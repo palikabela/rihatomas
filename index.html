@@ -8,60 +8,31 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-/* Tmavý režim (výchozí) */
 :root {
-  --bg:#0E0F11;
-  --surface:#16181C;
-  --surface2:#1E2126;
-  --surface3:#252A31;
-  --accent:#C8F04A;
-  --accent-dim:rgba(200,240,74,0.12);
-  --accent-dim2:rgba(200,240,74,0.06);
-  --text:#F0F2F5;
-  --text2:#8A9099;
-  --text3:#555C66;
-  --border:rgba(255,255,255,0.07);
-  --border2:rgba(255,255,255,0.12);
-  --green:#4ADE80;
-  --green-dim:rgba(74,222,128,0.1);
-  --red:#F87171;
-  --red-dim:rgba(248,113,113,0.1);
-  --chart-grid:rgba(255,255,255,0.04);
-  --chart-text:#555C66;
-  --chart-tooltip-bg:#1E2126;
-  --chart-tooltip-text:#F0F2F5;
+  --bg:#0E0F11; --surface:#16181C; --surface2:#1E2126; --surface3:#252A31;
+  --accent:#C8F04A; --accent-dim:rgba(200,240,74,0.12); --accent-dim2:rgba(200,240,74,0.06);
+  --text:#F0F2F5; --text2:#8A9099; --text3:#555C66;
+  --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.12);
+  --green:#4ADE80; --green-dim:rgba(74,222,128,0.1);
+  --red:#F87171; --red-dim:rgba(248,113,113,0.1);
+  --chart-grid:rgba(255,255,255,0.04); --chart-text:#555C66;
+  --chart-tooltip-bg:#1E2126; --chart-tooltip-text:#F0F2F5;
   --nav-bg:rgba(14,15,17,0.9);
 }
 
-/* Světlý režim */
 [data-theme="light"] {
-  --bg:#F9FAFB;
-  --surface:#FFFFFF;
-  --surface2:#F3F4F6;
-  --surface3:#E5E7EB;
-  --accent:#A6CC2B; 
-  --accent-dim:rgba(166,204,43,0.15);
-  --accent-dim2:rgba(166,204,43,0.08);
-  --text:#111827;
-  --text2:#4B5563;
-  --text3:#6B7280;
-  --border:rgba(0,0,0,0.08);
-  --border2:rgba(0,0,0,0.12);
-  --green:#16A34A;
-  --green-dim:rgba(22,163,74,0.1);
-  --red:#DC2626;
-  --red-dim:rgba(220,38,38,0.1);
-  --chart-grid:rgba(0,0,0,0.05);
-  --chart-text:#6B7280;
-  --chart-tooltip-bg:#FFFFFF;
-  --chart-tooltip-text:#111827;
+  --bg:#F9FAFB; --surface:#FFFFFF; --surface2:#F3F4F6; --surface3:#E5E7EB;
+  --accent:#A6CC2B; --accent-dim:rgba(166,204,43,0.15); --accent-dim2:rgba(166,204,43,0.08);
+  --text:#111827; --text2:#4B5563; --text3:#6B7280;
+  --border:rgba(0,0,0,0.08); --border2:rgba(0,0,0,0.12);
+  --green:#16A34A; --green-dim:rgba(22,163,74,0.1);
+  --red:#DC2626; --red-dim:rgba(220,38,38,0.1);
+  --chart-grid:rgba(0,0,0,0.05); --chart-text:#6B7280;
+  --chart-tooltip-bg:#FFFFFF; --chart-tooltip-text:#111827;
   --nav-bg:rgba(255,255,255,0.9);
 }
 
-html{scroll-behavior:smooth}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:16px;line-height:1.6;min-height:100vh;transition:background 0.3s, color 0.3s}
-
-/* NAV */
 nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;transition:background 0.3s, border-color 0.3s}
 .nav-logo{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--text);letter-spacing:-0.02em}
 .nav-logo span{color:var(--accent)}
@@ -73,65 +44,56 @@ nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:b
 .theme-btn{background:none;border:none;font-size:18px;cursor:pointer;padding:0;line-height:1;transition:transform 0.2s}
 .theme-btn:hover{transform:scale(1.1)}
 
-/* HERO */
 .hero{text-align:center;padding:5rem 2rem 3rem;max-width:600px;margin:0 auto}
 .hero-tag{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);background:var(--accent-dim);padding:6px 14px;border-radius:20px;margin-bottom:1.5rem;border:1px solid rgba(200,240,74,0.2)}
-.hero h1{font-family:'Syne',sans-serif;font-size:clamp(42px,5vw,60px);font-weight:700;line-height:1.08;letter-spacing:-0.04em;margin-bottom:1rem;color:var(--text)}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(42px,5vw,60px);font-weight:700;line-height:1.08;letter-spacing:-0.04em;margin-bottom:1rem;color:var(--text);transition:opacity 0.2s}
 .hero h1 em{color:var(--accent);font-style:normal}
-.hero p{font-size:17px;color:var(--text2);max-width:440px;margin:0 auto}
+.hero p{font-size:17px;color:var(--text2);max-width:440px;margin:0 auto;transition:opacity 0.2s}
 
-/* TABS */
 .tabs-wrap{display:flex;justify-content:center;margin-bottom:2.5rem}
 .tabs{display:inline-flex;background:var(--surface);border:1px solid var(--border);border-radius:50px;padding:4px;gap:2px;flex-wrap:wrap;justify-content:center;transition:background 0.3s, border-color 0.3s}
 .tab{padding:10px 26px;border:none;background:transparent;border-radius:50px;font-family:'Inter',sans-serif;font-size:15px;color:var(--text2);cursor:pointer;transition:all 0.2s}
 .tab:hover{color:var(--text)}
 .tab.active{background:var(--accent);color:#0E0F11;font-weight:600}
 
-/* CONTAINER */
 .container{max-width:920px;margin:0 auto;padding:0 1.5rem 6rem}
 .section{display:none}
 .section.active{display:block;animation:fadeUp 0.3s ease both}
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
-/* GRID */
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 @media(max-width:640px){.grid2{grid-template-columns:1fr}}
 
-/* CARD */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.75rem;transition:background 0.3s, border-color 0.3s}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.75rem;transition:background 0.3s, border-color 0.3s}
 .card-label{font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);margin-bottom:1.25rem}
 
-/* FIELDS */
 .field{margin-bottom:1.25rem}
 .field:last-child{margin-bottom:0}
 .field label{display:block;font-size:13px;color:var(--text2);margin-bottom:8px;font-weight:500}
-.field input,.field select{width:100%;padding:14px 16px;font-family:'Inter',sans-serif;font-size:16px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);transition:border-color 0.15s,background 0.15s;appearance:none;-webkit-appearance:none}
+.field input,.field select{width:100%;padding:14px 16px;font-family:'Inter',sans-serif;font-size:16px;border:1px solid var(--border2);border-radius:8px;background:var(--surface2);color:var(--text);transition:border-color 0.15s,background 0.15s;appearance:none;-webkit-appearance:none}
 .field input:focus,.field select:focus{outline:none;border-color:var(--accent);background:var(--surface3)}
 .field-preview{font-size:13px;color:var(--accent);margin-top:6px;font-weight:500}
 
-/* METRICS */
 .metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.metric{background:var(--surface2);border-radius:var(--radius-sm);padding:1.1rem 1.25rem;border:1px solid var(--border);transition:background 0.3s, border-color 0.3s}
+.metric{background:var(--surface2);border-radius:8px;padding:1.1rem 1.25rem;border:1px solid var(--border);transition:background 0.3s, border-color 0.3s}
 .metric-label{font-size:12px;color:var(--text3);margin-bottom:6px;font-weight:500;letter-spacing:0.05em;text-transform:uppercase}
 .metric-value{font-family:'Syne',sans-serif;font-size:22px;font-weight:600;color:var(--text);line-height:1.2}
 .metric-value.green{color:var(--green)}
 .metric-value.red{color:var(--red)}
 
-/* PROGRESS */
 .progress-wrap{margin:1.5rem 0 0}
 .progress-labels{display:flex;justify-content:space-between;font-size:13px;color:var(--text3);margin-bottom:8px}
 .progress-labels span strong{color:var(--text2)}
 .progress-track{height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;transition:background 0.3s}
 .progress-fill{height:100%;background:var(--accent);border-radius:3px;transition:width 0.5s cubic-bezier(.4,0,.2,1)}
 
-/* OFFER CARDS */
 .offers-header{display:flex;align-items:center;gap:10px;margin:2rem 0 1.25rem}
 .offers-title{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3)}
 .sazby-pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--text3);background:var(--surface2);padding:4px 12px;border-radius:20px;border:1px solid var(--border);transition:background 0.3s, border-color 0.3s}
 .sazby-pill .dot{width:6px;height:6px;border-radius:50%;background:var(--text3)}
 .sazby-pill .dot.live{background:var(--green)}
 
-.offer-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:12px;transition:background 0.3s, border-color 0.2s}
+.offer-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:12px;transition:background 0.3s, border-color 0.2s}
 .offer-card.best{border-color:rgba(200,240,74,0.4);background:linear-gradient(135deg,var(--surface) 0%,rgba(200,240,74,0.03) 100%)}
 .offer-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
 .offer-name{font-size:16px;font-weight:500;color:var(--text)}
@@ -146,25 +108,22 @@ nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:b
 .saving-tag.neg{background:var(--red-dim);color:var(--red)}
 .badge-best{display:inline-block;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:4px 12px;border-radius:20px;background:var(--accent);color:#0E0F11;margin-bottom:10px}
 
-/* CTA */
-.cta-strip{background:var(--surface);border:1px solid rgba(200,240,74,0.2);border-radius:var(--radius);padding:2.5rem;display:flex;justify-content:space-between;align-items:center;margin-top:2rem;flex-wrap:wrap;gap:1.5rem;position:relative;overflow:hidden;transition:background 0.3s, border-color 0.3s}
+.cta-strip{background:var(--surface);border:1px solid rgba(200,240,74,0.2);border-radius:14px;padding:2.5rem;display:flex;justify-content:space-between;align-items:center;margin-top:2rem;flex-wrap:wrap;gap:1.5rem;position:relative;overflow:hidden;transition:background 0.3s, border-color 0.3s}
 .cta-strip::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:var(--accent-dim2);border-radius:50%;pointer-events:none}
 .cta-strip h3{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--text)}
 .cta-strip p{font-size:15px;color:var(--text2);margin-top:6px}
 .cta-btn{display:inline-block;padding:14px 28px;background:var(--accent);color:#0E0F11;font-family:'Inter',sans-serif;font-size:15px;font-weight:600;border-radius:50px;text-decoration:none;white-space:nowrap;transition:opacity 0.15s}
 .cta-btn:hover{opacity:0.88}
 
-/* NOTE */
 .note{font-size:13px;color:var(--text3);margin-top:1.5rem;line-height:1.7}
 
-/* FOOTER */
 footer{text-align:center;padding:2.5rem;font-size:13px;color:var(--text3);border-top:1px solid var(--border)}
 footer a{color:var(--text3);text-decoration:none}
 footer a:hover{color:var(--text2)}
 
-/* INVEST GRID */
+/* INVEST GRID - SLOUPEC */
 .products-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:2rem}
-.product-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.5rem;transition:background 0.3s, border-color 0.3s}
+.product-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem 1.5rem;transition:background 0.3s, border-color 0.3s}
 .product-card.best{border-color:rgba(200,240,74,0.4)}
 .product-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
 .product-name{font-size:15px;font-weight:500;color:var(--text)}
@@ -176,12 +135,12 @@ footer a:hover{color:var(--text2)}
 .product-gain.pos{color:var(--green)}
 .product-gain.neg{color:var(--red)}
 
-.sazby-toggle-row{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:1rem 1.25rem;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:1.25rem;user-select:none;transition:background 0.3s, border-color 0.3s}
+.sazby-toggle-row{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:1rem 1.25rem;background:var(--surface2);border:1px solid var(--border);border-radius:8px;margin-bottom:1.25rem;user-select:none;transition:background 0.3s, border-color 0.3s}
 .sazby-toggle-row span{font-size:14px;color:var(--text2)}
 .sazby-fields-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.5rem}
 @media(max-width:500px){.sazby-fields-grid{grid-template-columns:1fr 1fr}}
 .sazby-f label{display:block;font-size:12px;color:var(--text3);margin-bottom:6px}
-.sazby-f input{width:100%;padding:10px 12px;font-family:"Inter",sans-serif;font-size:15px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);text-align:right;transition:background 0.3s, border-color 0.3s}
+.sazby-f input{width:100%;padding:10px 12px;font-family:"Inter",sans-serif;font-size:15px;border:1px solid var(--border2);border-radius:8px;background:var(--surface2);color:var(--text);text-align:right;transition:background 0.3s, border-color 0.3s}
 .sazby-f input:focus{outline:none;border-color:var(--accent)}
 .chart-wrap{position:relative;height:320px;margin-top:1.5rem}
 .i-badge-best{display:inline-block;font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:3px 10px;border-radius:20px;background:var(--accent);color:#0E0F11;margin-bottom:8px}
@@ -202,14 +161,13 @@ footer a:hover{color:var(--text2)}
     <button onclick="toggleTheme()" class="theme-btn" id="theme-icon">☀️</button>
     <div class="nav-dot live" id="nav-dot" title="Sazby online"></div>
     <a href="tel:601323963">601 323 963</a>
-    <a href="mailto:tom.ri@me.com">tom.ri@me.com</a>
   </div>
 </nav>
 
 <div class="hero">
-  <div class="hero-tag">Finanční kalkulačka</div>
-  <h1>Spočítejte si<br>úvěr <em>přesně</em></h1>
-  <p>Zadejte parametry a okamžitě uvidíte měsíční splátku, přeplatek a aktuální nabídky refinancování.</p>
+  <div class="hero-tag" id="hero-tag">Finanční kalkulačka</div>
+  <h1 id="hero-title">Spočítejte si<br>úvěr <em>přesně</em></h1>
+  <p id="hero-desc">Zadejte parametry a okamžitě uvidíte měsíční splátku, přeplatek a aktuální nabídky refinancování.</p>
 </div>
 
 <div class="tabs-wrap">
@@ -244,35 +202,18 @@ footer a:hover{color:var(--text2)}
       <div class="card">
         <div class="card-label">Výsledek výpočtu</div>
         <div class="metrics">
-          <div class="metric">
-            <div class="metric-label">Měsíční splátka</div>
-            <div class="metric-value green" id="k_splatka">—</div>
-          </div>
-          <div class="metric">
-            <div class="metric-label">Celkem zaplatíte</div>
-            <div class="metric-value" id="k_celkem">—</div>
-          </div>
-          <div class="metric">
-            <div class="metric-label">Přeplatek úroky</div>
-            <div class="metric-value red" id="k_uroky">—</div>
-          </div>
-          <div class="metric">
-            <div class="metric-label">Počet splátek</div>
-            <div class="metric-value" id="k_pocet">—</div>
-          </div>
+          <div class="metric"><div class="metric-label">Měsíční splátka</div><div class="metric-value green" id="k_splatka">—</div></div>
+          <div class="metric"><div class="metric-label">Celkem zaplatíte</div><div class="metric-value" id="k_celkem">—</div></div>
+          <div class="metric"><div class="metric-label">Přeplatek úroky</div><div class="metric-value red" id="k_uroky">—</div></div>
+          <div class="metric"><div class="metric-label">Počet splátek</div><div class="metric-value" id="k_pocet">—</div></div>
         </div>
         <div class="progress-wrap">
-          <div class="progress-labels">
-            <span>Jistina <strong id="k_pct_j">—</strong></span>
-            <span>Úroky <strong id="k_pct_u">—</strong></span>
-          </div>
-          <div class="progress-track">
-            <div class="progress-fill" id="k_bar" style="width:0%"></div>
-          </div>
+          <div class="progress-labels"><span>Jistina <strong id="k_pct_j">—</strong></span><span>Úroky <strong id="k_pct_u">—</strong></span></div>
+          <div class="progress-track"><div class="progress-fill" id="k_bar" style="width:0%"></div></div>
         </div>
       </div>
     </div>
-    <p class="note">Výpočet je orientační a nezohledňuje poplatky, pojistné ani jiné náklady. Přesná nabídka na základě individuálního posouzení.</p>
+    <p class="note">Výpočet je orientační a nezohledňuje poplatky, pojistné ani jiné náklady.</p>
   </div>
 
   <div id="refi" class="section">
@@ -296,17 +237,8 @@ footer a:hover{color:var(--text2)}
       <div class="card">
         <div class="card-label">Vaše současná situace</div>
         <div class="metrics">
-          <div class="metric">
-            <div class="metric-label">Měsíční splátka</div>
-            <div class="metric-value" id="r_sou_splatka">—</div>
-          </div>
-          <div class="metric">
-            <div class="metric-label">Celkem zbývá</div>
-            <div class="metric-value red" id="r_sou_celkem">—</div>
-          </div>
-        </div>
-        <div style="margin-top:1.25rem;font-size:14px;color:var(--text2);line-height:1.6">
-          Porovnejte níže naše aktuální nabídky a zjistěte, kolik ušetříte refinancováním.
+          <div class="metric"><div class="metric-label">Měsíční splátka</div><div class="metric-value" id="r_sou_splatka">—</div></div>
+          <div class="metric"><div class="metric-label">Celkem zbývá</div><div class="metric-value red" id="r_sou_celkem">—</div></div>
         </div>
       </div>
     </div>
@@ -321,13 +253,9 @@ footer a:hover{color:var(--text2)}
     <div id="refi-offers"></div>
 
     <div class="cta-strip">
-      <div>
-        <h3>Vybrali jste si?</h3>
-        <p>Zařídím celé refinancování za vás — bez poplatků, bez papírování.</p>
-      </div>
+      <div><h3>Vybrali jste si?</h3><p>Zařídím celé refinancování za vás — bez poplatků, bez papírování.</p></div>
       <a href="tel:601323963" class="cta-btn">Zavolat Tomáš Říha →</a>
     </div>
-    <p class="note">Sazby jsou pravidelně aktualizovány. Skutečná výše splátky závisí na bonitě klienta a podmínkách banky.</p>
   </div>
 
   <div id="invest" class="section">
@@ -428,6 +356,14 @@ footer a:hover{color:var(--text2)}
 </footer>
 
 <script>
+// DYNAMICKÉ TEXTY
+const content = {
+  kalk: { tag: "Finanční kalkulačka", title: "Spočítejte si<br>úvěr <em>přesně</em>", desc: "Zadejte parametry a okamžitě uvidíte měsíční splátku, přeplatek a aktuální nabídky refinancování." },
+  refi: { tag: "Optimalizace úvěru", title: "Spočítejte si,<br>kolik <em>přeplácíte</em>", desc: "Zjistěte, kolik můžete ušetřit refinancováním na nižší úrok u konkurenčních bank." },
+  invest: { tag: "Investiční strategie", title: "Zjistěte, kde<br>lépe <em>investovat</em>", desc: "Porovnejte efektivitu různých produktů a uvidíte, jak poplatky ovlivňují vaši budoucí rentu." },
+  rc: { tag: "Klientská analýza", title: "Analýza klienta<br>během <em>vteřiny</em>", desc: "Rychlé ověření věku, pohlaví a data narození přímo z rodného čísla klienta." }
+};
+
 // Téma
 document.getElementById('theme-icon').textContent = document.documentElement.getAttribute('data-theme') === 'light' ? '🌙' : '☀️';
 
@@ -449,7 +385,6 @@ const SHEET_URL_TSV = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/e
 
 let sazby = [];
 
-// GOOGLE SHEETS
 async function loadSazbyFromSheets() {
   try {
     const res = await fetch(SHEET_URL_TSV);
@@ -476,7 +411,6 @@ async function loadSazbyFromSheets() {
   calcRefi();
 }
 
-// HELPERS
 function fmt(n) {
   return new Intl.NumberFormat('cs-CZ', {
     style: 'currency', currency: 'CZK', maximumFractionDigits: 0
@@ -489,7 +423,6 @@ function monthlyPayment(jistina, sazbaRocni, mesice) {
   return jistina * r * Math.pow(1 + r, mesice) / (Math.pow(1 + r, mesice) - 1);
 }
 
-// KALKULACKA
 function calcKalk() {
   const j = parseFloat(document.getElementById('k_jistina').value) || 0;
   const s = parseFloat(document.getElementById('k_sazba').value) || 0;
@@ -523,7 +456,6 @@ function calcKalk() {
   document.getElementById('k_jistina_preview').textContent = fmt(j);
 }
 
-// REFINANCOVANI
 function calcRefi() {
   const dluh = parseFloat(document.getElementById('r_dluh').value) || 0;
   const sazSou = parseFloat(document.getElementById('r_sazba_sou').value) || 0;
@@ -581,7 +513,6 @@ function calcRefi() {
   });
 }
 
-// TABS
 function showTab(id) {
   const ids = ['kalk', 'refi', 'invest', 'rc'];
   document.querySelectorAll('.tab').forEach((t, i) => {
@@ -590,12 +521,16 @@ function showTab(id) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   
+  // Změna textu v Hero sekci
+  document.getElementById('hero-tag').textContent = content[id].tag;
+  document.getElementById('hero-title').innerHTML = content[id].title;
+  document.getElementById('hero-desc').textContent = content[id].desc;
+
   if (id === 'invest' && investChart) {
     calcInvest();
   }
 }
 
-// RC KALKULAČKA
 function calcRC() {
   const raw = document.getElementById('rc_input').value.replace('/', '').replace(/\s/g, '');
   const err = document.getElementById('rc_error');
@@ -650,7 +585,6 @@ function calcRC() {
   document.getElementById('rc_narozeniny').textContent = narozeniinyText;
 }
 
-// INVESTICE
 let investChart = null;
 
 function toggleISazby() {
@@ -671,7 +605,7 @@ function calcFV(jednoraz, mesicni, sazbaRocni, roky, isIZP = false) {
     let zustatek = jednoraz * 0.97; // 3% vstupní poplatek z jednorázu
     for(let m=1; m<=n; m++) {
       let vkladVMesici = mesicni;
-      if (m <= 24) vkladVMesici = 0; // První 2 roky jdou na poplatky a provizi
+      if (m <= 24) vkladVMesici = 0; // První 2 roky jdou na provizi a poplatky
       zustatek += vkladVMesici;
       zustatek -= 150; // Poplatek 150 Kč každý měsíc
       if (zustatek < 0) zustatek = 0;
@@ -759,14 +693,12 @@ function calcInvest() {
     grid.appendChild(div);
   });
 
-  // Načtení barev podle motivu pro graf
   const style = getComputedStyle(document.body);
   const gridColor = style.getPropertyValue('--chart-grid').trim();
   const textColor = style.getPropertyValue('--chart-text').trim();
   const tooltipBg = style.getPropertyValue('--chart-tooltip-bg').trim();
   const tooltipText = style.getPropertyValue('--chart-tooltip-text').trim();
 
-  // Graf
   const colors = {etf:"#C8F04A",dip:"#4ADE80",penzijko:"#60A5FA",stavebko:"#F59E0B",sporici:"#A78BFA",bezny:"#F87171",izp:"#F97316"};
   const maxPoints = Math.min(roky, 40);
   const step = Math.max(1, Math.floor(roky / maxPoints));
@@ -817,7 +749,6 @@ function calcInvest() {
   });
 }
 
-// INIT
 calcKalk();
 calcInvest();
 calcRC();
