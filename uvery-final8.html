@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRfin — Kalkulačka úvěrů</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0E0F11;
+  --surface:#16181C;
+  --surface2:#1E2126;
+  --surface3:#252A31;
+  --accent:#C8F04A;
+  --accent-dim:rgba(200,240,74,0.12);
+  --accent-dim2:rgba(200,240,74,0.06);
+  --text:#F0F2F5;
+  --text2:#8A9099;
+  --text3:#555C66;
+  --border:rgba(255,255,255,0.07);
+  --border2:rgba(255,255,255,0.12);
+  --green:#4ADE80;
+  --green-dim:rgba(74,222,128,0.1);
+  --red:#F87171;
+  --red-dim:rgba(248,113,113,0.1);
+  --radius:14px;
+  --radius-sm:8px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.6;min-height:100vh}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(14,15,17,0.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--text);letter-spacing:-0.02em}
+.nav-logo span{color:var(--accent)}
+.nav-right{display:flex;align-items:center;gap:1.5rem}
+.nav-right a{font-size:13px;color:var(--text2);text-decoration:none;transition:color 0.15s}
+.nav-right a:hover{color:var(--text)}
+.nav-dot{width:6px;height:6px;border-radius:50%;background:var(--text3)}
+.nav-dot.live{background:var(--green);box-shadow:0 0 8px var(--green)}
+
+/* HERO */
+.hero{text-align:center;padding:5rem 2rem 3rem;max-width:600px;margin:0 auto}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);background:var(--accent-dim);padding:6px 14px;border-radius:20px;margin-bottom:1.5rem;border:1px solid rgba(200,240,74,0.2)}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(38px,5vw,56px);font-weight:700;line-height:1.08;letter-spacing:-0.04em;margin-bottom:1rem;color:var(--text)}
+.hero h1 em{color:var(--accent);font-style:normal}
+.hero p{font-size:16px;color:var(--text2);max-width:440px;margin:0 auto}
+
+/* TABS */
+.tabs-wrap{display:flex;justify-content:center;margin-bottom:2.5rem}
+.tabs{display:inline-flex;background:var(--surface);border:1px solid var(--border);border-radius:50px;padding:4px;gap:2px}
+.tab{padding:10px 26px;border:none;background:transparent;border-radius:50px;font-family:'Inter',sans-serif;font-size:14px;color:var(--text2);cursor:pointer;transition:all 0.2s}
+.tab:hover{color:var(--text)}
+.tab.active{background:var(--accent);color:#0E0F11;font-weight:600}
+
+/* CONTAINER */
+.container{max-width:920px;margin:0 auto;padding:0 1.5rem 6rem}
+.section{display:none}
+.section.active{display:block;animation:fadeUp 0.3s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* GRID */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.75rem}
+.card-label{font-size:10px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);margin-bottom:1.25rem}
+
+/* FIELDS */
+.field{margin-bottom:1.1rem}
+.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:12px;color:var(--text2);margin-bottom:6px;font-weight:500}
+.field input,.field select{width:100%;padding:12px 14px;font-family:'Inter',sans-serif;font-size:15px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);transition:border-color 0.15s,background 0.15s;appearance:none;-webkit-appearance:none}
+.field input:focus,.field select:focus{outline:none;border-color:var(--accent);background:var(--surface3)}
+.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238A9099' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+
+/* METRICS */
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.metric{background:var(--surface2);border-radius:var(--radius-sm);padding:.9rem 1rem;border:1px solid var(--border)}
+.metric-label{font-size:11px;color:var(--text3);margin-bottom:5px;font-weight:500;letter-spacing:0.05em;text-transform:uppercase}
+.metric-value{font-family:'Syne',sans-serif;font-size:20px;font-weight:600;color:var(--text);line-height:1.2}
+.metric-value.green{color:var(--green)}
+.metric-value.red{color:var(--red)}
+
+/* PROGRESS */
+.progress-wrap{margin:1.25rem 0 0}
+.progress-labels{display:flex;justify-content:space-between;font-size:12px;color:var(--text3);margin-bottom:8px}
+.progress-labels span strong{color:var(--text2)}
+.progress-track{height:5px;background:var(--surface3);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:var(--accent);border-radius:3px;transition:width 0.5s cubic-bezier(.4,0,.2,1)}
+
+/* OFFER CARDS */
+.offers-header{display:flex;align-items:center;gap:10px;margin:1.5rem 0 1rem}
+.offers-title{font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3)}
+.sazby-pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--text3);background:var(--surface2);padding:3px 10px;border-radius:20px;border:1px solid var(--border)}
+.sazby-pill .dot{width:5px;height:5px;border-radius:50%;background:var(--text3)}
+.sazby-pill .dot.live{background:var(--green)}
+
+.offer-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.5rem;margin-bottom:8px;transition:border-color 0.2s}
+.offer-card.best{border-color:rgba(200,240,74,0.4);background:linear-gradient(135deg,var(--surface) 0%,rgba(200,240,74,0.03) 100%)}
+.offer-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.offer-name{font-size:15px;font-weight:500;color:var(--text)}
+.offer-partner{font-size:12px;color:var(--text3);margin-top:2px}
+.offer-rate{font-family:'Syne',sans-serif;font-size:30px;font-weight:700;color:var(--accent);line-height:1}
+.offer-rate small{font-family:'Inter',sans-serif;font-size:12px;color:var(--text3);font-weight:400}
+.offer-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media(max-width:480px){.offer-cols{grid-template-columns:repeat(2,1fr)}}
+.offer-col-label{font-size:11px;color:var(--text3);margin-bottom:3px}
+.offer-col-val{font-size:15px;font-weight:500;color:var(--text)}
+.saving-tag{display:inline-flex;align-items:center;gap:5px;margin-top:12px;font-size:12px;font-weight:500;padding:5px 12px;border-radius:20px;background:var(--green-dim);color:var(--green)}
+.saving-tag.neg{background:var(--red-dim);color:var(--red)}
+.badge-best{display:inline-block;font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;background:var(--accent);color:#0E0F11;margin-bottom:8px}
+
+/* CTA */
+.cta-strip{background:var(--surface);border:1px solid rgba(200,240,74,0.2);border-radius:var(--radius);padding:2rem 2.5rem;display:flex;justify-content:space-between;align-items:center;margin-top:1.5rem;flex-wrap:wrap;gap:1rem;position:relative;overflow:hidden}
+.cta-strip::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:var(--accent-dim2);border-radius:50%;pointer-events:none}
+.cta-strip h3{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--text)}
+.cta-strip p{font-size:13px;color:var(--text2);margin-top:4px}
+.cta-btn{display:inline-block;padding:12px 26px;background:var(--accent);color:#0E0F11;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;border-radius:50px;text-decoration:none;white-space:nowrap;transition:opacity 0.15s}
+.cta-btn:hover{opacity:0.88}
+
+/* NOTE */
+.note{font-size:12px;color:var(--text3);margin-top:1.25rem;line-height:1.7}
+
+/* FOOTER */
+footer{text-align:center;padding:2rem;font-size:12px;color:var(--text3);border-top:1px solid var(--border)}
+footer a{color:var(--text3);text-decoration:none}
+footer a:hover{color:var(--text2)}
+
+/* DIVIDER */
+.divider{height:1px;background:var(--border);margin:1.25rem 0}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">TR<span>fin</span></div>
+  <div class="nav-right">
+    <div class="nav-dot live" id="nav-dot" title="Sazby online"></div>
+    <a href="tel:601323963">601 323 963</a>
+    <a href="mailto:tom.ri@me.com">tom.ri@me.com</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-tag">Finanční kalkulačka</div>
+  <h1>Spočítejte si<br>úvěr <em>přesně</em></h1>
+  <p>Zadejte parametry a okamžitě uvidíte měsíční splátku, přeplatek a aktuální nabídky refinancování.</p>
+</div>
+
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('kalk')">Nový úvěr</button>
+    <button class="tab" onclick="showTab('refi')">Refinancování</button>
+    <button class="tab" onclick="showTab('rc')">Rodné číslo</button>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- KALKULAČKA -->
+  <div id="kalk" class="section active">
+    <div class="grid2">
+      <div class="card">
+        <div class="card-label">Parametry úvěru</div>
+        <div class="field">
+          <label>Výše úvěru (Kč)</label>
+          <input type="number" id="k_jistina" value="0" min="0" step="10000" oninput="calcKalk()">
+          <div id="k_jistina_preview" style="font-size:12px;color:var(--accent);margin-top:5px;font-weight:500">3 000 000 Kč</div>
+        </div>
+        <div class="field">
+          <label>Úroková sazba (% ročně)</label>
+          <input type="number" id="k_sazba" value="4.89" step="0.01" min="0" oninput="calcKalk()">
+        </div>
+        <div class="field">
+          <label>Doba splatnosti (roky)</label>
+          <input type="number" id="k_roky" value="25" min="1" max="40" oninput="calcKalk()">
+        </div>
+
+      </div>
+      <div class="card">
+        <div class="card-label">Výsledek výpočtu</div>
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-label">Měsíční splátka</div>
+            <div class="metric-value green" id="k_splatka">—</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Celkem zaplatíte</div>
+            <div class="metric-value" id="k_celkem">—</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Přeplatek úroky</div>
+            <div class="metric-value red" id="k_uroky">—</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Počet splátek</div>
+            <div class="metric-value" id="k_pocet">—</div>
+          </div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-labels">
+            <span>Jistina <strong id="k_pct_j">—</strong></span>
+            <span>Úroky <strong id="k_pct_u">—</strong></span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="k_bar" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="note">Výpočet je orientační a nezohledňuje poplatky, pojistné ani jiné náklady. Přesná nabídka na základě individuálního posouzení.</p>
+  </div>
+
+  <!-- REFINANCOVÁNÍ -->
+  <div id="refi" class="section">
+    <div class="grid2" style="margin-bottom:12px">
+      <div class="card">
+        <div class="card-label">Váš současný úvěr</div>
+        <div class="field">
+          <label>Zbývající dluh (Kč)</label>
+          <input type="number" id="r_dluh" value="0" min="0" step="10000" oninput="calcRefi()">
+          <div id="r_dluh_preview" style="font-size:12px;color:var(--accent);margin-top:5px;font-weight:500">2 500 000 Kč</div>
+        </div>
+        <div class="field">
+          <label>Stávající sazba (% ročně)</label>
+          <input type="number" id="r_sazba_sou" value="6.50" step="0.01" min="0" oninput="calcRefi()">
+        </div>
+        <div class="field">
+          <label>Zbývající splatnost (roky)</label>
+          <input type="number" id="r_roky" value="20" min="1" max="40" oninput="calcRefi()">
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">Vaše současná situace</div>
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-label">Měsíční splátka</div>
+            <div class="metric-value" id="r_sou_splatka">—</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Celkem zbývá</div>
+            <div class="metric-value red" id="r_sou_celkem">—</div>
+          </div>
+        </div>
+        <div style="margin-top:1rem;font-size:13px;color:var(--text2);line-height:1.6">
+          Porovnejte níže naše aktuální nabídky a zjistěte, kolik ušetříte refinancováním.
+        </div>
+      </div>
+    </div>
+
+    <div class="offers-header">
+      <div class="offers-title">Nabídky refinancování</div>
+      <div class="sazby-pill">
+        <div class="dot" id="sazby-dot"></div>
+        <span id="sazby-info">Načítám sazby…</span>
+      </div>
+    </div>
+    <div id="refi-offers"></div>
+
+    <div class="cta-strip">
+      <div>
+        <h3>Vybrali jste si?</h3>
+        <p>Zařídím celé refinancování za vás — bez poplatků, bez papírování.</p>
+      </div>
+      <a href="tel:601323963" class="cta-btn">Zavolat Tomáš Říha →</a>
+    </div>
+    <p class="note">Sazby jsou pravidelně aktualizovány. Skutečná výše splátky závisí na bonitě klienta a podmínkách banky.</p>
+  </div>
+
+
+  <!-- RODNÉ ČÍSLO -->
+  <div id="rc" class="section">
+    <div class="grid2">
+      <div class="card">
+        <div class="card-label">Zadejte rodné číslo</div>
+        <div class="field">
+          <label>Rodné číslo</label>
+          <input type="text" id="rc_input" placeholder="např. 8554121234" maxlength="11" oninput="calcRC()" style="letter-spacing:0.1em">
+        </div>
+        <div id="rc_error" style="font-size:12px;color:var(--red);margin-top:8px;display:none">Neplatné rodné číslo</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Výsledek</div>
+        <div class="metrics">
+          <div class="metric"><div class="metric-label">Datum narození</div><div class="metric-value green" id="rc_datum">—</div></div>
+          <div class="metric"><div class="metric-label">Věk</div><div class="metric-value" id="rc_vek">—</div></div>
+          <div class="metric"><div class="metric-label">Pohlaví</div><div class="metric-value" id="rc_pohlavi">—</div></div>
+          <div class="metric"><div class="metric-label">Narozeniny za</div><div class="metric-value" id="rc_narozeniny">—</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cta-strip">
+      <div><h3>Potřebujete pojištění?</h3><p>Nezávazná konzultace zdarma — sestavím nabídku přímo pro vás.</p></div>
+      <a href="tel:601323963" class="cta-btn">Zavolat Tomáš Říha →</a>
+    </div>
+    <p class="note">Rodné číslo se nikam neodesílá ani neukládá — výpočet probíhá pouze ve vašem prohlížeči.</p>
+  </div>
+
+</div>
+
+<footer>
+  TRfin management s.r.o. &nbsp;·&nbsp; IČ: 24096563 &nbsp;·&nbsp; Nábřeží 599, Zlín 76001
+  &nbsp;·&nbsp; <a href="tel:601323963">601 323 963</a>
+  &nbsp;·&nbsp; <a href="mailto:tom.ri@me.com">tom.ri@me.com</a>
+</footer>
+
+<script>
+const SHEET_ID = '121nElMghOfktcRutG3rNkznTvzkyhLQlVyNbU3WpSGE';
+const SHEET_URL = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:csv&sheet=Sheet1';
+const SHEET_URL_TSV = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/export?format=tsv&sheet=Sheet1';
+
+let sazby = [
+  { nazev: 'Hypotéka 3Y fix', partner: 'Česká spořitelna', sazba: 4.59 },
+  { nazev: 'Hypotéka 5Y fix', partner: 'Komerční banka', sazba: 4.89 },
+  { nazev: 'Hypotéka 7Y fix', partner: 'ČSOB', sazba: 5.19 },
+  { nazev: 'Spotřební úvěr', partner: 'Moneta Money Bank', sazba: 6.99 },
+  { nazev: 'Podnikatelský úvěr', partner: 'Raiffeisenbank', sazba: 5.89 },
+];
+
+// GOOGLE SHEETS
+async function loadSazbyFromSheets() {
+  try {
+    const res = await fetch(SHEET_URL_TSV);
+    const text = await res.text();
+    const rows = text.trim().split('\n').slice(1);
+    const loaded = rows
+      .map(row => {
+        const cols = row.split('\t').map(c => c.trim());
+        return { nazev: cols[0], partner: cols[1], sazba: parseFloat(cols[2].replace(',', '.')) };
+      })
+      .filter(s => s.nazev && s.nazev !== 'nazev' && !isNaN(s.sazba));
+    if (loaded.length > 0) {
+      sazby = loaded;
+      document.getElementById('sazby-dot').classList.add('live');
+      document.getElementById('sazby-info').textContent = 'Sazby aktuální — aktualizováno dnes';
+      document.getElementById('nav-dot').classList.add('live');
+    } else {
+      document.getElementById('sazby-info').textContent = 'Výchozí sazby';
+    }
+  } catch(e) {
+    document.getElementById('sazby-info').textContent = 'Výchozí sazby';
+    document.getElementById('nav-dot').classList.remove('live');
+  }
+  calcRefi();
+}
+
+// HELPERS
+function updatePreview(inputId, previewId) {
+  const val = parseFloat(document.getElementById(inputId).value) || 0;
+  const el = document.getElementById(previewId);
+  if (el) el.textContent = new Intl.NumberFormat('cs-CZ', {style:'currency',currency:'CZK',maximumFractionDigits:0}).format(val);
+}
+function fmt(n) {
+  return new Intl.NumberFormat('cs-CZ', {
+    style: 'currency', currency: 'CZK', maximumFractionDigits: 0
+  }).format(Math.round(n));
+}
+
+function monthlyPayment(jistina, sazbaRocni, mesice) {
+  if (sazbaRocni <= 0) return jistina / mesice;
+  const r = sazbaRocni / 100 / 12;
+  return jistina * r * Math.pow(1 + r, mesice) / (Math.pow(1 + r, mesice) - 1);
+}
+
+// KALKULACKA
+function calcKalk() {
+  const j = parseFloat(document.getElementById('k_jistina').value) || 0;
+  const s = parseFloat(document.getElementById('k_sazba').value) || 0;
+  const r = parseInt(document.getElementById('k_roky').value) || 1;
+  const m = r * 12;
+
+  if (j <= 0) return;
+
+  const splatka = monthlyPayment(j, s, m);
+  const celkem = splatka * m;
+  const uroky = celkem - j;
+  const pctJ = (j / celkem) * 100;
+
+  document.getElementById('k_splatka').textContent = fmt(splatka) + ' / měs.';
+  document.getElementById('k_celkem').textContent = fmt(celkem);
+  document.getElementById('k_uroky').textContent = fmt(uroky);
+  document.getElementById('k_pocet').textContent = m.toLocaleString('cs-CZ');
+  document.getElementById('k_bar').style.width = Math.min(pctJ, 100).toFixed(1) + '%';
+  document.getElementById('k_pct_j').textContent = pctJ.toFixed(0) + ' %';
+  document.getElementById('k_pct_u').textContent = (100 - pctJ).toFixed(0) + ' %';
+  document.getElementById('k_jistina_preview').textContent = j > 0 ? fmt(j) : '';
+}
+
+// REFINANCOVANI
+function calcRefi() {
+  const dluh = parseFloat(document.getElementById('r_dluh').value) || 0;
+  const sazSou = parseFloat(document.getElementById('r_sazba_sou').value) || 0;
+  const roky = parseInt(document.getElementById('r_roky').value) || 1;
+  const mes = roky * 12;
+
+  if (dluh <= 0) return;
+
+  const splatSou = monthlyPayment(dluh, sazSou, mes);
+  const celkemSou = splatSou * mes;
+
+  document.getElementById('r_sou_splatka').textContent = fmt(splatSou) + ' / měs.';
+  document.getElementById('r_sou_celkem').textContent = fmt(celkemSou);
+  document.getElementById('r_dluh_preview').textContent = dluh > 0 ? fmt(dluh) : '';
+
+  const container = document.getElementById('refi-offers');
+  container.innerHTML = '';
+  if (!sazby.length) return;
+
+  const sorted = [...sazby];
+
+  sorted.forEach((s, i) => {
+    const novaSpl = monthlyPayment(dluh, s.sazba, mes);
+    const novaCelk = novaSpl * mes;
+    const uspMes = splatSou - novaSpl;
+    const uspTotal = celkemSou - novaCelk;
+    const isBest = i === 0;
+
+    const div = document.createElement('div');
+    div.className = 'offer-card' + (isBest ? ' best' : '');
+    div.innerHTML =
+      (isBest ? '<div class="badge-best">Nejlepší nabídka</div>' : '') +
+      '<div class="offer-head">' +
+        '<div>' +
+          '<div class="offer-name">' + s.nazev + '</div>' +
+          '<div class="offer-partner">' + s.partner + '</div>' +
+        '</div>' +
+        '<div class="offer-rate">' + s.sazba.toFixed(2) + '<small> % p.a.</small></div>' +
+      '</div>' +
+      '<div class="offer-cols">' +
+        '<div><div class="offer-col-label">Nová splátka</div><div class="offer-col-val">' + fmt(novaSpl) + '/m</div></div>' +
+        '<div><div class="offer-col-label">' + (uspMes >= 0 ? 'Měsíční úspora' : 'Přeplatek') + '</div><div class="offer-col-val">' + fmt(Math.abs(uspMes)) + '/m</div></div>' +
+        '<div><div class="offer-col-label">Celkem zaplatíte</div><div class="offer-col-val">' + fmt(novaCelk) + '</div></div>' +
+      '</div>' +
+      '<div class="saving-tag' + (uspTotal < 0 ? ' neg' : '') + '">' +
+        (uspTotal >= 0 ? '↓ Celková úspora: ' + fmt(uspTotal) : '↑ Celkový přeplatek: ' + fmt(Math.abs(uspTotal))) +
+      '</div>';
+    container.appendChild(div);
+  });
+}
+
+// TABS
+function showTab(id) {
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    t.classList.toggle('active', ['kalk', 'refi', 'rc'][i] === id);
+  });
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+
+// RC KALKULAČKA
+function calcRC() {
+  const raw = document.getElementById('rc_input').value.replace('/', '').replace(/\s/g, '');
+  const err = document.getElementById('rc_error');
+  const fields = ['rc_datum', 'rc_vek', 'rc_pohlavi', 'rc_narozeniny'];
+
+  if (raw.length < 9) {
+    err.style.display = 'none';
+    fields.forEach(f => document.getElementById(f).textContent = '—');
+    return;
+  }
+
+  // Parse
+  let rok = parseInt(raw.substring(0, 2));
+  let mesic = parseInt(raw.substring(2, 4));
+  let den = parseInt(raw.substring(4, 6));
+
+  // Pohlaví
+  let pohlavi = 'Muž';
+  if (mesic > 50) { mesic -= 50; pohlavi = 'Žena'; }
+  if (mesic > 20) { mesic -= 20; } // po roce 2004 přidání 20
+
+  // Rok - určení století
+  const dnesRok = new Date().getFullYear() % 100;
+  if (raw.length >= 10) {
+    // 10místné RČ: po roce 1954 mohou být 2000+
+    rok = rok <= dnesRok ? 2000 + rok : 1900 + rok;
+  } else {
+    // 9místné RČ: vždy 1900
+    rok = 1900 + rok;
+  }
+
+  // Validace
+  if (mesic < 1 || mesic > 12 || den < 1 || den > 31) {
+    err.style.display = 'block';
+    fields.forEach(f => document.getElementById(f).textContent = '—');
+    return;
+  }
+
+  err.style.display = 'none';
+
+  const narozen = new Date(rok, mesic - 1, den);
+  const dnes = new Date();
+
+  // Věk
+  let vek = dnes.getFullYear() - narozen.getFullYear();
+  const mDiff = dnes.getMonth() - narozen.getMonth();
+  if (mDiff < 0 || (mDiff === 0 && dnes.getDate() < narozen.getDate())) vek--;
+
+  // Narozeniny za
+  const pristi = new Date(dnes.getFullYear(), mesic - 1, den);
+  if (pristi < dnes) pristi.setFullYear(dnes.getFullYear() + 1);
+  const dniDo = Math.ceil((pristi - dnes) / (1000 * 60 * 60 * 24));
+  const narozeniinyText = dniDo === 0 ? 'Dnes!' : dniDo === 1 ? 'Zítra!' : dniDo + ' dní';
+
+  // Datum
+  const datumText = den + '. ' + mesic + '. ' + rok;
+
+  document.getElementById('rc_datum').textContent = datumText;
+  document.getElementById('rc_vek').textContent = vek + ' let';
+  document.getElementById('rc_pohlavi').textContent = pohlavi;
+  document.getElementById('rc_narozeniny').textContent = narozeniinyText;
+}
+
+// INIT
+document.getElementById('k_jistina_preview').textContent = '';
+document.getElementById('r_dluh_preview').textContent = '';
+calcKalk();
+calcRefi();
+loadSazbyFromSheets();
+</script>
+</body>
+</html>
