@@ -130,8 +130,7 @@ footer a{color:var(--text3);text-decoration:none}
 footer a:hover{color:var(--text2)}
 
 /* INVEST GRID */
-.products-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:2rem}
-@media(max-width:500px){.products-grid{grid-template-columns:1fr}}
+.products-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:2rem}
 .product-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem 1.5rem}
 .product-card.best{border-color:rgba(200,240,74,0.4)}
 .product-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
@@ -190,7 +189,7 @@ footer a:hover{color:var(--text2)}
         <div class="card-label">Parametry úvěru</div>
         <div class="field">
           <label>Výše úvěru (Kč)</label>
-          <input type="number" id="k_jistina" value="3000000" min="0" step="10000" oninput="calcKalk()">
+          <input type="number" id="k_jistina" value="" placeholder="např. 3 000 000" min="0" step="10000" oninput="calcKalk()">
           <div id="k_jistina_preview" class="field-preview"></div>
         </div>
         <div class="field">
@@ -242,7 +241,7 @@ footer a:hover{color:var(--text2)}
         <div class="card-label">Váš současný úvěr</div>
         <div class="field">
           <label>Zbývající dluh (Kč)</label>
-          <input type="number" id="r_dluh" value="2500000" min="0" step="10000" oninput="calcRefi()">
+          <input type="number" id="r_dluh" value="" placeholder="např. 2 500 000" min="0" step="10000" oninput="calcRefi()">
           <div id="r_dluh_preview" class="field-preview"></div>
         </div>
         <div class="field">
@@ -296,14 +295,14 @@ footer a:hover{color:var(--text2)}
       <div class="card">
         <div class="card-label">Parametry spoření</div>
         <div class="field">
-          <label>Jednorázový vklad (Kč)</label>
-          <input type="number" id="i_jednoraz" value="100000" min="0" step="1000" oninput="calcInvest()">
-          <div class="field-preview" id="i_jednoraz_preview"></div>
-        </div>
-        <div class="field">
           <label>Měsíční vklad (Kč)</label>
           <input type="number" id="i_vklad" value="5000" min="0" step="500" oninput="calcInvest()">
           <div class="field-preview" id="i_vklad_preview"></div>
+        </div>
+        <div class="field">
+          <label>Jednorázový vklad (Kč)</label>
+          <input type="number" id="i_jednoraz" value="100000" min="0" step="1000" oninput="calcInvest()">
+          <div class="field-preview" id="i_jednoraz_preview"></div>
         </div>
         <div class="field">
           <label>Doba spoření (roky)</label>
@@ -442,6 +441,13 @@ function calcKalk() {
   const m = r * 12;
 
   if (j <= 0) {
+    document.getElementById('k_splatka').textContent = '—';
+    document.getElementById('k_celkem').textContent = '—';
+    document.getElementById('k_uroky').textContent = '—';
+    document.getElementById('k_pocet').textContent = '—';
+    document.getElementById('k_bar').style.width = '0%';
+    document.getElementById('k_pct_j').textContent = '—';
+    document.getElementById('k_pct_u').textContent = '—';
     document.getElementById('k_jistina_preview').textContent = '';
     return;
   }
@@ -469,7 +475,10 @@ function calcRefi() {
   const mes = roky * 12;
 
   if (dluh <= 0) {
+    document.getElementById('r_sou_splatka').textContent = '—';
+    document.getElementById('r_sou_celkem').textContent = '—';
     document.getElementById('r_dluh_preview').textContent = '';
+    document.getElementById('refi-offers').innerHTML = '';
     return;
   }
 
@@ -598,12 +607,17 @@ function calcFV(jednoraz, mesicni, sazbaRocni, roky, isIZP = false) {
   let n = roky * 12;
 
   if (isIZP) {
-    // Drsná realita IŽP: -3% vstupák z jednorázu, -24 měsíců plateb (jdou na provizi/poplatky)
-    let efektivniJednoraz = jednoraz * 0.97;
-    let fvJednoraz = efektivniJednoraz * Math.pow(1 + r, n);
-    let efektivniMesice = Math.max(0, n - 24);
-    let fvMesicni = sazbaRocni > 0 ? mesicni * ((Math.pow(1 + r, efektivniMesice) - 1) / r) * (1 + r) : mesicni * efektivniMesice;
-    return fvJednoraz + fvMesicni;
+    let fv = 0;
+    let zustatek = jednoraz * 0.97; // 3% vstupní poplatek z jednorázu
+    for(let m=1; m<=n; m++) {
+      let vkladVMesici = mesicni;
+      if (m <= 24) vkladVMesici = 0; // První 2 roky jdou celé na provizi a počáteční náklady
+      zustatek += vkladVMesici;
+      zustatek -= 150; // Poplatek 150 Kč každý měsíc
+      if (zustatek < 0) zustatek = 0;
+      zustatek = zustatek * (1 + (1.0 / 100 / 12)); // Výnos natvrdo nastaven na 1 % p.a.
+    }
+    return zustatek;
   }
 
   let fvJednoraz = jednoraz * Math.pow(1 + r, n);
@@ -638,8 +652,6 @@ function calcInvest() {
   const realna = celkem / Math.pow(1 + inflace / 100, roky);
   document.getElementById("i_realna").textContent = celkem > 0 ? fmt(realna) : "—";
 
-  const sIzp = sEtf - 1.5; // IŽP management fee 1.5% dole
-
   const produkty = [
     {id:"etf", name:"ETF / Akciový index", desc:"Světové akcie (S&P 500, MSCI World)", sazba:sEtf},
     {id:"dip", name:"DIP", desc:"Dlouhodobý investiční produkt + daň. úleva", sazba:sDip},
@@ -647,7 +659,7 @@ function calcInvest() {
     {id:"stavebko", name:"Stavební spoření", desc:"Garantovaný výnos + státní podpora", sazba:sStavebko},
     {id:"sporici", name:"Spořicí účet", desc:"Bankovní spořicí produkty", sazba:sSporici},
     {id:"bezny", name:"Běžný účet (inflace)", desc:"Peníze ztrácejí reálnou hodnotu", sazba:sBezny - inflace},
-    {id:"izp", name:"Investiční životko", desc:"Extrémní poplatky (vstup + 2 roky provize)", sazba:sIzp, isIZP:true},
+    {id:"izp", name:"Životní pojištění", desc:"Zhodnocení max 1 % + poplatek 150 Kč/měs.", sazba:1.0, isIZP:true},
   ];
 
   produkty.forEach(p => {
