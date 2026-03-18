@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRfin — Finanční kalkulačky</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --bg:#0E0F11; --surface:#16181C; --surface2:#1E2126; --surface3:#252A31;
+  --accent:#C8F04A; --accent-dim:rgba(200,240,74,0.12); --accent-dim2:rgba(200,240,74,0.06);
+  --text:#F0F2F5; --text2:#8A9099; --text3:#555C66;
+  --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.12);
+  --green:#4ADE80; --green-dim:rgba(74,222,128,0.1);
+  --red:#F87171; --red-dim:rgba(248,113,113,0.1);
+  --chart-grid:rgba(255,255,255,0.04); --chart-text:#555C66;
+  --chart-tooltip-bg:#1E2126; --chart-tooltip-text:#F0F2F5;
+  --nav-bg:rgba(14,15,17,0.9);
+}
+
+[data-theme="light"] {
+  --bg:#F9FAFB; --surface:#FFFFFF; --surface2:#F3F4F6; --surface3:#E5E7EB;
+  --accent:#A6CC2B; --accent-dim:rgba(166,204,43,0.15); --accent-dim2:rgba(166,204,43,0.08);
+  --text:#111827; --text2:#4B5563; --text3:#6B7280;
+  --border:rgba(0,0,0,0.08); --border2:rgba(0,0,0,0.12);
+  --green:#16A34A; --green-dim:rgba(22,163,74,0.1);
+  --red:#DC2626; --red-dim:rgba(220,38,38,0.1);
+  --chart-grid:rgba(0,0,0,0.05); --chart-text:#6B7280;
+  --chart-tooltip-bg:#FFFFFF; --chart-tooltip-text:#111827;
+  --nav-bg:rgba(255,255,255,0.9);
+}
+
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:16px;line-height:1.6;min-height:100vh;transition:background 0.3s, color 0.3s}
+nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;transition:background 0.3s, border-color 0.3s}
+.nav-logo{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--text);letter-spacing:-0.02em}
+.nav-logo span{color:var(--accent)}
+.nav-right{display:flex;align-items:center;gap:1.5rem}
+.nav-right a{font-size:14px;color:var(--text2);text-decoration:none;transition:color 0.15s}
+.nav-right a:hover{color:var(--text)}
+.nav-dot{width:6px;height:6px;border-radius:50%;background:var(--text3)}
+.nav-dot.live{background:var(--green);box-shadow:0 0 8px var(--green)}
+.theme-btn{background:none;border:none;font-size:18px;cursor:pointer;padding:0;line-height:1;transition:transform 0.2s}
+.theme-btn:hover{transform:scale(1.1)}
+
+.hero{text-align:center;padding:2rem 2rem 1.5rem;max-width:600px;margin:0 auto}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);background:var(--accent-dim);padding:4px 12px;border-radius:20px;margin-bottom:.75rem;border:1px solid rgba(200,240,74,0.2)}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(26px,3.5vw,38px);font-weight:700;line-height:1.08;letter-spacing:-0.04em;margin-bottom:.5rem;color:var(--text);transition:opacity 0.2s}
+.hero h1 em{color:var(--accent);font-style:normal}
+.hero p{font-size:14px;color:var(--text2);max-width:440px;margin:0 auto;transition:opacity 0.2s}
+
+.tabs-wrap{display:flex;justify-content:center;margin-bottom:1.5rem}
+.tabs{display:inline-flex;background:var(--surface);border:1px solid var(--border);border-radius:50px;padding:4px;gap:2px;flex-wrap:wrap;justify-content:center;transition:background 0.3s, border-color 0.3s}
+.tab{padding:10px 26px;border:none;background:transparent;border-radius:50px;font-family:'Inter',sans-serif;font-size:15px;color:var(--text2);cursor:pointer;transition:all 0.2s}
+.tab:hover{color:var(--text)}
+.tab.active{background:var(--accent);color:#0E0F11;font-weight:600}
+
+.container{max-width:920px;margin:0 auto;padding:0 1.5rem 6rem}
+.section{display:none}
+.section.active{display:block;animation:fadeUp 0.3s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.75rem;transition:background 0.3s, border-color 0.3s}
+.card-label{font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);margin-bottom:1.25rem}
+
+.field{margin-bottom:1.25rem}
+.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:13px;color:var(--text2);margin-bottom:8px;font-weight:500}
+.field input,.field select{width:100%;padding:14px 16px;font-family:'Inter',sans-serif;font-size:16px;border:1px solid var(--border2);border-radius:8px;background:var(--surface2);color:var(--text);transition:border-color 0.15s,background 0.15s;appearance:none;-webkit-appearance:none}
+.field input:focus,.field select:focus{outline:none;border-color:var(--accent);background:var(--surface3)}
+.field-preview{font-size:13px;color:var(--accent);margin-top:6px;font-weight:500}
+
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.metric{background:var(--surface2);border-radius:8px;padding:.85rem 1rem;border:1px solid var(--border);transition:background 0.3s, border-color 0.3s}
+.metric-label{font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:400;letter-spacing:0.04em;text-transform:uppercase}
+.metric-value{font-family:'Inter',sans-serif;font-variant-numeric:tabular-nums;font-size:17px;font-weight:500;color:var(--text);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.metric-value.green{color:var(--green)}
+.metric-value.red{color:var(--red)}
+
+.progress-wrap{margin:1.5rem 0 0}
+.progress-labels{display:flex;justify-content:space-between;font-size:13px;color:var(--text3);margin-bottom:8px}
+.progress-labels span strong{color:var(--text2)}
+.progress-track{height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;transition:background 0.3s}
+.progress-fill{height:100%;background:var(--accent);border-radius:3px;transition:width 0.5s cubic-bezier(.4,0,.2,1)}
+
+.offers-header{display:flex;align-items:center;gap:10px;margin:2rem 0 1.25rem}
+.offers-title{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3)}
+.sazby-pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--text3);background:var(--surface2);padding:4px 12px;border-radius:20px;border:1px solid var(--border);transition:background 0.3s, border-color 0.3s}
+.sazby-pill .dot{width:6px;height:6px;border-radius:50%;background:var(--text3)}
+.sazby-pill .dot.live{background:var(--green)}
+
+.offer-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:12px;transition:background 0.3s, border-color 0.2s}
+.offer-card.best{border-color:rgba(200,240,74,0.4);background:var(--surface)}
+.offer-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
+.offer-name{font-size:16px;font-weight:500;color:var(--text)}
+.offer-partner{font-size:13px;color:var(--text3);margin-top:4px}
+.offer-rate{font-family:'Syne',sans-serif;font-size:32px;font-weight:700;color:var(--accent);line-height:1}
+.offer-rate small{font-family:'Inter',sans-serif;font-size:14px;color:var(--text3);font-weight:400}
+.offer-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:480px){.offer-cols{grid-template-columns:repeat(2,1fr)}}
+.offer-col-label{font-size:12px;color:var(--text3);margin-bottom:4px}
+.offer-col-val{font-size:16px;font-weight:500;color:var(--text)}
+.saving-tag{display:inline-flex;align-items:center;gap:6px;margin-top:16px;font-size:13px;font-weight:500;padding:6px 14px;border-radius:20px;background:var(--green-dim);color:var(--green)}
+.saving-tag.neg{background:var(--red-dim);color:var(--red)}
+.badge-best{display:inline-block;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:4px 12px;border-radius:20px;background:var(--accent);color:#0E0F11;margin-bottom:10px}
+
+.cta-strip{background:var(--surface);border:1px solid rgba(200,240,74,0.2);border-radius:14px;padding:2.5rem;display:flex;justify-content:space-between;align-items:center;margin-top:2rem;flex-wrap:wrap;gap:1.5rem;position:relative;overflow:hidden;transition:background 0.3s, border-color 0.3s}
+.cta-strip::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:var(--accent-dim2);border-radius:50%;pointer-events:none}
+.cta-strip h3{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--text)}
+.cta-strip p{font-size:15px;color:var(--text2);margin-top:6px}
+.cta-btn{display:inline-block;padding:14px 28px;background:var(--accent);color:#0E0F11;font-family:'Inter',sans-serif;font-size:15px;font-weight:600;border-radius:50px;text-decoration:none;white-space:nowrap;transition:opacity 0.15s}
+.cta-btn:hover{opacity:0.88}
+
+.note{font-size:13px;color:var(--text3);margin-top:1.5rem;line-height:1.7}
+
+footer{text-align:center;padding:2.5rem;font-size:13px;color:var(--text3);border-top:1px solid var(--border)}
+footer a{color:var(--text3);text-decoration:none}
+footer a:hover{color:var(--text2)}
+
+/* INVEST GRID - SLOUPEC */
+.products-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:2rem}
+.product-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem 1.5rem;transition:background 0.3s, border-color 0.3s}
+.product-card.best{border-color:rgba(200,240,74,0.4)}
+.product-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.product-name{font-size:15px;font-weight:500;color:var(--text)}
+.product-amount{font-family:"Syne",sans-serif;font-size:19px;font-weight:700;color:var(--text);text-align:right}
+.product-amount.pos{color:var(--green)}
+.product-amount.neg{color:var(--red)}
+.product-desc{font-size:12px;color:var(--text3);line-height:1.5}
+.product-gain{font-size:12px;text-align:right;margin-top:4px}
+.product-gain.pos{color:var(--green)}
+.product-gain.neg{color:var(--red)}
+
+.sazby-toggle-row{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:1rem 1.25rem;background:var(--surface2);border:1px solid var(--border);border-radius:8px;margin-bottom:1.25rem;user-select:none;transition:background 0.3s, border-color 0.3s}
+.sazby-toggle-row span{font-size:14px;color:var(--text2)}
+.sazby-fields-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.5rem}
+@media(max-width:500px){.sazby-fields-grid{grid-template-columns:1fr 1fr}}
+.sazby-f label{display:block;font-size:12px;color:var(--text3);margin-bottom:6px}
+.sazby-f input{width:100%;padding:10px 12px;font-family:"Inter",sans-serif;font-size:15px;border:1px solid var(--border2);border-radius:8px;background:var(--surface2);color:var(--text);text-align:right;transition:background 0.3s, border-color 0.3s}
+.sazby-f input:focus{outline:none;border-color:var(--accent)}
+.chart-wrap{position:relative;height:320px;margin-top:1.5rem}
+.i-badge-best{display:inline-block;font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:3px 10px;border-radius:20px;background:var(--accent);color:#0E0F11;margin-bottom:8px}
+
+
+
+[data-theme="light"] .offer-card {
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.10);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+[data-theme="light"] .offer-card.best {
+  border-color: rgba(100,160,40,0.45);
+  box-shadow: 0 2px 8px rgba(100,160,40,0.10);
+}
+[data-theme="light"] .offer-col-label {
+  color: #666;
+  font-weight: 500;
+}
+[data-theme="light"] .offer-col-val {
+  color: #111;
+  font-weight: 600;
+}
+[data-theme="light"] .offer-name {
+  color: #111;
+}
+[data-theme="light"] .offer-partner {
+  color: #888;
+}
+[data-theme="light"] .badge-best {
+  background: #5a9e20;
+  color: #fff;
+}
+[data-theme="light"] .offer-cols {
+  border-top: 1px solid rgba(0,0,0,0.07);
+  padding-top: 12px;
+  margin-top: 4px;
+}
+
+.offer-card {
+  background: #1E2329;
+  border: 1px solid rgba(255,255,255,0.10);
+}
+[data-theme="light"] .offer-card {
+  background: #ffffff !important;
+  border: 1px solid rgba(0,0,0,0.10) !important;
+}
+.offer-card.best {
+  background: #1E2329;
+  border-color: rgba(200,240,74,0.35);
+}
+[data-theme="light"] .offer-card.best {
+  background: #ffffff !important;
+  border-color: rgba(100,160,40,0.45) !important;
+}
+.offer-col-label {
+  color: #8A9099;
+}
+.offer-col-val {
+  color: #E8ECF0;
+  font-weight: 500;
+}
+.offer-name {
+  color: #E8ECF0;
+}
+.offer-partner {
+  color: #6B7280;
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="javascript:location.reload()" class="nav-logo" style="text-decoration:none;cursor:pointer" title="Obnovit stránku">TR<span>fin</span></a>
+  <div class="nav-right">
+    <button onclick="toggleTheme()" class="theme-btn" id="theme-icon">☀️</button>
+    <div class="nav-dot live" id="nav-dot" title="Sazby online"></div>
+    
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-tag" id="hero-tag">Finanční kalkulačka</div>
+  <h1 id="hero-title">Spočítejte si<br>úvěr <em>přesně</em></h1>
+  <p id="hero-desc">Zadejte parametry a okamžitě uvidíte měsíční splátku, přeplatek a aktuální nabídky refinancování.</p>
+</div>
+
+
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('kalk')">Nový úvěr</button>
+    <button class="tab" onclick="showTab('refi')">Refinancování</button>
+    <button class="tab" onclick="showTab('invest')">Investice</button>
+    <button class="tab" onclick="showTab('penze')">Kalkulace penze</button>
+    <button class="tab" onclick="showTab('rc')">Rodné číslo</button>
+  </div>
+</div>
+
+<div class="container">
+<div id="kalk" class="section active">
+    <div class="grid2">
+      <div class="card">
+        <div class="card-label">Parametry úvěru</div>
+        <div class="field">
+          <label>Výše úvěru (Kč)</label>
+          <input type="number" id="k_jistina" value="" placeholder="např. 3 000 000" min="0" step="10000" oninput="calcKalk()">
+          <div id="k_jistina_preview" class="field-preview"></div>
+        </div>
+        <div class="field">
+          <label>Úroková sazba (% ročně)</label>
+          <input type="number" id="k_sazba" value="4.89" step="0.01" min="0" oninput="calcKalk()">
+        </div>
+        <div class="field">
+          <label>Doba splatnosti (roky)</label>
+          <input type="number" id="k_roky" value="25" min="1" max="40" oninput="calcKalk()">
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">Výsledek výpočtu</div>
+        <div class="metrics">
+          <div class="metric"><div class="metric-label">Měsíční splátka</div><div class="metric-value green" id="k_splatka">—</div></div>
+          <div class="metric"><div class="metric-label">Celkem zaplatíte</div><div class="metric-value" id="k_celkem">—</div></div>
+          <div class="metric"><div class="metric-label">Přeplatek úroky</div><div class="metric-value red" id="k_uroky">—</div></div>
+          <div class="metric"><div class="metric-label">Počet splátek</div><div class="metric-value" id="k_pocet">—</div></div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-labels"><span>Jistina <strong id="k_pct_j">—</strong></span><span>Úroky <strong id="k_pct_u">—</strong></span></div>
+          <div class="progress-track"><div class="progress-fill" id="k_bar" style="width:0%"></div></div>
+        </div>
+      </div>
+    </div>
+    <p class="note">Výpočet je orientační a nezohledňuje poplatky, pojistné ani jiné náklady.</p>
+  </div>
+
+
+<div id="refi" class="section">
+    <div class="grid2" style="margin-bottom:16px">
+      <div class="card">
+        <div class="card-label">Váš současný úvěr</div>
+        <div class="field">
+          <label>Zbývající dluh (Kč)</label>
+          <input type="number" id="r_dluh" value="" placeholder="např. 2 500 000" min="0" step="10000" oninput="calcRefi()">
+          <div id="r_dluh_preview" class="field-preview"></div>
+        </div>
+        <div class="field">
+          <label>Stávající sazba (% ročně)</label>
+          <input type="number" id="r_sazba_sou" value="6.50" step="0.01" min="0" oninput="calcRefi()">
+        </div>
+        <div class="field">
+          <label>Zbývající splatnost (roky)</label>
+          <input type="number" id="r_roky" value="20" min="1" max="40" oninput="calcRefi()">
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">Vaše současná situace</div>
+        <div class="metrics">
+          <div class="metric"><div class="metric-label">Měsíční splátka</div><div class="metric-value" id="r_sou_splatka">—</div></div>
+          <div class="metric"><div class="metric-label">Celkem zbývá</div><div class="metric-value red" id="r_sou_celkem">—</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="offers-header">
+      <div class="offers-title">Nabídky refinancování</div>
+      <div class="sazby-pill">
+        <div class="dot" id="sazby-dot"></div>
+        <span id="sazby-info">Načítám sazby…</span>
+      </div>
+    </div>
+    <div id="refi-offers"></div>
+
+    <div class="cta-strip">
+      <div><h3>Vybrali jste si?</h3><p>Zařídím celé refinancování za vás — bez poplatků, bez papírování.</p></div>
+      <a href="tel:601323963" class="cta-btn">Zavolat Tomáš Říha →</a>
+    </div>
+  </div>
+
+
+<div id="invest" class="section">
+    <div class="grid2" style="margin-bottom:16px">
+      <div class="card">
+        <div class="card-label">Parametry spoření</div>
+        <div class="field">
+          <label>Měsíční vklad (Kč)</label>
+          <input type="number" id="i_vklad" value="" placeholder="např. 5 000" min="0" step="500" oninput="calcInvest()">
+          <div class="field-preview" id="i_vklad_preview"></div>
+        </div>
+        <div class="field">
+          <label>Jednorázový vklad (Kč)</label>
+          <input type="number" id="i_jednoraz" value="" placeholder="např. 100 000" min="0" step="1000" oninput="calcInvest()">
+          <div class="field-preview" id="i_jednoraz_preview"></div>
+        </div>
+        <div class="field">
+          <label>Doba spoření (roky)</label>
+          <input type="number" id="i_roky" value="20" min="1" max="50" oninput="calcInvest()">
+        </div>
+        <div class="field">
+          <label>Inflace (% ročně)</label>
+          <input type="number" id="i_inflace" value="3.5" step="0.1" min="0" oninput="calcInvest()">
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">Přehled</div>
+        <div class="metrics">
+          <div class="metric"><div class="metric-label">Celkem vložíte</div><div class="metric-value" id="i_celkem">—</div></div>
+          <div class="metric"><div class="metric-label">Reálná hodnota dnes</div><div class="metric-value red" id="i_realna">—</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sazby-toggle-row" onclick="toggleISazby()">
+      <span>Upravit úrokové sazby produktů</span>
+      <span id="i-sazby-icon">▼</span>
+    </div>
+    <div id="i-sazby-content" style="display:none">
+      <div class="sazby-fields-grid">
+        <div class="sazby-f"><label>ETF (% p.a.)</label><input type="number" id="s_etf" value="8.0" step="0.1" oninput="calcInvest()"></div>
+        <div class="sazby-f"><label>DIP (% p.a.)</label><input type="number" id="s_dip" value="6.0" step="0.1" oninput="calcInvest()"></div>
+        <div class="sazby-f"><label>Stavební spoření (% p.a.)</label><input type="number" id="s_stavebko" value="3.5" step="0.1" oninput="calcInvest()"></div>
+        <div class="sazby-f"><label>Penzijko (% p.a.)</label><input type="number" id="s_penzijko" value="4.5" step="0.1" oninput="calcInvest()"></div>
+        <div class="sazby-f"><label>Spořicí účet (% p.a.)</label><input type="number" id="s_sporici" value="3.0" step="0.1" oninput="calcInvest()"></div>
+        <div class="sazby-f"><label>Běžný účet (% p.a.)</label><input type="number" id="s_bezny" value="0.1" step="0.1" oninput="calcInvest()"></div>
+      </div>
+    </div>
+
+    <div style="font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);margin-bottom:1rem">Srovnání produktů</div>
+    <div class="products-grid" id="products-grid"></div>
+
+    <div class="card">
+      <div class="card-label">Vývoj hodnoty v čase</div>
+      <div class="chart-wrap"><canvas id="investChart"></canvas></div>
+    </div>
+
+    <div class="cta-strip" style="margin-top:2rem">
+      <div><h3>Chcete začít investovat?</h3><p>Poradím kde a jak začít — nezávazná konzultace zdarma.</p></div>
+      <a href="tel:601323963" class="cta-btn">Zavolat Tomáš Říha →</a>
+    </div>
+    <p class="note">Výpočty jsou orientační. Historická výnosnost nezaručuje budoucí výsledky. Státní příspěvky na DIP a penzijko nejsou zahrnuty.</p>
+  </div>
+
+
+  <div id="penze" class="section">
+    <div class="grid2" style="margin-bottom:14px">
+      <div class="card">
+        <div class="card-label">Parametry spoření</div>
+        <div class="field">
+          <label>Měsíční příspěvek klienta (Kč)</label>
+          <input type="number" id="p_vklad" value="0" min="0" step="100" oninput="calcPenze()">
+          <div class="field-preview" id="p_vklad_preview"></div>
+        </div>
+        <div class="field">
+          <label>Věk klienta</label>
+          <input type="number" id="p_vek" value="35" min="18" max="70" oninput="calcPenze()">
+          <div class="field-preview" id="p_vek_info" style="color:var(--text2)"></div>
+        </div>
+
+        <div class="field">
+          <label>Příspěvek zaměstnavatele (Kč/měs.)</label>
+          <input type="number" id="p_zamest" value="0" min="0" step="100" oninput="calcPenze()">
+          <div class="field-preview" id="p_zamest_preview"></div>
+        </div>
+        <div class="field">
+          <label>Aktuálně naspořeno v TF — při převodu (Kč)</label>
+          <input type="number" id="p_prevod" value="0" min="0" step="1000" oninput="calcPenze()">
+          <div class="field-preview" id="p_prevod_preview"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">Státní příspěvek & daňová úleva</div>
+        <div class="metrics">
+          <div class="metric"><div class="metric-label">Státní příspěvek / měs.</div><div class="metric-value green" id="p_stat">—</div></div>
+          <div class="metric"><div class="metric-label">Státní příspěvek / rok</div><div class="metric-value green" id="p_stat_rok">—</div></div>
+          <div class="metric"><div class="metric-label">Daňová úspora / rok</div><div class="metric-value green" id="p_dan_uspora">—</div></div>
+          <div class="metric"><div class="metric-label">Celková roční výhoda</div><div class="metric-value green" id="p_rocni_vyhoda">—</div></div>
+        </div>
+        <div id="p_dan_info" style="margin-top:1rem;font-size:12px;color:var(--text2);line-height:1.7;display:none"></div>
+      </div>
+    </div>
+
+    <div class="grid2" style="margin-bottom:14px">
+      <div class="card">
+        <div class="card-label" style="color:var(--red)">Transformovaný fond (TF)</div>
+        <div style="font-size:12px;color:var(--text3);margin-bottom:1rem">~1,5 % p.a. — garantované</div>
+        <div class="metrics">
+          <div class="metric"><div class="metric-label">Naspořeno celkem</div><div class="metric-value" id="tf_celkem">—</div></div>
+          <div class="metric"><div class="metric-label">Z toho výnos</div><div class="metric-value" id="tf_vynos">—</div></div>
+          <div class="metric"><div class="metric-label">Měsíční renta (20 let)</div><div class="metric-value" id="tf_renta">—</div></div>
+          <div class="metric"><div class="metric-label">Zhodnocení p.a.</div><div class="metric-value" style="color:var(--red)">1,5 %</div></div>
+        </div>
+      </div>
+      <div class="card" style="border-color:rgba(200,240,74,0.35)">
+        <div class="card-label" style="color:var(--accent)">DPS — Účastnický fond</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:1rem">~10 % p.a. + státní příspěvek</div>
+        <div class="metrics">
+          <div class="metric"><div class="metric-label">Naspořeno celkem</div><div class="metric-value green" id="dps_celkem">—</div></div>
+          <div class="metric"><div class="metric-label">Z toho výnos</div><div class="metric-value green" id="dps_vynos">—</div></div>
+          <div class="metric"><div class="metric-label">Měsíční renta (20 let)</div><div class="metric-value green" id="dps_renta">—</div></div>
+          <div class="metric"><div class="metric-label">Zhodnocení p.a.</div><div class="metric-value green">10 %</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="border-color:rgba(200,240,74,0.35);margin-bottom:14px">
+      <div class="card-label">Výhoda DPS oproti TF</div>
+      <div class="metrics">
+        <div class="metric"><div class="metric-label">Rozdíl celkem</div><div class="metric-value green" id="p_rozdil_celkem">—</div></div>
+        <div class="metric"><div class="metric-label">Rozdíl v rentě / měs.</div><div class="metric-value green" id="p_rozdil_renta">—</div></div>
+        <div class="metric"><div class="metric-label">Roky do důchodu</div><div class="metric-value" id="p_roky_do">—</div></div>
+        <div class="metric"><div class="metric-label">Celkem vložíte</div><div class="metric-value" id="p_vlozeno">—</div></div>
+      </div>
+      <div id="p_doporuceni" style="margin-top:1.25rem;padding:1rem 1.25rem;background:var(--accent-dim);border-radius:8px;font-size:14px;color:var(--text);line-height:1.8;display:none"></div>
+    </div>
+
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-label">Vývoj naspořené částky v čase</div>
+      <div style="position:relative;height:300px;margin-top:1rem"><canvas id="penzeChart"></canvas></div>
+    </div>
+
+
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-label">Přehled státní podpory — od 1. 7. 2024</div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border)">
+              <th style="text-align:left;padding:8px 10px;color:var(--text3);font-weight:500;font-size:11px;letter-spacing:0.08em;text-transform:uppercase">Měsíční vklad</th>
+              <th style="text-align:right;padding:8px 10px;color:var(--text3);font-weight:500;font-size:11px;letter-spacing:0.08em;text-transform:uppercase">Státní příspěvek/měs.</th>
+              <th style="text-align:right;padding:8px 10px;color:var(--text3);font-weight:500;font-size:11px;letter-spacing:0.08em;text-transform:uppercase">Státní příspěvek/rok</th>
+              <th style="text-align:right;padding:8px 10px;color:var(--text3);font-weight:500;font-size:11px;letter-spacing:0.08em;text-transform:uppercase">Daňová úspora/rok</th>
+              <th style="text-align:right;padding:8px 10px;color:var(--text3);font-weight:500;font-size:11px;letter-spacing:0.08em;text-transform:uppercase">Celková výhoda/rok</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:7px 10px;font-weight:500">500 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">100 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">1 200 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--text2);font-weight:400">0 Kč</td>
+              <td style="text-align:right;padding:7px 10px;font-weight:500">1 200 Kč</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:7px 10px;font-weight:500">600 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">120 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">1 440 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--text2);font-weight:400">0 Kč</td>
+              <td style="text-align:right;padding:7px 10px;font-weight:500">1 440 Kč</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:7px 10px;font-weight:500">700 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">140 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">1 680 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--text2);font-weight:400">0 Kč</td>
+              <td style="text-align:right;padding:7px 10px;font-weight:500">1 680 Kč</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:7px 10px;font-weight:500">800 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">160 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">1 920 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--text2);font-weight:400">0 Kč</td>
+              <td style="text-align:right;padding:7px 10px;font-weight:500">1 920 Kč</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:7px 10px;font-weight:500">900 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">180 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">2 160 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--text2);font-weight:400">0 Kč</td>
+              <td style="text-align:right;padding:7px 10px;font-weight:500">2 160 Kč</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:7px 10px;font-weight:500">1 000 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">200 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">2 400 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--text2);font-weight:400">0 Kč</td>
+              <td style="text-align:right;padding:7px 10px;font-weight:500">2 400 Kč</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:7px 10px;font-weight:500">1 100 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">220 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">2 640 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--text2);font-weight:400">0 Kč</td>
+              <td style="text-align:right;padding:7px 10px;font-weight:500">2 640 Kč</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:7px 10px;font-weight:500">1 200 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">240 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">2 880 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--text2);font-weight:400">0 Kč</td>
+              <td style="text-align:right;padding:7px 10px;font-weight:500">2 880 Kč</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:7px 10px;font-weight:500">1 300 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">260 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">3 120 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--text2);font-weight:400">0 Kč</td>
+              <td style="text-align:right;padding:7px 10px;font-weight:500">3 120 Kč</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:7px 10px;font-weight:500">1 400 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">280 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">3 360 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--text2);font-weight:400">0 Kč</td>
+              <td style="text-align:right;padding:7px 10px;font-weight:500">3 360 Kč</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:7px 10px;font-weight:500">1 500 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">300 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">3 600 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--text2);font-weight:400">0 Kč</td>
+              <td style="text-align:right;padding:7px 10px;font-weight:500">3 600 Kč</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:7px 10px;font-weight:500">1 600 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">320 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">3 840 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--text2);font-weight:400">0 Kč</td>
+              <td style="text-align:right;padding:7px 10px;font-weight:500">3 840 Kč</td>
+            </tr>
+            <tr style="background:rgba(200,240,74,0.04);border-bottom:1px solid var(--border);">
+              <td style="padding:7px 10px;color:var(--accent);font-weight:600">1 700 Kč ★</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:600">340 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:600">4 080 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--text2);font-weight:400">0 Kč</td>
+              <td style="text-align:right;padding:7px 10px;font-weight:600;color:var(--accent)">4 080 Kč</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:7px 10px;font-weight:500">1 800 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">340 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">4 080 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:#60A5FA;font-weight:400">180 Kč</td>
+              <td style="text-align:right;padding:7px 10px;font-weight:500">4 260 Kč</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:7px 10px;font-weight:500">2 000 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">340 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">4 080 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:#60A5FA;font-weight:400">540 Kč</td>
+              <td style="text-align:right;padding:7px 10px;font-weight:500">4 620 Kč</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:7px 10px;font-weight:500">2 500 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">340 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">4 080 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:#60A5FA;font-weight:400">1 440 Kč</td>
+              <td style="text-align:right;padding:7px 10px;font-weight:500">5 520 Kč</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:7px 10px;font-weight:500">3 000 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">340 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">4 080 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:#60A5FA;font-weight:400">2 340 Kč</td>
+              <td style="text-align:right;padding:7px 10px;font-weight:500">6 420 Kč</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:7px 10px;font-weight:500">4 000 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">340 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:400">4 080 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:#60A5FA;font-weight:400">4 140 Kč</td>
+              <td style="text-align:right;padding:7px 10px;font-weight:500">8 220 Kč</td>
+            </tr>
+            <tr style="background:rgba(200,240,74,0.06);">
+              <td style="padding:7px 10px;color:var(--accent);font-weight:600">5 700 Kč ★★</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:600">340 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:var(--green);font-weight:600">4 080 Kč</td>
+              <td style="text-align:right;padding:7px 10px;color:#60A5FA;font-weight:600">7 200 Kč</td>
+              <td style="text-align:right;padding:7px 10px;font-weight:600;color:var(--accent)">11 280 Kč</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:1rem;font-size:12px;color:var(--text2);line-height:1.8">
+        <strong style="color:var(--accent)">★ 1 700 Kč/měs.</strong> — maximální státní příspěvek 340 Kč/měs.<br>
+        <strong style="color:var(--accent)">★★ 5 700 Kč/měs.</strong> — maximální státní příspěvek + maximální daňová úleva 7 200 Kč/rok = celkem <strong>11 280 Kč ročně</strong>.<br>
+        Daňová úspora z příspěvků nad 1 700 Kč/měs. při 15% sazbě daně z příjmu.
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-label">DPS vs DIP — kdy co zvolit</div>
+      <div class="grid2">
+        <div style="padding:.75rem;background:var(--surface2);border-radius:8px;border:1px solid rgba(200,240,74,0.2)">
+          <div style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:.5rem">DPS je lepší když...</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.9">
+            Chcete státní příspěvek (až 340 Kč/měs.)<br>
+            Přispívá zaměstnavatel<br>
+            Preferujete nižší riziko<br>
+            Spoříte méně než 1 700 Kč/měs.
+          </div>
+        </div>
+        <div style="padding:.75rem;background:var(--surface2);border-radius:8px;border:1px solid rgba(96,165,250,0.2)">
+          <div style="font-size:13px;font-weight:600;color:#60A5FA;margin-bottom:.5rem">DIP je lepší když...</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.9">
+            Spoříte nad 1 700 Kč/měs. (max. daň. úleva)<br>
+            Chcete volnost investic (ETF, akcie)<br>
+            Nepotřebujete státní příspěvek<br>
+            Horizont spoření je 10+ let
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:1rem;padding:.75rem 1rem;background:var(--surface2);border-radius:8px;font-size:12px;color:var(--text2);line-height:1.8">
+        <strong style="color:var(--text)">Optimální kombinace:</strong> DPS 1 700 Kč/měs. (max. státní příspěvek 340 Kč) + DIP 4 000 Kč/měs. = celkem 5 700 Kč/měs. Daňová úspora až <strong style="color:var(--accent)">7 200 Kč ročně</strong>.
+      </div>
+    </div>
+
+    <div class="cta-strip">
+      <div><h3>Chcete přejít do DPS?</h3><p>Zařídím převod bez papírování — nezávazná konzultace zdarma.</p></div>
+      <a href="tel:601323963" class="cta-btn">Zavolat Tomáš Říha →</a>
+    </div>
+    <p class="note">Výpočty jsou orientační. Zhodnocení DPS vychází z historické výnosnosti světových akciových indexů. Minulá výnosnost nezaručuje budoucí výsledky. Státní příspěvek dle legislativy platné od 1. 7. 2024. Daňová úspora při 15% sazbě daně z příjmu.</p>
+  </div>
+
+
+
+<div id="rc" class="section">
+    <div class="grid2">
+      <div class="card">
+        <div class="card-label">Zadejte rodné číslo</div>
+        <div class="field">
+          <label>Rodné číslo</label>
+          <input type="text" id="rc_input" placeholder="např. 8554121234" maxlength="11" oninput="calcRC()" style="letter-spacing:0.1em">
+        </div>
+        <div id="rc_error" style="font-size:13px;color:var(--red);margin-top:10px;display:none">Neplatné rodné číslo</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Výsledek</div>
+        <div class="metrics">
+          <div class="metric"><div class="metric-label">Datum narození</div><div class="metric-value green" id="rc_datum">—</div></div>
+          <div class="metric"><div class="metric-label">Věk</div><div class="metric-value" id="rc_vek">—</div></div>
+          <div class="metric"><div class="metric-label">Pohlaví</div><div class="metric-value" id="rc_pohlavi">—</div></div>
+          <div class="metric"><div class="metric-label">Narozeniny za</div><div class="metric-value" id="rc_narozeniny">—</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cta-strip">
+      <div><h3>Potřebujete pojištění?</h3><p>Nezávazná konzultace zdarma — sestavím nabídku přímo pro vás.</p></div>
+      <a href="tel:601323963" class="cta-btn">Zavolat Tomáš Říha →</a>
+    </div>
+    <p class="note">Rodné číslo se nikam neodesílá ani neukládá — výpočet probíhá pouze ve vašem prohlížeči.</p>
+  </div>
+
+</div>
+
+<footer>
+  TRfin management s.r.o. &nbsp;·&nbsp; IČ: 24096563 &nbsp;·&nbsp; Nábřeží 599, Zlín 76001
+  &nbsp;·&nbsp; 
+  &nbsp;·&nbsp; <a href="mailto:tomas.riha@grandteam.cz" style="color:inherit;">tomas.riha@grandteam.cz</a>
+</footer>
+
+<script>
+const SHEET_ID = "121nElMghOfktcRutG3rNkznTvzkyhLQlVyNbU3WpSGE";
+const SHEET_URL_TSV = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/export?format=tsv&sheet=Sheet1";
+
+const pageContent = {
+  kalk: { tag: "Finanční kalkulačka", title: "Spočítejte si<br>úvěr <em>přesně</em>", desc: "Zadejte parametry a okamžitě uvidíte měsíční splátku, přeplatek a aktuální nabídky refinancování." },
+  refi: { tag: "Optimalizace úvěru", title: "Spočítejte si,<br>kolik <em>přeplácíte</em>", desc: "Zjistěte, kolik můžete ušetřit refinancováním na nižší úrok u konkurenčních bank." },
+  invest: { tag: "Investiční strategie", title: "Zjistěte, kde<br>lépe <em>investovat</em>", desc: "Porovnejte výnosy ETF, DIPu, penzijka, stavebního spoření a dopady inflace." },
+  penze: { tag: "Penzijní spoření", title: "Srovnání<br><em>penzijních fondů</em>", desc: "Porovnejte TF a DPS, zjistěte daňové výhody a kolik získáte převodem do účastnického fondu." },
+  rc: { tag: "Nástroje", title: "Užitečné<br><em>kalkulačky</em>", desc: "Pomocné nástroje pro finanční poradce a jejich klienty." }
+};
+
+let sazby = [
+  {nazev:"Hypotéka 3Y fix", partner:"Česká spořitelna", sazba:4.59},
+  {nazev:"Hypotéka 5Y fix", partner:"Komerční banka", sazba:4.89},
+  {nazev:"Hypotéka 7Y fix", partner:"ČSOB", sazba:5.19},
+  {nazev:"Spotřební úvěr", partner:"Moneta Money Bank", sazba:6.99},
+  {nazev:"Podnikatelský úvěr", partner:"Raiffeisenbank", sazba:5.89},
+];
+
+let investChart = null;
+
+// THEME
+function toggleTheme() {
+  const root = document.documentElement;
+  const current = root.getAttribute("data-theme");
+  const next = current === "light" ? "dark" : "light";
+  root.setAttribute("data-theme", next);
+  localStorage.setItem("theme", next);
+  const btn = document.querySelector(".theme-btn");
+  if (btn) btn.textContent = next === "light" ? "🌙" : "☀️";
+}
+
+const savedTheme = localStorage.getItem("theme");
+if (savedTheme) {
+  document.documentElement.setAttribute("data-theme", savedTheme);
+  const btn = document.querySelector(".theme-btn");
+  if (btn) btn.textContent = savedTheme === "light" ? "🌙" : "☀️";
+}
+
+// GOOGLE SHEETS
+async function loadSazbyFromSheets() {
+  try {
+    const res = await fetch(SHEET_URL_TSV);
+    const text = await res.text();
+    const rows = text.trim().split("\n").slice(1);
+    const loaded = rows.map(row => {
+      const cols = row.split("\t").map(c => c.trim());
+      return {nazev: cols[0], partner: cols[1], sazba: parseFloat(cols[2].replace(",", "."))};
+    }).filter(s => s.nazev && s.nazev !== "nazev" && !isNaN(s.sazba));
+    if (loaded.length > 0) {
+      sazby = loaded;
+      const dot = document.getElementById("sazby-dot");
+      const info = document.getElementById("sazby-info");
+      if (dot) dot.classList.add("live");
+      if (info) info.textContent = "Sazby aktuální — aktualizováno dnes";
+    }
+  } catch(e) {
+    console.log("Sheets offline, using defaults");
+  }
+  calcRefi();
+}
+
+// FORMAT
+function fmt(n) {
+  return new Intl.NumberFormat("cs-CZ", {style:"currency", currency:"CZK", maximumFractionDigits:0}).format(Math.round(n));
+}
+
+function monthlyPayment(jistina, sazbaRocni, mesice) {
+  if (sazbaRocni <= 0) return jistina / mesice;
+  const r = sazbaRocni / 100 / 12;
+  return jistina * r * Math.pow(1+r, mesice) / (Math.pow(1+r, mesice) - 1);
+}
+
+// KALKULAČKA
+function calcKalk() {
+  const j = parseFloat(document.getElementById("k_jistina").value) || 0;
+  const s = parseFloat(document.getElementById("k_sazba").value) || 0;
+  const r = parseInt(document.getElementById("k_roky").value) || 1;
+  const m = r * 12;
+  const prev = document.getElementById("k_jistina_preview");
+  if (prev) prev.textContent = j > 0 ? fmt(j) : "";
+  if (j <= 0) return;
+  const splatka = monthlyPayment(j, s, m);
+  const celkem = splatka * m;
+  const uroky = celkem - j;
+  const pctJ = (j / celkem) * 100;
+  document.getElementById("k_splatka").textContent = fmt(splatka) + " / měs.";
+  document.getElementById("k_celkem").textContent = fmt(celkem);
+  document.getElementById("k_uroky").textContent = fmt(uroky);
+  document.getElementById("k_pocet").textContent = m;
+  document.getElementById("k_bar").style.width = Math.min(pctJ, 100).toFixed(1) + "%";
+  document.getElementById("k_pct_j").textContent = pctJ.toFixed(0) + " %";
+  document.getElementById("k_pct_u").textContent = (100-pctJ).toFixed(0) + " %";
+}
+
+// REFINANCOVÁNÍ
+function calcRefi() {
+  const dluh = parseFloat(document.getElementById("r_dluh").value) || 0;
+  const sazSou = parseFloat(document.getElementById("r_sazba_sou").value) || 0;
+  const roky = parseInt(document.getElementById("r_roky").value) || 1;
+  const mes = roky * 12;
+  const prev = document.getElementById("r_dluh_preview");
+  if (prev) prev.textContent = dluh > 0 ? fmt(dluh) : "";
+  if (dluh <= 0) return;
+  const splatSou = monthlyPayment(dluh, sazSou, mes);
+  const celkemSou = splatSou * mes;
+  document.getElementById("r_sou_splatka").textContent = fmt(splatSou) + " / měs.";
+  document.getElementById("r_sou_celkem").textContent = fmt(celkemSou);
+  const container = document.getElementById("refi-offers");
+  container.innerHTML = "";
+  sazby.forEach((s, i) => {
+    const novaSpl = monthlyPayment(dluh, s.sazba, mes);
+    const novaCelk = novaSpl * mes;
+    const uspMes = splatSou - novaSpl;
+    const uspTotal = celkemSou - novaCelk;
+    const isBest = i === 0;
+    const div = document.createElement("div");
+    div.className = "offer-card" + (isBest ? " best" : "");
+    div.innerHTML =
+      (isBest ? "<div class=\"badge-best\">Nejlepší nabídka</div>" : "") +
+      "<div class=\"offer-head\">" +
+        "<div><div class=\"offer-name\">" + s.nazev + "</div><div class=\"offer-partner\">" + s.partner + "</div></div>" +
+        "<div class=\"offer-rate\">" + s.sazba.toFixed(2) + "<small> % p.a.</small></div>" +
+      "</div>" +
+      "<div class=\"offer-cols\">" +
+        "<div><div class=\"offer-col-label\">Nová splátka</div><div class=\"offer-col-val\">" + fmt(novaSpl) + "/m</div></div>" +
+        "<div><div class=\"offer-col-label\">" + (uspMes >= 0 ? "Měsíční úspora" : "Přeplatek") + "</div><div class=\"offer-col-val\">" + fmt(Math.abs(uspMes)) + "/m</div></div>" +
+        "<div><div class=\"offer-col-label\">Celkem zaplatíte</div><div class=\"offer-col-val\">" + fmt(novaCelk) + "</div></div>" +
+      "</div>" +
+      "<div class=\"saving-tag" + (uspTotal < 0 ? " neg" : "") + "\">" +
+        (uspTotal >= 0 ? "↓ Celková úspora: " + fmt(uspTotal) : "↑ Celkový přeplatek: " + fmt(Math.abs(uspTotal))) +
+      "</div>";
+    container.appendChild(div);
+  });
+}
+
+// TABS
+function showTab(id) {
+  const ids = ["kalk", "refi", "invest", "penze", "rc"];
+  document.querySelectorAll(".tab").forEach((t, i) => {
+    t.classList.toggle("active", ids[i] === id);
+  });
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  const pc = pageContent[id];
+  if (pc) {
+    const tag = document.getElementById("hero-tag");
+    const title = document.getElementById("hero-title");
+    const desc = document.getElementById("hero-desc");
+    if (tag) tag.textContent = pc.tag;
+    if (title) title.innerHTML = pc.title;
+    if (desc) desc.textContent = pc.desc;
+  }
+  if (id === "invest") calcInvest();
+}
+
+// RODNÉ ČÍSLO
+function calcRC() {
+  const raw = document.getElementById("rc_input").value.replace("/", "").replace(/\s/g, "");
+  const err = document.getElementById("rc_error");
+  const fields = ["rc_datum", "rc_vek", "rc_pohlavi", "rc_narozeniny"];
+  if (raw.length < 9) {
+    if (err) err.style.display = "none";
+    fields.forEach(f => { const el = document.getElementById(f); if(el) el.textContent = "—"; });
+    return;
+  }
+  let rok = parseInt(raw.substring(0, 2));
+  let mesic = parseInt(raw.substring(2, 4));
+  let den = parseInt(raw.substring(4, 6));
+  let pohlavi = "Muž";
+  if (mesic > 50) { mesic -= 50; pohlavi = "Žena"; }
+  if (mesic > 20) { mesic -= 20; }
+  const dnesRok = new Date().getFullYear() % 100;
+  rok = raw.length >= 10 ? (rok <= dnesRok ? 2000 + rok : 1900 + rok) : 1900 + rok;
+  if (mesic < 1 || mesic > 12 || den < 1 || den > 31) {
+    if (err) err.style.display = "block";
+    fields.forEach(f => { const el = document.getElementById(f); if(el) el.textContent = "—"; });
+    return;
+  }
+  if (err) err.style.display = "none";
+  const narozen = new Date(rok, mesic - 1, den);
+  const dnes = new Date();
+  let vek = dnes.getFullYear() - narozen.getFullYear();
+  const mDiff = dnes.getMonth() - narozen.getMonth();
+  if (mDiff < 0 || (mDiff === 0 && dnes.getDate() < narozen.getDate())) vek--;
+  const pristi = new Date(dnes.getFullYear(), mesic - 1, den);
+  if (pristi < dnes) pristi.setFullYear(dnes.getFullYear() + 1);
+  const dniDo = Math.ceil((pristi - dnes) / (1000 * 60 * 60 * 24));
+  const narozeniinyText = dniDo === 0 ? "Dnes!" : dniDo === 1 ? "Zítra!" : dniDo + " dní";
+  const el_datum = document.getElementById("rc_datum");
+  const el_vek = document.getElementById("rc_vek");
+  const el_pohl = document.getElementById("rc_pohlavi");
+  const el_nar = document.getElementById("rc_narozeniny");
+  if (el_datum) el_datum.textContent = den + ". " + mesic + ". " + rok;
+  if (el_vek) el_vek.textContent = vek + " let";
+  if (el_pohl) el_pohl.textContent = pohlavi;
+  if (el_nar) el_nar.textContent = narozeniinyText;
+}
+
+// INVESTICE
+function toggleISazby() {
+  const c = document.getElementById("i-sazby-content");
+  const icon = document.getElementById("i-sazby-icon");
+  if (!c) return;
+  const open = c.style.display !== "none";
+  c.style.display = open ? "none" : "block";
+  if (icon) icon.textContent = open ? "▼" : "▲";
+}
+
+function calcFV(mesicni, sazbaRocni, roky) {
+  if (roky <= 0) return 0;
+  if (sazbaRocni <= 0) return mesicni * 12 * roky;
+  const r = sazbaRocni / 100 / 12;
+  const n = roky * 12;
+  return mesicni * ((Math.pow(1+r, n) - 1) / r) * (1+r);
+}
+
+function calcInvest() {
+  const vklad = parseFloat(document.getElementById("i_vklad").value) || 0;
+  const roky = parseInt(document.getElementById("i_roky").value) || 1;
+  const inflace = parseFloat(document.getElementById("i_inflace").value) || 0;
+  const sEtf = parseFloat(document.getElementById("s_etf").value) || 0;
+  const sDip = parseFloat(document.getElementById("s_dip").value) || 0;
+  const sStavebko = parseFloat(document.getElementById("s_stavebko").value) || 0;
+  const sPenzijko = parseFloat(document.getElementById("s_penzijko").value) || 0;
+  const sSporici = parseFloat(document.getElementById("s_sporici").value) || 0;
+  const sBezny = parseFloat(document.getElementById("s_bezny").value) || 0;
+  const prev = document.getElementById("i_vklad_preview");
+  if (prev) prev.textContent = vklad > 0 ? fmt(vklad) : "";
+  const celkem = vklad * 12 * roky;
+  const el_celkem = document.getElementById("i_celkem");
+  const el_realna = document.getElementById("i_realna");
+  if (el_celkem) el_celkem.textContent = vklad > 0 ? fmt(celkem) : "—";
+  const realna = celkem / Math.pow(1 + inflace / 100, roky);
+  if (el_realna) el_realna.textContent = vklad > 0 ? fmt(realna) : "—";
+  const produkty = [
+    {id:"etf", name:"ETF / Akciový index", desc:"Světové akcie (S&P 500, MSCI World)", sazba:sEtf},
+    {id:"dip", name:"DIP", desc:"Dlouhodobý investiční produkt + daň. úleva", sazba:sDip},
+    {id:"penzijko", name:"Penzijní spoření", desc:"Transformované / účastnické fondy", sazba:sPenzijko},
+    {id:"stavebko", name:"Stavební spoření", desc:"Garantovaný výnos + státní podpora", sazba:sStavebko},
+    {id:"sporici", name:"Spořicí účet", desc:"Bankovní spořicí produkty", sazba:sSporici},
+    {id:"izp", name:"Životní pojištění", desc:"Poplatkově nevýhodné — vysoká provize zprostředkovatele", sazba:1.0, isIZP:true},
+    {id:"bezny", name:"Běžný účet (inflace)", desc:"Peníze ztrácejí reálnou hodnotu", sazba:sBezny - inflace},
+  ];
+  produkty.forEach(p => {
+    p.hodnota = calcFV(vklad, Math.max(p.sazba, 0), roky);
+    if (p.isIZP) {
+      let z = vklad * 0.97;
+      for (let m = 1; m <= roky * 12; m++) {
+        z = z * (1 + 0.01/12);
+        if (m > 24) z += vklad;
+        z -= 150;
+      }
+      p.hodnota = Math.max(z, 0);
+    }
+    p.zisk = p.hodnota - celkem;
+    p.isNeg = p.zisk < 0;
+  });
+  const sorted = [...produkty].sort((a, b) => b.hodnota - a.hodnota);
+  const grid = document.getElementById("products-grid");
+  if (grid) {
+    grid.innerHTML = "";
+    sorted.forEach((p, i) => {
+      const isBest = i === 0;
+      const div = document.createElement("div");
+      div.className = "product-card" + (isBest ? " best" : "");
+      div.innerHTML =
+        (isBest ? "<div class=\"i-badge-best\">Nejlepší výnos</div>" : "") +
+        "<div class=\"product-top\">" +
+          "<div class=\"product-name\">" + p.name + "</div>" +
+          "<div class=\"product-amount " + (isBest ? "pos" : p.isNeg ? "neg" : "") + "\">" + fmt(p.hodnota) + "</div>" +
+        "</div>" +
+        "<div style=\"display:flex;justify-content:space-between;align-items:center\">" +
+          "<div class=\"product-desc\">" + p.desc + "</div>" +
+          "<div class=\"product-gain " + (p.isNeg ? "neg" : "pos") + "\">" + (p.isNeg ? "−" : "+") + fmt(Math.abs(p.zisk)) + "</div>" +
+        "</div>";
+      grid.appendChild(div);
+    });
+  }
+  // GRAF
+  const isDark = document.documentElement.getAttribute("data-theme") !== "light";
+  const textColor = isDark ? "#8A9099" : "#555C66";
+  const gridColor = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)";
+  const tooltipBg = isDark ? "#1E2126" : "#ffffff";
+  const tooltipText = isDark ? "#F0F2F5" : "#1A1A1A";
+  const colors = {etf:"#C8F04A",dip:"#4ADE80",penzijko:"#60A5FA",stavebko:"#F59E0B",sporici:"#A78BFA",izp:"#FB923C",bezny:"#F87171"};
+  const labels = [];
+  for (let y = 0; y <= roky; y++) labels.push(y === 0 ? "Start" : y + "r");
+  const datasets = produkty.map(p => ({
+    label: p.name,
+    data: labels.map((l, idx) => Math.round(calcFV(vklad, Math.max(p.sazba, 0), idx))),
+    borderColor: colors[p.id] || "#888",
+    backgroundColor: "transparent",
+    borderWidth: p.id === "etf" ? 2.5 : 1.5,
+    pointRadius: 0,
+    tension: 0.4,
+  }));
+  if (investChart) investChart.destroy();
+  const canvas = document.getElementById("investChart");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  investChart = new Chart(ctx, {
+    type: "line",
+    data: {labels, datasets},
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {mode:"index", intersect:false},
+      plugins: {
+        legend: {labels: {color:textColor, font:{family:"Inter",size:12}, boxWidth:14, padding:14}},
+        tooltip: {
+          backgroundColor:tooltipBg, borderColor:gridColor, borderWidth:1,
+          titleColor:tooltipText, bodyColor:textColor, padding:12,
+          callbacks: {
+            label: ctx => " " + ctx.dataset.label + ": " + new Intl.NumberFormat("cs-CZ",{style:"currency",currency:"CZK",maximumFractionDigits:0}).format(ctx.raw)
+          }
+        }
+      },
+      scales: {
+        x: {ticks:{color:textColor,font:{size:11},maxTicksLimit:10}, grid:{color:gridColor}},
+        y: {
+          ticks: {color:textColor, font:{size:11}, callback: v => new Intl.NumberFormat("cs-CZ",{notation:"compact"}).format(v) + " Kč"},
+          grid: {color:gridColor}
+        }
+      }
+    }
+  });
+}
+
+
+// PENZE
+let penzeChart = null;
+
+function getStatniPrispevek(mesicni) {
+  if (mesicni < 500) return 0;
+  if (mesicni >= 1700) return 340;
+  return Math.floor(mesicni * 0.20);
+}
+
+function getDanUspora(mesicni) {
+  if (mesicni <= 1700) return 0;
+  const odpocetRocni = Math.min((mesicni - 1700) * 12, 48000);
+  return odpocetRocni * 0.15;
+}
+
+function calcFVPenze(mesicniVklad, sazbaRocni, mesice) {
+  if (mesice <= 0) return 0;
+  if (sazbaRocni <= 0) return mesicniVklad * mesice;
+  const r = sazbaRocni / 100 / 12;
+  return mesicniVklad * ((Math.pow(1+r, mesice) - 1) / r) * (1+r);
+}
+
+function calcPenze() {
+  const vklad = parseFloat(document.getElementById("p_vklad").value) || 0;
+  const vek = parseInt(document.getElementById("p_vek").value) || 35;
+  const zamest = parseFloat(document.getElementById("p_zamest").value) || 0;
+  const prevod = parseFloat(document.getElementById("p_prevod").value) || 0;
+  const setP = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val > 0 ? fmt(val) : ""; };
+  setP("p_vklad_preview", vklad); setP("p_zamest_preview", zamest); setP("p_prevod_preview", prevod);
+  const setT = (id, text) => { const el = document.getElementById(id); if(el) el.textContent = text; };
+  const roky = Math.max(65 - vek, 1);
+  const mesice = roky * 12;
+  const stat = getStatniPrispevek(vklad);
+  const statRok = stat * 12;
+  const danUspora = getDanUspora(vklad);
+  const rocniVyhoda = statRok + danUspora;
+  const celkMesicni = vklad + zamest + stat;
+  setT("p_stat", fmt(stat) + "/m");
+  setT("p_stat_rok", fmt(statRok) + "/rok");
+  setT("p_dan_uspora", danUspora > 0 ? fmt(danUspora) + "/rok" : "—");
+  setT("p_rocni_vyhoda", fmt(rocniVyhoda) + "/rok");
+  setT("p_roky_do", roky + " let");
+  const vekInfo = document.getElementById("p_vek_info");
+  if (vekInfo) vekInfo.textContent = "Do důchodu (65 let) zbývá " + roky + " let";
+  setT("p_vlozeno", vklad > 0 ? fmt(celkMesicni * mesice) : "—");
+  const danInfo = document.getElementById("p_dan_info");
+  if (danInfo) {
+    if (vklad > 1700) {
+      const odpocet = Math.min((vklad - 1700) * 12, 48000);
+      danInfo.style.display = "block";
+      danInfo.innerHTML = "Spoříte nad 1 700 Kč/měs. — daňový odpočet <strong>" + fmt(odpocet) + " Kč/rok</strong>, úspora na dani <strong>" + fmt(danUspora) + " Kč/rok</strong>.";
+    } else if (vklad >= 500) {
+      danInfo.style.display = "block";
+      danInfo.innerHTML = "Pro daňový odpočet navyšte příspěvek nad <strong>1 700 Kč/měs.</strong> Za každých 100 Kč navíc ušetříte <strong>180 Kč na daních ročně</strong>.";
+    } else { danInfo.style.display = "none"; }
+  }
+  if (vklad <= 0) {
+    ["tf_celkem","tf_vynos","tf_renta","dps_celkem","dps_vynos","dps_renta","p_rozdil_celkem","p_rozdil_renta"].forEach(id => setT(id, "—"));
+    const dop = document.getElementById("p_doporuceni"); if (dop) dop.style.display = "none";
+    return;
+  }
+  const tfNove = calcFVPenze(celkMesicni, 1.5, mesice);
+  const tfPrevodZh = prevod * Math.pow(1 + 0.015/12, mesice);
+  const tfCelkem = tfNove + tfPrevodZh;
+  const tfVlozeno = celkMesicni * mesice;
+  const tfVynos = Math.max(tfCelkem - tfVlozeno - prevod, 0);
+  const tfRenta = tfCelkem / (20 * 12);
+  const dpsNove = calcFVPenze(celkMesicni, 10, mesice);
+  const dpsPrevodZh = prevod * Math.pow(1 + 0.10/12, mesice);
+  const dpsCelkem = dpsNove + dpsPrevodZh;
+  const dpsVynos = dpsCelkem - tfVlozeno - prevod;
+  const dpsRenta = dpsCelkem / (20 * 12);
+
+  const rozdilCelkem = dpsCelkem - tfCelkem;
+  const rozdilRenta = dpsRenta - tfRenta;
+  setT("tf_celkem", fmt(tfCelkem)); setT("tf_vynos", fmt(tfVynos)); setT("tf_renta", fmt(tfRenta) + "/m");
+  setT("dps_celkem", fmt(dpsCelkem)); setT("dps_vynos", fmt(dpsVynos)); setT("dps_renta", fmt(dpsRenta) + "/m");
+  setT("p_rozdil_celkem", fmt(rozdilCelkem)); setT("p_rozdil_renta", fmt(rozdilRenta) + "/m");
+
+  const dop = document.getElementById("p_doporuceni");
+  if (dop) {
+    dop.style.display = "block";
+    let text = "Převodem do DPS získáte při odchodu do důchodu o <strong>" + fmt(rozdilCelkem) + " více</strong>, měsíční renta bude vyšší o <strong>" + fmt(rozdilRenta) + " měsíčně</strong>.";
+    if (prevod > 0) text += " Převedených <strong>" + fmt(prevod) + " Kč</strong> se v DPS zhodnotí výrazně lépe.";
+    dop.innerHTML = text;
+  }
+  const isDark = document.documentElement.getAttribute("data-theme") !== "light";
+  const textColor = isDark ? "#8A9099" : "#555C66";
+  const gridColor = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)";
+  const tooltipBg = isDark ? "#1E2126" : "#ffffff";
+  const tooltipText = isDark ? "#F0F2F5" : "#1A1A1A";
+  const labels = []; const tfData = []; const dpsData = [];
+  for (let y = 0; y <= roky; y++) {
+    labels.push(y === 0 ? "Dnes" : y + "r");
+    const m = y * 12;
+    tfData.push(Math.round(calcFVPenze(celkMesicni, 1.5, m) + prevod * Math.pow(1 + 0.015/12, m)));
+    dpsData.push(Math.round(calcFVPenze(celkMesicni, 10, m) + prevod * Math.pow(1 + 0.10/12, m)));
+  }
+  if (penzeChart) penzeChart.destroy();
+  const canvas = document.getElementById("penzeChart");
+  if (!canvas) return;
+  penzeChart = new Chart(canvas.getContext("2d"), {
+    type: "line",
+    data: {labels, datasets: [
+      {label:"DPS", data:dpsData, borderColor:"#C8F04A", backgroundColor:"rgba(200,240,74,0.05)", borderWidth:2.5, pointRadius:0, tension:0.4, fill:true},
+      {label:"Transformovaný fond", data:tfData, borderColor:"#F87171", backgroundColor:"transparent", borderWidth:1.5, pointRadius:0, tension:0.4}
+    ]},
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      interaction:{mode:"index", intersect:false},
+      plugins:{
+        legend:{labels:{color:textColor, font:{family:"Inter",size:12}, boxWidth:14, padding:14}},
+        tooltip:{backgroundColor:tooltipBg, borderColor:gridColor, borderWidth:1, titleColor:tooltipText, bodyColor:textColor, padding:12,
+          callbacks:{label:ctx=>" "+ctx.dataset.label+": "+new Intl.NumberFormat("cs-CZ",{style:"currency",currency:"CZK",maximumFractionDigits:0}).format(ctx.raw)}}
+      },
+      scales:{
+        x:{ticks:{color:textColor,font:{size:11},maxTicksLimit:12},grid:{color:gridColor}},
+        y:{ticks:{color:textColor,font:{size:11},callback:v=>new Intl.NumberFormat("cs-CZ",{notation:"compact"}).format(v)+" Kč"},grid:{color:gridColor}}
+      }
+    }
+  });
+}
+
+
+// INIT
+document.getElementById("k_jistina_preview").textContent = "";
+document.getElementById("r_dluh_preview").textContent = "";
+calcKalk();
+calcRefi();
+loadSazbyFromSheets();
+</script>
+</body>
+</html>
