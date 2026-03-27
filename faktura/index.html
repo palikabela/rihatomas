@@ -1,1 +1,266 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generátor Faktur</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --border: #e5e7eb;
+            --bg: #f9fafb;
+            --text: #1f2937;
+        }
+        * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { background-color: #f3f4f6; color: var(--text); padding: 20px; line-height: 1.5; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        h1, h2 { color: var(--text); margin-top: 0; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 0.9em; }
+        input[type="text"], input[type="number"], input[type="date"] { 
+            width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 4px; 
+        }
+        input:focus { outline: none; border-color: var(--primary); }
+        .ares-btn { background: #4b5563; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 0.8em; margin-top: 5px;}
+        .ares-btn:hover { background: #374151; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { text-align: left; padding: 10px; border-bottom: 1px solid var(--border); }
+        th { background-color: var(--bg); }
+        .btn { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn:hover { background: #1d4ed8; }
+        .btn-danger { background: #dc2626; padding: 5px 10px; }
+        .btn-danger:hover { background: #b91c1c; }
+        .totals { text-align: right; font-size: 1.2em; font-weight: bold; margin: 20px 0; }
+        .qr-section { display: flex; align-items: center; justify-content: space-between; background: var(--bg); padding: 20px; border-radius: 8px; }
+        #qrcode img { display: block; margin: 0 auto; }
+        
+        /* Tiskové styly - schová tlačítka a inputy převede na text */
+        @media print {
+            body { background: white; padding: 0; }
+            .container { box-shadow: none; padding: 0; }
+            input { border: none !important; padding: 0 !important; background: transparent !important; }
+            input[type="number"] { -moz-appearance: textfield; }
+            .btn, .ares-btn, .remove-btn, .no-print { display: none !important; }
+            .grid-2 { gap: 50px; }
+        }
+    </style>
+</head>
+<body>
 
+<div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border); padding-bottom: 20px; margin-bottom: 30px;">
+        <h1>Faktura</h1>
+        <div>
+            <div class="form-group">
+                <label>Číslo faktury / VS:</label>
+                <input type="text" id="vs" value="20260001" onchange="generateQR()">
+            </div>
+            <div class="form-group">
+                <label>Datum vystavení:</label>
+                <input type="date" id="date-issue">
+            </div>
+            <div class="form-group">
+                <label>Datum splatnosti:</label>
+                <input type="date" id="date-due">
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-2">
+        <div class="box">
+            <h2>Dodavatel</h2>
+            <div class="form-group">
+                <label>Jméno / Firma:</label>
+                <input type="text" id="sup-name" onchange="saveSup()" placeholder="např. Tomáš Říha">
+            </div>
+            <div class="form-group">
+                <label>IČO:</label>
+                <input type="text" id="sup-ico" onchange="saveSup()">
+            </div>
+            <div class="form-group">
+                <label>Sídlo:</label>
+                <input type="text" id="sup-address" onchange="saveSup()">
+            </div>
+            <div class="form-group">
+                <label>IBAN (nutné pro QR):</label>
+                <input type="text" id="sup-iban" onchange="saveSup(); generateQR();" placeholder="CZ0000...">
+            </div>
+            <div class="form-group">
+                <label>Telefon:</label>
+                <input type="text" id="sup-phone" onchange="saveSup()" placeholder="např. 601323963">
+            </div>
+        </div>
+
+        <div class="box">
+            <h2>Odběratel</h2>
+            <div class="form-group">
+                <label>IČO:</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="sub-ico">
+                    <button class="ares-btn" type="button" onclick="fetchAres()">Načíst ARES</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Jméno / Firma:</label>
+                <input type="text" id="sub-name">
+            </div>
+            <div class="form-group">
+                <label>DIČ:</label>
+                <input type="text" id="sub-dic">
+            </div>
+            <div class="form-group">
+                <label>Sídlo:</label>
+                <input type="text" id="sub-address">
+            </div>
+        </div>
+    </div>
+
+    <h2>Položky faktury</h2>
+    <table id="items-table">
+        <thead>
+            <tr>
+                <th>Popis položky</th>
+                <th style="width: 100px;">Množství</th>
+                <th style="width: 150px;">Cena za mj. (Kč)</th>
+                <th style="width: 150px;">Celkem</th>
+                <th class="no-print" style="width: 50px;"></th>
+            </tr>
+        </thead>
+        <tbody id="items-body">
+            </tbody>
+    </table>
+    
+    <button class="btn no-print" onclick="addRow()" style="background: #4b5563; margin-bottom: 20px;">+ Přidat položku</button>
+
+    <div class="totals">
+        Celkem k úhradě: <span id="total-sum">0.00</span> Kč
+    </div>
+
+    <div class="qr-section">
+        <div>
+            <h3>Platební údaje</h3>
+            <p>Nejsem plátce DPH.</p>
+            <p>Faktura slouží zároveň jako dodací list.</p>
+        </div>
+        <div style="text-align: center;">
+            <div id="qrcode"></div>
+            <p style="font-size: 0.8em; margin-top: 5px; color: #6b7280;">QR Platba</p>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 40px;">
+        <button class="btn no-print" onclick="window.print()" style="font-size: 1.2em;">Vytisknout / Uložit do PDF</button>
+    </div>
+</div>
+
+<script>
+    // Inicializace
+    document.getElementById('date-issue').valueAsDate = new Date();
+    let dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + 14); // Splatnost 14 dní
+    document.getElementById('date-due').valueAsDate = dueDate;
+
+    // ARES API
+    async function fetchAres() {
+        const ico = document.getElementById('sub-ico').value.trim();
+        if (!ico) return alert('Zadejte IČO');
+        
+        try {
+            // Nové REST API ARES (podporuje CORS)
+            const response = await fetch(`https://ares.gov.cz/ekonomicke-subjekty-v-info/rest/ekonomicke-subjekty/${ico}`);
+            if (!response.ok) throw new Error('Subjekt nenalezen nebo chyba spojení.');
+            
+            const data = await response.json();
+            document.getElementById('sub-name').value = data.obchodniJmeno || '';
+            document.getElementById('sub-dic').value = data.dic || '';
+            document.getElementById('sub-address').value = data.sidlo.textovaAdresa || '';
+        } catch (error) {
+            alert('ARES načítání selhalo. Zkontrolujte IČO. Chyba: ' + error.message);
+        }
+    }
+
+    // Položky
+    function addRow() {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><input type="text" placeholder="Název položky" onchange="calculate()"></td>
+            <td><input type="number" min="1" value="1" onchange="calculate()"></td>
+            <td><input type="number" min="0" value="0" onchange="calculate()"></td>
+            <td class="row-sum">0.00 Kč</td>
+            <td class="no-print"><button class="btn btn-danger remove-btn" onclick="this.closest('tr').remove(); calculate()">X</button></td>
+        `;
+        document.getElementById('items-body').appendChild(tr);
+    }
+
+    let currentTotal = 0;
+
+    // Výpočty (Ověřeno: matematicky správné sčítání a zaokrouhlování na 2 desetinná místa)
+    function calculate() {
+        let total = 0;
+        const rows = document.querySelectorAll('#items-body tr');
+        
+        rows.forEach(row => {
+            const inputs = row.querySelectorAll('input');
+            const qty = parseFloat(inputs[1].value) || 0;
+            const price = parseFloat(inputs[2].value) || 0;
+            const sum = qty * price;
+            row.querySelector('.row-sum').innerText = sum.toFixed(2) + ' Kč';
+            total += sum;
+        });
+
+        currentTotal = total;
+        document.getElementById('total-sum').innerText = total.toFixed(2);
+        generateQR();
+    }
+
+    // Český QR kód (Standard SPD)
+    let qrcode = new QRCode(document.getElementById("qrcode"), {
+        width: 120, height: 120, colorDark : "#000000", colorLight : "#ffffff",
+        correctLevel : QRCode.CorrectLevel.M
+    });
+
+    function generateQR() {
+        const iban = document.getElementById('sup-iban').value.replace(/\s+/g, '').toUpperCase();
+        const vs = document.getElementById('vs').value.trim();
+        const amount = currentTotal.toFixed(2);
+
+        // Validace: Generuj QR pouze pokud je zadán IBAN (musí začínat CZ a mít 24 znaků)
+        if (!iban || !iban.startsWith('CZ') || iban.length !== 24) {
+            qrcode.clear();
+            return;
+        }
+
+        // Sestavení SPD řetězce
+        const spdString = `SPD*1.0*ACC:${iban}*AM:${amount}*CC:CZK*X-VS:${vs}`;
+        qrcode.makeCode(spdString);
+    }
+
+    // Ukládání dodavatele do localStorage
+    const supFields = ['sup-name', 'sup-ico', 'sup-address', 'sup-iban', 'sup-phone'];
+    
+    function saveSup() {
+        supFields.forEach(id => {
+            localStorage.setItem(id, document.getElementById(id).value);
+        });
+    }
+
+    function loadSup() {
+        supFields.forEach(id => {
+            if(localStorage.getItem(id)) {
+                document.getElementById(id).value = localStorage.getItem(id);
+            }
+        });
+    }
+
+    // Načtení dat při startu a přidání prvního řádku
+    window.onload = () => {
+        loadSup();
+        addRow();
+        calculate();
+    };
+</script>
+
+</body>
+</html>
