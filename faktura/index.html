@@ -189,16 +189,14 @@
     dueDate.setDate(dueDate.getDate() + 14);
     document.getElementById('date-due').valueAsDate = dueDate;
 
-    // --- UNIVERZÁLNÍ ARES FUNKCE PRO DODAVATELE I ODBĚRATELE ---
     async function fetchAres(type, btnElement) {
         let icoInputObj = document.getElementById(`${type}-ico`);
-        let icoInput = icoInputObj.value.replace(/\s+/g, ''); // Ořízne mezery
+        let icoInput = icoInputObj.value.replace(/\s+/g, ''); 
         
-        // Doplnění nul, pokud je IČO kratší než 8 znaků (řeší chybu s kratšími IČO)
         if (icoInput.length > 0 && icoInput.length < 8) {
             icoInput = icoInput.padStart(8, '0');
             icoInputObj.value = icoInput; 
-            if (type === 'sup') saveSup(); // Uloží opravené IČO do paměti, pokud je to dodavatel
+            if (type === 'sup') saveSup(); 
         }
 
         if (!icoInput || icoInput.length !== 8 || !/^\d+$/.test(icoInput)) {
@@ -210,30 +208,26 @@
         btnElement.disabled = true;
 
         try {
-            const response = await fetch(`https://ares.gov.cz/ekonomicke-subjekty-v-info/rest/ekonomicke-subjekty/${icoInput}`);
+            const targetUrl = `https://ares.gov.cz/ekonomicke-subjekty-v-info/rest/ekonomicke-subjekty/${icoInput}`;
+            // Nasazen průmyslový CORS proxy server
+            const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
+            
+            const response = await fetch(proxyUrl);
             
             if (!response.ok) {
                 if (response.status === 404) throw new Error('Subjekt s tímto IČO nebyl v ARES nalezen.');
-                let aresError = 'Neznámá chyba serveru';
-                try {
-                    const errData = await response.json();
-                    aresError = errData.popis || errData.message || aresError;
-                } catch(e) {}
-                throw new Error(aresError);
+                throw new Error(`Chyba serveru (kód: ${response.status}).`);
             }
             
             const data = await response.json();
             
-            // Vyplnění názvu
             document.getElementById(`${type}-name`).value = data.obchodniJmeno || '';
             
-            // DIČ (vyplní jen pokud formulář dané pole má - odběratel ho má, dodavatel ho teď nemá)
             const dicElement = document.getElementById(`${type}-dic`);
             if (dicElement) {
                 dicElement.value = data.dic || '';
             }
             
-            // Sestavení adresy
             let adresa = '';
             if (data.sidlo && data.sidlo.textovaAdresa) {
                 adresa = data.sidlo.textovaAdresa;
@@ -243,13 +237,12 @@
             }
             document.getElementById(`${type}-address`).value = adresa;
 
-            // Pokud jsme načítali dodavatele, rovnou to uložíme do paměti prohlížeče
             if (type === 'sup') {
                 saveSup();
             }
             
         } catch (error) {
-            alert('Chyba ARES: ' + error.message);
+            alert('Chyba ARES: ' + error.message + '\n\nPokud se ukazuje "Load failed", blokuje to přímo tvůj prohlížeč (např. Safari), AdBlocker nebo Antivir.');
         } finally {
             btnElement.innerText = originalText;
             btnElement.disabled = false;
@@ -278,7 +271,6 @@
             const qty = parseFloat(inputs[1].value) || 0;
             const price = parseFloat(inputs[2].value) || 0;
             const sum = qty * price;
-            // Matematicky ověřené zaokrouhlování pro prevenci floating-point chyb JS
             row.querySelector('.row-sum').innerText = (Math.round(sum * 100) / 100).toFixed(2);
             total += sum;
         });
