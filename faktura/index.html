@@ -94,12 +94,15 @@
         <div class="box">
             <h2>Dodavatel</h2>
             <div class="form-group">
-                <label>Jméno / Firma:</label>
-                <input type="text" id="sup-name" onchange="saveSup()" placeholder="Vyplňte své údaje">
+                <label>IČO (Načíst z registru):</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="sup-ico" placeholder="Zadejte IČO" onchange="saveSup()">
+                    <button class="ares-btn" type="button" onclick="fetchAres('sup', this)">Načíst z ARES</button>
+                </div>
             </div>
             <div class="form-group">
-                <label>IČO:</label>
-                <input type="text" id="sup-ico" onchange="saveSup()">
+                <label>Jméno / Firma:</label>
+                <input type="text" id="sup-name" onchange="saveSup()" placeholder="Vyplňte své údaje">
             </div>
             <div class="form-group">
                 <label>Sídlo:</label>
@@ -121,8 +124,8 @@
             <div class="form-group">
                 <label>IČO (Načíst z registru):</label>
                 <div style="display: flex; gap: 8px;">
-                    <input type="text" id="sub-ico" placeholder="Zadejte 8 číslic">
-                    <button class="ares-btn" type="button" onclick="fetchAres()">Načíst z ARES</button>
+                    <input type="text" id="sub-ico" placeholder="Zadejte IČO">
+                    <button class="ares-btn" type="button" onclick="fetchAres('sub', this)">Načíst z ARES</button>
                 </div>
             </div>
             <div class="form-group">
@@ -186,51 +189,70 @@
     dueDate.setDate(dueDate.getDate() + 14);
     document.getElementById('date-due').valueAsDate = dueDate;
 
-    // --- PŘÍMÉ VOLÁNÍ ARES (Bez proxy, funguje bleskově na webových serverech jako GitHub) ---
-    async function fetchAres() {
-        const btn = document.querySelector('.ares-btn');
-        const icoInput = document.getElementById('sub-ico').value.replace(/\s+/g, '');
+    // --- UNIVERZÁLNÍ ARES FUNKCE PRO DODAVATELE I ODBĚRATELE ---
+    async function fetchAres(type, btnElement) {
+        let icoInputObj = document.getElementById(`${type}-ico`);
+        let icoInput = icoInputObj.value.replace(/\s+/g, ''); // Ořízne mezery
         
-        if (!icoInput || icoInput.length !== 8 || !/^\d+$/.test(icoInput)) {
-            alert('IČO musí mít přesně 8 číslic.');
-            return;
+        // Doplnění nul, pokud je IČO kratší než 8 znaků (řeší chybu s kratšími IČO)
+        if (icoInput.length > 0 && icoInput.length < 8) {
+            icoInput = icoInput.padStart(8, '0');
+            icoInputObj.value = icoInput; 
+            if (type === 'sup') saveSup(); // Uloží opravené IČO do paměti, pokud je to dodavatel
         }
 
-        btn.innerText = "Načítám...";
-        btn.disabled = true;
+        if (!icoInput || icoInput.length !== 8 || !/^\d+$/.test(icoInput)) {
+            return alert('IČO musí obsahovat přesně 8 číslic.');
+        }
+
+        const originalText = btnElement.innerText;
+        btnElement.innerText = "Načítám...";
+        btnElement.disabled = true;
 
         try {
-            // Přímé připojení na ARES API
-            const response = await fetch(`https://ares.gov.cz/ekonomicke-subjekty-v-info/rest/ekonomicke-subjekty/${icoInput}`, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json'
-                }
-            });
+            const response = await fetch(`https://ares.gov.cz/ekonomicke-subjekty-v-info/rest/ekonomicke-subjekty/${icoInput}`);
             
             if (!response.ok) {
-                if (response.status === 404) throw new Error('Subjekt s tímto IČO nebyl nalezen.');
-                throw new Error('Nelze se spojit s registrem (Chyba státního serveru: ' + response.status + ').');
+                if (response.status === 404) throw new Error('Subjekt s tímto IČO nebyl v ARES nalezen.');
+                let aresError = 'Neznámá chyba serveru';
+                try {
+                    const errData = await response.json();
+                    aresError = errData.popis || errData.message || aresError;
+                } catch(e) {}
+                throw new Error(aresError);
             }
             
             const data = await response.json();
             
-            document.getElementById('sub-name').value = data.obchodniJmeno || '';
-            document.getElementById('sub-dic').value = data.dic || '';
+            // Vyplnění názvu
+            document.getElementById(`${type}-name`).value = data.obchodniJmeno || '';
             
+            // DIČ (vyplní jen pokud formulář dané pole má - odběratel ho má, dodavatel ho teď nemá)
+            const dicElement = document.getElementById(`${type}-dic`);
+            if (dicElement) {
+                dicElement.value = data.dic || '';
+            }
+            
+            // Sestavení adresy
+            let adresa = '';
             if (data.sidlo && data.sidlo.textovaAdresa) {
-                document.getElementById('sub-address').value = data.sidlo.textovaAdresa;
+                adresa = data.sidlo.textovaAdresa;
             } else if (data.sidlo) {
                 const s = data.sidlo;
-                const adresa = `${s.nazevUlice || s.nazevObce} ${s.cisloDomovni}${s.cisloOrientacni ? '/' + s.cisloOrientacni : ''}, ${s.psc} ${s.nazevObce}`;
-                document.getElementById('sub-address').value = adresa;
+                adresa = `${s.nazevUlice || s.nazevObce} ${s.cisloDomovni}${s.cisloOrientacni ? '/' + s.cisloOrientacni : ''}, ${s.psc} ${s.nazevObce}`;
+            }
+            document.getElementById(`${type}-address`).value = adresa;
+
+            // Pokud jsme načítali dodavatele, rovnou to uložíme do paměti prohlížeče
+            if (type === 'sup') {
+                saveSup();
             }
             
         } catch (error) {
             alert('Chyba ARES: ' + error.message);
         } finally {
-            btn.innerText = "Načíst z ARES";
-            btn.disabled = false;
+            btnElement.innerText = originalText;
+            btnElement.disabled = false;
         }
     }
 
@@ -256,6 +278,7 @@
             const qty = parseFloat(inputs[1].value) || 0;
             const price = parseFloat(inputs[2].value) || 0;
             const sum = qty * price;
+            // Matematicky ověřené zaokrouhlování pro prevenci floating-point chyb JS
             row.querySelector('.row-sum').innerText = (Math.round(sum * 100) / 100).toFixed(2);
             total += sum;
         });
@@ -346,13 +369,17 @@
     const supFields = ['sup-name', 'sup-ico', 'sup-address', 'sup-account', 'sup-phone'];
     
     function saveSup() {
-        supFields.forEach(id => localStorage.setItem(id, document.getElementById(id).value));
+        supFields.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) localStorage.setItem(id, el.value);
+        });
     }
 
     function loadSup() {
         supFields.forEach(id => {
             const val = localStorage.getItem(id);
-            if(val) document.getElementById(id).value = val;
+            const el = document.getElementById(id);
+            if(val && el) el.value = val;
         });
     }
 
