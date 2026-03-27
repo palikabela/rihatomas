@@ -114,7 +114,7 @@
             </div>
             <div class="form-group">
                 <label>Telefon:</label>
-                <input type="text" id="sup-phone" onchange="saveSup()" placeholder="např. 601323963">
+                <input type="text" id="sup-phone" onchange="saveSup()">
             </div>
             <p style="font-size: 0.85em; font-weight: bold; margin-top: 10px;">Nejsem plátce DPH.</p>
         </div>
@@ -189,15 +189,16 @@
     dueDate.setDate(dueDate.getDate() + 14);
     document.getElementById('date-due').valueAsDate = dueDate;
 
-    // --- NEPRŮSTŘELNÁ ARES FUNKCE S DVOJITÝM ZÁCHRANNÝM SYSTÉMEM ---
+    // --- UNIVERZÁLNÍ ARES FUNKCE PRO DODAVATELE I ODBĚRATELE ---
     async function fetchAres(type, btnElement) {
         let icoInputObj = document.getElementById(`${type}-ico`);
-        let icoInput = icoInputObj.value.replace(/\s+/g, ''); 
+        let icoInput = icoInputObj.value.replace(/\s+/g, ''); // Ořízne mezery
         
+        // Doplnění nul, pokud je IČO kratší než 8 znaků (řeší chybu s kratšími IČO)
         if (icoInput.length > 0 && icoInput.length < 8) {
             icoInput = icoInput.padStart(8, '0');
             icoInputObj.value = icoInput; 
-            if (type === 'sup') saveSup(); 
+            if (type === 'sup') saveSup(); // Uloží opravené IČO do paměti, pokud je to dodavatel
         }
 
         if (!icoInput || icoInput.length !== 8 || !/^\d+$/.test(icoInput)) {
@@ -208,67 +209,48 @@
         btnElement.innerText = "Načítám...";
         btnElement.disabled = true;
 
-        const targetUrl = `https://ares.gov.cz/ekonomicke-subjekty-v-info/rest/ekonomicke-subjekty/${icoInput}`;
-        let aresData = null;
-
         try {
-            // POKUS 1: Přímé spojení na ARES API (nejrychlejší)
-            try {
-                const response = await fetch(targetUrl, { headers: { 'Accept': 'application/json' } });
-                if (response.ok) {
-                    aresData = await response.json();
-                } else if (response.status === 404) {
-                    throw new Error('IČO nenalezeno.');
-                }
-            } catch (err) {
-                // Pokud POKUS 1 selže (např. kvůli AdBlocku nebo "Load failed"), spustí se automaticky POKUS 2
-                if (!aresData && err.message !== 'IČO nenalezeno.') {
-                    // AllOrigins vrací data zabalená do textu, což obejde přísné blokátory v prohlížeči
-                    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`;
-                    const proxyResponse = await fetch(proxyUrl);
-                    if (proxyResponse.ok) {
-                        const proxyData = await proxyResponse.json();
-                        if (proxyData.contents) {
-                            aresData = JSON.parse(proxyData.contents);
-                            // ARES API při chybě vrací JSON s kódem chyby místo HTTP 404 přes tuto proxy
-                            if (aresData.kod === 'NENALEZENO' || aresData.kod === 'CHYBA_VSTUPU') {
-                                throw new Error('IČO nenalezeno.');
-                            }
-                        }
-                    }
-                } else {
-                    throw err; // Předá dál chybu "IČO nenalezeno"
-                }
-            }
-
-            // Pokud se data nepodařilo získat ani jedním způsobem
-            if (!aresData || !aresData.obchodniJmeno) {
-                throw new Error('Spojení bylo zcela zablokováno prohlížečem.');
+            const aresUrl = `https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty/${icoInput}`;
+            const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(aresUrl)}`);
+            
+            if (!response.ok) {
+                if (response.status === 404) throw new Error('Subjekt s tímto IČO nebyl v ARES nalezen.');
+                let aresError = 'Neznámá chyba serveru';
+                try {
+                    const errData = await response.json();
+                    aresError = errData.popis || errData.message || aresError;
+                } catch(e) {}
+                throw new Error(aresError);
             }
             
-            // Vyplnění dat
-            document.getElementById(`${type}-name`).value = aresData.obchodniJmeno || '';
+            const data = await response.json();
             
+            // Vyplnění názvu
+            document.getElementById(`${type}-name`).value = data.obchodniJmeno || '';
+            
+            // DIČ (vyplní jen pokud formulář dané pole má - odběratel ho má, dodavatel ho teď nemá)
             const dicElement = document.getElementById(`${type}-dic`);
             if (dicElement) {
-                dicElement.value = aresData.dic || '';
+                dicElement.value = data.dic || '';
             }
             
+            // Sestavení adresy
             let adresa = '';
-            if (aresData.sidlo && aresData.sidlo.textovaAdresa) {
-                adresa = aresData.sidlo.textovaAdresa;
-            } else if (aresData.sidlo) {
-                const s = aresData.sidlo;
+            if (data.sidlo && data.sidlo.textovaAdresa) {
+                adresa = data.sidlo.textovaAdresa;
+            } else if (data.sidlo) {
+                const s = data.sidlo;
                 adresa = `${s.nazevUlice || s.nazevObce} ${s.cisloDomovni}${s.cisloOrientacni ? '/' + s.cisloOrientacni : ''}, ${s.psc} ${s.nazevObce}`;
             }
             document.getElementById(`${type}-address`).value = adresa;
 
+            // Pokud jsme načítali dodavatele, rovnou to uložíme do paměti prohlížeče
             if (type === 'sup') {
                 saveSup();
             }
             
         } catch (error) {
-            alert('Chyba ARES: ' + error.message + '\n\nZkuste zkontrolovat nastavení AdBlocku nebo použít jiný prohlížeč.');
+            alert('Chyba ARES: ' + error.message);
         } finally {
             btnElement.innerText = originalText;
             btnElement.disabled = false;
@@ -297,6 +279,7 @@
             const qty = parseFloat(inputs[1].value) || 0;
             const price = parseFloat(inputs[2].value) || 0;
             const sum = qty * price;
+            // Matematicky ověřené zaokrouhlování pro prevenci floating-point chyb JS
             row.querySelector('.row-sum').innerText = (Math.round(sum * 100) / 100).toFixed(2);
             total += sum;
         });
