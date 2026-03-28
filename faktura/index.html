@@ -77,7 +77,7 @@
         <div style="text-align: right; min-width: 200px;">
             <div class="form-group" style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
                 <label style="margin: 0;">Číslo faktury / VS:</label>
-                <input type="text" id="vs" value="20260001" onchange="generateQR()" style="width: 100px; text-align: right; font-weight: bold;">
+                <input type="text" id="vs" value="20260001" oninput="generateQR()" onchange="generateQR()" style="width: 100px; text-align: right; font-weight: bold;">
             </div>
             <div class="form-group" style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
                 <label style="margin: 0;">Datum vystavení:</label>
@@ -110,7 +110,12 @@
             </div>
             <div class="form-group">
                 <label>Číslo bankovního účtu:</label>
-                <input type="text" id="sup-account" onchange="saveSup(); generateQR();" placeholder="např. 123456789/0100">
+                <input type="text" id="sup-account" oninput="saveSup(); generateQR();" onchange="saveSup(); generateQR();" placeholder="např. 123456789/0100">
+                <span id="account-warning" style="color: #dc2626; font-size: 0.82em; display: none;">⚠️ Vyplňte číslo účtu pro generování QR kódu</span>
+            </div>
+            <div class="form-group">
+                <label>Variabilní symbol (VS):</label>
+                <input type="text" id="sup-vs" oninput="generateQR();" onchange="generateQR();" placeholder="např. 20260001">
             </div>
             <div class="form-group">
                 <label>Telefon:</label>
@@ -210,34 +215,28 @@
         btnElement.disabled = true;
 
         try {
-            // Zkusíme postupně více endpointů
             let data = null;
-            const endpoints = [
-                // 1. Přímý REST
-                async () => {
-                    const r = await fetch(`https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty/${icoInput}`, { headers: { 'Accept': 'application/json' } });
-                    if (!r.ok) throw new Error(r.status);
-                    return await r.json();
-                },
-                // 2. allorigins proxy
-                async () => {
-                    const url = encodeURIComponent(`https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty/${icoInput}`);
-                    const r = await fetch(`https://api.allorigins.win/raw?url=${url}`);
-                    if (!r.ok) throw new Error(r.status);
-                    return await r.json();
-                },
-                // 3. corsproxy.io
-                async () => {
-                    const r = await fetch(`https://corsproxy.io/?https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty/${icoInput}`);
-                    if (!r.ok) throw new Error(r.status);
-                    return await r.json();
-                }
-            ];
 
-            for (const endpoint of endpoints) {
-                try { data = await endpoint(); break; } catch(e) { continue; }
-            }
-            if (!data) throw new Error('ARES není dostupný. Zkuste to prosím za chvíli nebo vyplňte údaje ručně.');
+            // 1. Přímý REST
+            try {
+                const r = await fetch(`https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty/${icoInput}`, { headers: { 'Accept': 'application/json' } });
+                if (r.ok) data = await r.json();
+            } catch(e) {}
+
+            // 2. allorigins proxy
+            if (!data) try {
+                const url = encodeURIComponent(`https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty/${icoInput}`);
+                const r = await fetch(`https://api.allorigins.win/raw?url=${url}`);
+                if (r.ok) data = await r.json();
+            } catch(e) {}
+
+            // 3. corsproxy.io
+            if (!data) try {
+                const r = await fetch(`https://corsproxy.io/?https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty/${icoInput}`);
+                if (r.ok) data = await r.json();
+            } catch(e) {}
+
+            if (!data) throw new Error('ARES není dostupný. Zkuste to znovu nebo vyplňte údaje ručně.');
             
             // Vyplnění názvu
             document.getElementById(`${type}-name`).value = data.obchodniJmeno || '';
@@ -285,6 +284,10 @@
 
     let currentTotal = 0;
 
+    function formatCZK(n) {
+        return n.toLocaleString('cs-CZ', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
     function calculate() {
         let total = 0;
         const rows = document.querySelectorAll('#items-body tr');
@@ -293,12 +296,11 @@
             const qty = parseFloat(inputs[1].value) || 0;
             const price = parseFloat(inputs[2].value) || 0;
             const sum = qty * price;
-            // Matematicky ověřené zaokrouhlování pro prevenci floating-point chyb JS
-            row.querySelector('.row-sum').innerText = (Math.round(sum * 100) / 100).toFixed(2);
+            row.querySelector('.row-sum').innerText = formatCZK(Math.round(sum * 100) / 100);
             total += sum;
         });
         currentTotal = Math.round(total * 100) / 100;
-        document.getElementById('total-sum').innerText = currentTotal.toFixed(2);
+        document.getElementById('total-sum').innerText = formatCZK(currentTotal);
         generateQR();
     }
 
@@ -338,27 +340,30 @@
         }
     }
 
-    const qrcode = new QRCode(document.getElementById("qrcode"), {
-        width: 120, height: 120, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.M
-    });
+    let qrInstance = null;
 
     function generateQR() {
-        const rawAccount = document.getElementById('sup-account').value;
-        const vs = document.getElementById('vs').value.trim();
+        const rawAccount = document.getElementById('sup-account').value.trim();
+        const supVsEl = document.getElementById('sup-vs');
+        const vs = (supVsEl && supVsEl.value.trim()) ? supVsEl.value.trim() : document.getElementById('vs').value.trim();
         const amount = currentTotal.toFixed(2);
-        
+
         const warning = document.getElementById('qr-warning');
         const label = document.getElementById('qr-label');
         const qrDiv = document.getElementById('qrcode');
-        
+        const accountWarning = document.getElementById('account-warning');
+
         document.getElementById('vs-text').innerText = vs;
         document.getElementById('acc-text').innerText = rawAccount;
 
-        qrcode.clear();
+        // Smaž předchozí QR
+        qrDiv.innerHTML = '';
+        qrInstance = null;
 
-        if (currentTotal <= 0) {
-            warning.innerText = "⚠️ Částka musí být vyšší než 0 Kč.";
-            warning.style.display = 'block';
+        accountWarning.style.display = rawAccount ? 'none' : 'inline';
+
+        if (!rawAccount) {
+            warning.style.display = 'none';
             label.style.display = 'none';
             qrDiv.style.opacity = '0.3';
             return;
@@ -374,11 +379,24 @@
             return;
         }
 
+        if (currentTotal <= 0) {
+            warning.innerText = "⚠️ Přidejte položky faktury.";
+            warning.style.display = 'block';
+            label.style.display = 'none';
+            qrDiv.style.opacity = '0.3';
+            return;
+        }
+
         warning.style.display = 'none';
         label.style.display = 'block';
         qrDiv.style.opacity = '1';
         const spdString = `SPD*1.0*ACC:${iban}*AM:${amount}*CC:CZK*X-VS:${vs}`;
-        qrcode.makeCode(spdString);
+        qrInstance = new QRCode(qrDiv, {
+            text: spdString,
+            width: 120, height: 120,
+            colorDark: "#000000", colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.M
+        });
     }
 
     const supFields = ['sup-name', 'sup-ico', 'sup-address', 'sup-account', 'sup-phone'];
