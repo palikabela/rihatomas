@@ -1096,73 +1096,91 @@ input[type="range"]::-webkit-slider-runnable-track {
 
   <div id="hypo" class="section">
     <div class="grid2" style="margin-bottom:14px">
+
+      <!-- PARAMETRY -->
       <div class="card">
         <div class="card-label">Parametry hypotéky</div>
 
+        <!-- Cena nemovitosti -->
         <div class="field">
           <label>Cena nemovitosti (Kč)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <button onclick="syncHypoField('cena',-100000)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-            <input type="number" id="h_cena" value="" min="0" step="100000" placeholder="např. 5 000 000" oninput="calcHypo()" style="flex:1;text-align:center">
-            <button onclick="syncHypoField('cena',100000)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+            <button onclick="hAdjust('cena',-100000)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <input type="text" id="h_cena" placeholder="např. 5 000 000" class="fmt-input" oninput="hCenaInput(this)" onblur="formatInputValue(this);calcHypo()" style="flex:1;text-align:center">
+            <button onclick="hAdjust('cena',100000)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
-          <input type="range" id="h_cena_slider" min="0" max="30000000" value="0" step="100000" oninput="document.getElementById('h_cena').value=this.value;calcHypo()" style="width:100%;accent-color:var(--accent);cursor:pointer">
+          <input type="range" id="h_cena_slider" min="0" max="30000000" value="0" step="100000"
+            oninput="hSlider('cena',this.value)"
+            style="width:100%;accent-color:var(--accent);cursor:pointer">
           <div class="field-preview" id="h_cena_preview"></div>
         </div>
 
-        <div class="field">
-          <label>Vlastní zdroje (LTV)</label>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
-            <button onclick="setLTV(10)" id="ltv-10" style="flex:1;padding:8px;font-size:13px;font-weight:500;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:#0E0F11;cursor:pointer;min-width:55px">10 %</button>
-            <button onclick="setLTV(15)" id="ltv-15" style="flex:1;padding:8px;font-size:13px;font-weight:500;border-radius:8px;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;min-width:55px">15 %</button>
-            <button onclick="setLTV(20)" id="ltv-20" style="flex:1;padding:8px;font-size:13px;font-weight:500;border-radius:8px;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;min-width:55px">20 %</button>
-            <button onclick="setLTV(25)" id="ltv-25" style="flex:1;padding:8px;font-size:13px;font-weight:500;border-radius:8px;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;min-width:55px">25 %</button>
-          </div>
-          <div id="h_ltv_warning" style="font-size:12px;color:var(--red);margin-bottom:6px;line-height:1.5"></div>
-          <div style="font-size:12px;color:var(--text2)">Vlastní zdroje: <strong id="h_vlastni_zdroje" style="color:var(--accent)">—</strong> &nbsp;·&nbsp; Hypotéka: <strong id="h_vyse_hypo_info" style="color:var(--text)">—</strong></div>
-        </div>
-
+        <!-- Rok narození -->
         <div class="field">
           <label>Rok narození</label>
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <button onclick="syncHypoField('rok',-1)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-            <input type="number" id="h_rok" value="" min="1950" max="2005" placeholder="např. 1985" oninput="hypoLTVManual=false;calcHypo()" style="flex:1;text-align:center">
-            <button onclick="syncHypoField('rok',1)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+          <div style="display:flex;align-items:center;gap:8px">
+            <button onclick="hAdjust('rok',-1)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <input type="number" id="h_rok" placeholder="např. 1985" min="1940" max="2005" oninput="hVlastniManual=false;calcHypo()" style="flex:1;text-align:center">
+            <button onclick="hAdjust('rok',1)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
-          <div style="font-size:12px;color:var(--text2)" id="h_vek_info"></div>
+          <div style="font-size:12px;margin-top:6px" id="h_vek_info"></div>
         </div>
 
+        <!-- LTV -->
+        <div class="field">
+          <label>Vlastní zdroje (LTV)</label>
+          <div style="display:flex;gap:8px;margin-bottom:10px">
+            <button onclick="hSetLTV(10)" id="ltv-10" style="flex:1;padding:10px;font-size:14px;font-weight:600;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:#0E0F11;cursor:pointer">10 %</button>
+            <button onclick="hSetLTV(20)" id="ltv-20" style="flex:1;padding:10px;font-size:14px;font-weight:600;border-radius:8px;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer">20 %</button>
+          </div>
+
+          <!-- Vlastní zdroje manuálně -->
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <button onclick="hAdjust('vlastni',-10000)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <input type="text" id="h_vlastni_input" placeholder="vlastní zdroje Kč" class="fmt-input" oninput="hVlastniInput(this)" onblur="formatInputValue(this);calcHypo()" style="flex:1;text-align:center">
+            <button onclick="hAdjust('vlastni',10000)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+          </div>
+          <div id="h_ltv_warning" style="font-size:12px;color:var(--red);line-height:1.5;min-height:18px"></div>
+        </div>
+
+        <!-- Sazba -->
         <div class="field">
           <label>Úroková sazba (% ročně)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <button onclick="syncHypoSazba(-0.1)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-            <input type="number" id="h_sazba" value="4.49" step="0.01" min="0" oninput="syncHypoSazbaInput(this.value)" style="flex:1;text-align:center">
-            <button onclick="syncHypoSazba(0.1)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+            <button onclick="hAdjSazba(-0.1)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <input type="number" id="h_sazba" value="4.79" step="0.01" min="0" oninput="hSlider('sazba',this.value)" style="flex:1;text-align:center">
+            <button onclick="hAdjSazba(0.1)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
-          <input type="range" id="h_sazba_slider" min="0" max="15" value="4.49" step="0.1" oninput="syncHypoSazbaSlider(this.value)" style="width:100%;accent-color:var(--accent);cursor:pointer">
+          <input type="range" id="h_sazba_slider" min="0" max="15" value="4.79" step="0.1"
+            oninput="hSlider('sazba',this.value)"
+            style="width:100%;accent-color:var(--accent);cursor:pointer">
         </div>
 
+        <!-- Splatnost -->
         <div class="field">
           <label>Doba splatnosti</label>
           <div style="display:flex;align-items:center;gap:10px">
-            <button onclick="syncHypoField('roky',-1)" style="width:44px;height:44px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:300">−</button>
+            <button onclick="hAdjust('roky',-1)" style="width:44px;height:44px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:300">−</button>
             <div style="flex:1;text-align:center">
               <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:700;color:var(--accent);line-height:1" id="h_roky_label">30</div>
               <div style="font-size:12px;color:var(--text3);margin-top:2px">let</div>
             </div>
-            <button onclick="syncHypoField('roky',1)" style="width:44px;height:44px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:300">+</button>
+            <button onclick="hAdjust('roky',1)" style="width:44px;height:44px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:300">+</button>
           </div>
-          <input type="range" id="h_roky_slider" min="1" max="35" value="30" step="1" oninput="syncHypoRokySlider(this.value)" style="width:100%;margin-top:12px;accent-color:var(--accent);cursor:pointer">
+          <input type="range" id="h_roky_slider" min="1" max="35" value="30" step="1"
+            oninput="hSlider('roky',this.value)"
+            style="width:100%;margin-top:12px;accent-color:var(--accent);cursor:pointer">
           <input type="number" id="h_roky" value="30" style="display:none">
-          <div style="font-size:12px;color:var(--red);margin-top:6px" id="h_max_splatnost_info"></div>
+          <div style="font-size:12px;color:var(--red);margin-top:4px" id="h_max_info"></div>
         </div>
       </div>
 
+      <!-- VÝSLEDKY -->
       <div class="card">
         <div class="card-label">Výsledek výpočtu</div>
         <div class="metrics">
           <div class="metric"><div class="metric-label">Výše hypotéky</div><div class="metric-value green" id="h_vyse_hypo">—</div></div>
-          <div class="metric"><div class="metric-label">Vlastní zdroje</div><div class="metric-value" id="h_vlastni">—</div></div>
+          <div class="metric"><div class="metric-label">Vlastní zdroje</div><div class="metric-value" id="h_vlastni_vysledek">—</div></div>
           <div class="metric"><div class="metric-label">Měsíční splátka</div><div class="metric-value green" id="h_splatka">—</div></div>
           <div class="metric"><div class="metric-label">Celkem zaplatíte</div><div class="metric-value" id="h_celkem">—</div></div>
           <div class="metric"><div class="metric-label">Přeplatek (úroky)</div><div class="metric-value red" id="h_uroky">—</div></div>
@@ -1177,7 +1195,7 @@ input[type="range"]::-webkit-slider-runnable-track {
                 <th style="text-align:left;padding:6px 8px;color:var(--text3);font-weight:500">Vlastní zdroje</th>
                 <th style="text-align:right;padding:6px 8px;color:var(--text3);font-weight:500">Částka</th>
                 <th style="text-align:right;padding:6px 8px;color:var(--text3);font-weight:500">Hypotéka</th>
-                <th style="text-align:right;padding:6px 8px;color:var(--text3);font-weight:500">Splátka</th>
+                <th style="text-align:right;padding:6px 8px;color:var(--text3);font-weight:500">Splátka/měs.</th>
               </tr>
             </thead>
             <tbody id="h_ltv_tbody"></tbody>
@@ -1185,22 +1203,21 @@ input[type="range"]::-webkit-slider-runnable-track {
         </div>
       </div>
     </div>
-    <p class="note">Výpočet je orientační. Maximální splatnost je omezena věkem — banky zpravidla požadují splacení do 70 let věku.</p>
 
-    <div class="card" style="margin-top:14px">
+    <!-- Sazby pro poradce -->
+    <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer" onclick="toggleHypoSazby()">
         <div class="card-label" style="margin-bottom:0">Aktuální sazby hypoték — přehled pro poradce</div>
-        <span id="hypo-sazby-arrow" style="color:var(--text3)">▲</span>
+        <span id="hypo-sazby-arrow" style="color:var(--text3)">▼</span>
       </div>
-      <div id="hypo-sazby-panel" style="display:block;margin-top:1rem">
-        <div style="font-size:12px;color:var(--text3);margin-bottom:.75rem">Načteno z vašeho Google Sheets (stejné sazby jako v Refinancování)</div>
-        <div id="hypo-sazby-list">
-          <div style="color:var(--text3);font-size:13px">Načítám...</div>
-        </div>
+      <div id="hypo-sazby-panel" style="display:none;margin-top:1rem">
+        <div style="font-size:12px;color:var(--text3);margin-bottom:.75rem">Načteno z Google Sheets (stejné sazby jako v Refinancování)</div>
+        <div id="hypo-sazby-list"><div style="color:var(--text3);font-size:13px">Načítám...</div></div>
       </div>
     </div>
-  </div>
 
+    <p class="note">Výpočet je orientační. Maximální splatnost je omezena věkem — banky zpravidla požadují splacení do 70 let věku. Dle ČNB: žadatelé do 36 let min. 10 % vlastních zdrojů, 36+ let min. 20 %.</p>
+  </div>
 
 
 <div id="rc" class="section">
@@ -2310,6 +2327,38 @@ function setRefiSazba(idx, val) {
 
 
 
+
+function adjustVlastni(delta) {
+  const input = document.getElementById("h_vlastni_input");
+  const cur = parseInt(input.value.replace(/[^0-9]/g,""))||0;
+  const v = Math.max(0, cur + delta);
+  if (input) input.value = v > 0 ? v.toLocaleString('cs-CZ') : '';
+  setVlastniManual(v);
+}
+
+function setVlastniManual(val) {
+  const cena = getHypoNum("h_cena");
+  const vlastni = parseInt(String(val).replace(/[^0-9]/g,""))||0;
+  const prevVl = document.getElementById("h_vlastni_preview");
+  if (prevVl) prevVl.textContent = vlastni > 0 ? fmt(vlastni) : "";
+  if (vlastni > 0 && cena > 0) {
+    hypoLTVManual = true;
+    const pct = Math.round(vlastni / cena * 100);
+    activeLTV = pct;
+    // Highlight matching button or deactivate all
+    [10,15,20,25].forEach(p => {
+      const btn = document.getElementById("ltv-"+p);
+      if (!btn) return;
+      if (p === pct) { btn.style.background="var(--accent)"; btn.style.color="#0E0F11"; btn.style.borderColor="var(--accent)"; }
+      else { btn.style.background="transparent"; btn.style.color="var(--text2)"; btn.style.borderColor="var(--border2)"; }
+    });
+  } else if (!val || val === "") {
+    hypoLTVManual = false;
+    activeLTV = 10;
+  }
+  calcHypo();
+}
+
 function toggleHypoSazby() {
   const panel = document.getElementById("hypo-sazby-panel");
   const arrow = document.getElementById("hypo-sazby-arrow");
@@ -2344,167 +2393,240 @@ function renderHypoSazby() {
   });
 }
 
+
+function syncHypoCena(val, fromSlider) {
+  const v = parseInt(String(val).replace(/[^0-9]/g, '')) || 0;
+  const el = document.getElementById("h_cena");
+  const slider = document.getElementById("h_cena_slider");
+  if (fromSlider && el) {
+    el.value = v > 0 ? v.toLocaleString('cs-CZ') : '';
+  }
+  if (slider && !fromSlider) slider.value = Math.min(v, 30000000);
+  calcHypo();
+}
+
 // HYPOTÉKA
-let activeLTV = 10;
-let hypoLTVManual = false;
+let hActiveLTV = 10;
+let hVlastniManual = false;
 
-function setLTV(pct, auto) {
-  activeLTV = pct;
-  if (!auto) hypoLTVManual = true;
-  [10,15,20,25].forEach(p => {
-    const btn = document.getElementById("ltv-"+p);
-    if (!btn) return;
-    if (p === pct) { btn.style.background="var(--accent)"; btn.style.color="#0E0F11"; btn.style.borderColor="var(--accent)"; }
-    else { btn.style.background="transparent"; btn.style.color="var(--text2)"; btn.style.borderColor="var(--border2)"; }
-  });
-  // Check ČNB limit
-  const rok = parseInt(document.getElementById("h_rok").value)||0;
-  const ltvWarning = document.getElementById("h_ltv_warning");
-  if (!auto && rok > 0) {
-    const vek = new Date().getFullYear() - rok;
-    const minVlastni = vek >= 36 ? 20 : 10;
-    if (pct < minVlastni) {
-      if (ltvWarning) ltvWarning.innerHTML = "⚠️ Dle ČNB nelze pro věk "+vek+" let nastavit vlastní zdroje pod <strong>"+minVlastni+" %</strong> (LTV max "+(100-minVlastni)+" %). Banka tuto hypotéku neschválí.";
-    } else {
-      if (ltvWarning) ltvWarning.textContent = "";
-    }
-  } else if (auto) {
-    if (ltvWarning) ltvWarning.textContent = "";
-  }
+function hGetNum(id) {
+  const el = document.getElementById(id);
+  if (!el) return 0;
+  return parseInt(el.value.replace(/[^0-9]/g,''))||0;
+}
+
+function hCenaInput(el) {
+  const v = parseInt(el.value.replace(/[^0-9]/g,''))||0;
+  const slider = document.getElementById('h_cena_slider');
+  if (slider) slider.value = Math.min(v, 30000000);
+  const prev = document.getElementById('h_cena_preview');
+  if (prev) prev.textContent = v > 0 ? fmt(v) : '';
   calcHypo();
 }
 
-function syncHypoField(field, delta) {
-  if (field === 'cena') {
-    const cur = parseInt(document.getElementById("h_cena").value)||0;
-    const v = Math.max(0, Math.min(cur+delta, 30000000));
-    document.getElementById("h_cena").value = v;
-    document.getElementById("h_cena_slider").value = v;
-  } else if (field === 'rok') {
-    const cur = parseInt(document.getElementById("h_rok").value)||1985;
-    document.getElementById("h_rok").value = Math.max(1950, Math.min(cur+delta, 2005));
-    hypoLTVManual = false;
-  } else if (field === 'roky') {
-    const cur = parseInt(document.getElementById("h_roky").value)||25;
-    const v = Math.max(1, Math.min(cur+delta, 35));
-    document.getElementById("h_roky").value = v;
-    document.getElementById("h_roky_slider").value = v;
-    document.getElementById("h_roky_label").textContent = v;
-  }
+function hVlastniInput(el) {
+  hVlastniManual = true;
   calcHypo();
 }
 
-function syncHypoRokySlider(val) {
-  const v = parseInt(val);
-  document.getElementById("h_roky").value = v;
-  document.getElementById("h_roky_label").textContent = v;
-  calcHypo();
-}
-
-function syncHypoSazba(delta) {
-  const cur = parseFloat(document.getElementById("h_sazba").value)||0;
-  const v = Math.round(Math.max(0, Math.min(cur+delta, 15))*100)/100;
-  document.getElementById("h_sazba").value = v;
-  document.getElementById("h_sazba_slider").value = v;
-  calcHypo();
-}
-
-function syncHypoSazbaInput(val) {
+function hSlider(field, val) {
   const v = parseFloat(val)||0;
-  document.getElementById("h_sazba_slider").value = v;
+  if (field === 'cena') {
+    const el = document.getElementById('h_cena');
+    if (el) el.value = v > 0 ? Math.round(v).toLocaleString('cs-CZ') : '';
+    const prev = document.getElementById('h_cena_preview');
+    if (prev) prev.textContent = '';
+    const slider = document.getElementById('h_cena_slider');
+    if (slider) slider.value = v;
+  } else if (field === 'sazba') {
+    const r = Math.round(v * 10) / 10;
+    const el = document.getElementById('h_sazba');
+    if (el && el !== document.activeElement) el.value = r;
+    const slider = document.getElementById('h_sazba_slider');
+    if (slider) slider.value = r;
+  } else if (field === 'roky') {
+    const r = Math.round(v);
+    document.getElementById('h_roky').value = r;
+    document.getElementById('h_roky_label').textContent = r;
+    document.getElementById('h_roky_slider').value = r;
+  }
   calcHypo();
 }
 
-function syncHypoSazbaSlider(val) {
-  const v = Math.round(parseFloat(val)*10)/10;
-  document.getElementById("h_sazba").value = v;
+function hAdjust(field, delta) {
+  if (field === 'cena') {
+    const cur = hGetNum('h_cena');
+    const v = Math.max(0, Math.min(cur + delta, 30000000));
+    const el = document.getElementById('h_cena');
+    if (el) el.value = v > 0 ? v.toLocaleString('cs-CZ') : '';
+    const slider = document.getElementById('h_cena_slider');
+    if (slider) slider.value = v;
+    const prev = document.getElementById('h_cena_preview');
+    if (prev) prev.textContent = v > 0 ? fmt(v) : '';
+  } else if (field === 'rok') {
+    const el = document.getElementById('h_rok');
+    const cur = parseInt(el.value)||1985;
+    el.value = Math.max(1940, Math.min(cur + delta, 2005));
+    hVlastniManual = false;
+  } else if (field === 'roky') {
+    const cur = parseInt(document.getElementById('h_roky').value)||30;
+    const v = Math.max(1, Math.min(cur + delta, 35));
+    document.getElementById('h_roky').value = v;
+    document.getElementById('h_roky_label').textContent = v;
+    document.getElementById('h_roky_slider').value = v;
+  } else if (field === 'vlastni') {
+    const cur = hGetNum('h_vlastni_input');
+    const v = Math.max(0, cur + delta);
+    const el = document.getElementById('h_vlastni_input');
+    if (el) el.value = v > 0 ? v.toLocaleString('cs-CZ') : '';
+    hVlastniManual = true;
+  }
+  calcHypo();
+}
+
+function hAdjSazba(delta) {
+  const el = document.getElementById('h_sazba');
+  const cur = parseFloat(el.value)||0;
+  const v = Math.round(Math.max(0, Math.min(cur + delta, 15)) * 100) / 100;
+  el.value = v;
+  document.getElementById('h_sazba_slider').value = v;
+  calcHypo();
+}
+
+function hSetLTV(pct) {
+  hActiveLTV = pct;
+  hVlastniManual = false;
+  [10, 20].forEach(p => {
+    const btn = document.getElementById('ltv-' + p);
+    if (!btn) return;
+    if (p === pct) { btn.style.background='var(--accent)'; btn.style.color='#0E0F11'; btn.style.borderColor='var(--accent)'; }
+    else { btn.style.background='transparent'; btn.style.color='var(--text2)'; btn.style.borderColor='var(--border2)'; }
+  });
   calcHypo();
 }
 
 function calcHypo() {
-  const cena = parseInt(document.getElementById("h_cena").value)||0;
-  const sazba = parseFloat(document.getElementById("h_sazba").value)||0;
-  const roky = parseInt(document.getElementById("h_roky").value)||25;
-  const rok = parseInt(document.getElementById("h_rok").value)||0;
-  const setT = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
+  const cena = hGetNum('h_cena');
+  const rok = parseInt(document.getElementById('h_rok').value)||0;
+  const sazba = parseFloat(document.getElementById('h_sazba').value)||0;
+  const roky = parseInt(document.getElementById('h_roky').value)||30;
+  const setT = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = v; };
 
-  const prevCena = document.getElementById("h_cena_preview");
-  if (prevCena) prevCena.textContent = cena > 0 ? fmt(cena) : "";
+  // Věk a ČNB limit
+  let minPct = 10, maxSpl = 35;
+  const vekInfoEl = document.getElementById('h_vek_info');
+  const maxInfoEl = document.getElementById('h_max_info');
+  const ltvWarn = document.getElementById('h_ltv_warning');
 
-  // Věk + LTV požadavek dle věku
   if (rok > 0) {
     const vek = new Date().getFullYear() - rok;
-    const maxSpl = Math.max(1, Math.min(70-vek, 35));
-    // ČNB pravidla: do 36 let LTV max 90%, 36+ LTV max 80%
-    let ltvLimit, minVlastni;
-    if (vek < 36) { ltvLimit = 90; minVlastni = 10; }
-    else { ltvLimit = 80; minVlastni = 20; }
-    // Auto-set LTV button if not manually changed
-    if (!hypoLTVManual && activeLTV !== minVlastni) {
-      activeLTV = minVlastni;
-      [10,15,20,25].forEach(p => {
-        const btn = document.getElementById("ltv-"+p);
-        if (!btn) return;
-        if (p === minVlastni) { btn.style.background="var(--accent)"; btn.style.color="#0E0F11"; btn.style.borderColor="var(--accent)"; }
-        else { btn.style.background="transparent"; btn.style.color="var(--text2)"; btn.style.borderColor="var(--border2)"; }
-      });
-    }
-    const vekInfo = document.getElementById("h_vek_info");
-    if (vekInfo) vekInfo.innerHTML =
-      "Věk: <strong>"+vek+" let</strong> — max. splatnost <strong>"+maxSpl+" let</strong><br>" +
-      "Dle ČNB: min. vlastní zdroje <strong style='color:var(--accent)'>"+minVlastni+" % (LTV "+ltvLimit+" %)</strong>" +
-      (cena > 0 ? " = <strong style='color:var(--accent)'>"+fmt(Math.ceil(cena*minVlastni/100))+" Kč</strong>" : "");
-    setT("h_max_roky", maxSpl+" let");
-    const maxInfo = document.getElementById("h_max_splatnost_info");
-    if (maxInfo) maxInfo.textContent = roky > maxSpl ? "⚠️ Splatnost přesahuje max. "+maxSpl+" let dle věku" : "";
+    minPct = vek >= 36 ? 20 : 10;
+    maxSpl = Math.max(1, Math.min(70 - vek, 35));
+    if (vekInfoEl) vekInfoEl.innerHTML = 'Věk: <strong>' + vek + ' let</strong> — max. splatnost <strong>' + maxSpl + ' let</strong> — min. vlastní zdroje dle ČNB: <strong style="color:var(--accent)">' + minPct + ' %</strong>';
+    // Auto-set LTV button
+    if (!hVlastniManual && hActiveLTV !== minPct) hSetLTV(minPct);
+    if (maxInfoEl) maxInfoEl.textContent = roky > maxSpl ? '⚠️ Splatnost přesahuje max. ' + maxSpl + ' let dle věku' : '';
   } else {
-    setT("h_max_roky", "—");
-    const vekInfo = document.getElementById("h_vek_info"); if(vekInfo) vekInfo.textContent="";
+    if (vekInfoEl) vekInfoEl.textContent = '';
+    if (maxInfoEl) maxInfoEl.textContent = '';
   }
 
-  // LTV
-  const vlastni = Math.round(cena * activeLTV / 100);
-  const hypo = cena - vlastni;
-  const vlZ = document.getElementById("h_vlastni_zdroje"); if(vlZ) vlZ.textContent = cena > 0 ? fmt(vlastni) : "—";
-  const hypoInfo = document.getElementById("h_vyse_hypo_info"); if(hypoInfo) hypoInfo.textContent = cena > 0 ? fmt(hypo) : "—";
+  // Vlastní zdroje
+  const vlastniEl = document.getElementById('h_vlastni_input');
+  let vlastni;
+  if (hVlastniManual && vlastniEl) {
+    vlastni = hGetNum('h_vlastni_input');
+  } else {
+    vlastni = cena > 0 ? Math.round(cena * hActiveLTV / 100) : 0;
+    if (vlastniEl && cena > 0) vlastniEl.value = vlastni > 0 ? vlastni.toLocaleString('cs-CZ') : '';
+    else if (vlastniEl) vlastniEl.value = '';
+  }
+
+  // LTV warning
+  if (ltvWarn && cena > 0 && rok > 0) {
+    const minCastka = Math.ceil(cena * minPct / 100);
+    if (vlastni < minCastka) {
+      ltvWarn.innerHTML = '⚠️ Min. vlastní zdroje dle ČNB: <strong>' + minPct + ' % = ' + fmt(minCastka) + '</strong> — zadáno příliš málo!';
+    } else {
+      ltvWarn.textContent = '';
+    }
+  } else if (ltvWarn) ltvWarn.textContent = '';
+
+  const hypo = Math.max(cena - vlastni, 0);
+
+  // Update vlastni zdroje display color
+  const vlRes = document.getElementById('h_vlastni_vysledek');
+  if (vlRes) {
+    vlRes.textContent = cena > 0 ? fmt(vlastni) : '—';
+    if (rok > 0 && cena > 0) {
+      const minC = Math.ceil(cena * minPct / 100);
+      vlRes.style.color = vlastni < minC ? 'var(--red)' : 'var(--green)';
+    } else vlRes.style.color = '';
+  }
+
+  setT('h_vyse_hypo', cena > 0 ? fmt(hypo) : '—');
+  setT('h_max_roky', rok > 0 ? maxSpl + ' let' : '—');
 
   if (cena <= 0) {
-    ["h_vyse_hypo","h_vlastni","h_splatka","h_celkem","h_uroky"].forEach(id=>setT(id,"—"));
-    const t=document.getElementById("h_ltv_tabulka"); if(t) t.style.display="none";
+    ['h_splatka','h_celkem','h_uroky'].forEach(id => setT(id, '—'));
+    const t = document.getElementById('h_ltv_tabulka'); if(t) t.style.display = 'none';
     return;
   }
 
   const mes = roky * 12;
   const splatka = monthlyPayment(hypo, sazba, mes);
-  const celkem = splatka * mes;
-  setT("h_vyse_hypo", fmt(hypo));
-  setT("h_vlastni", fmt(vlastni)+" ("+activeLTV+" %)");
-  setT("h_splatka", fmt(splatka)+" / měs.");
-  setT("h_celkem", fmt(celkem));
-  setT("h_uroky", fmt(celkem - hypo));
+  setT('h_splatka', fmt(splatka) + ' / měs.');
+  setT('h_celkem', fmt(splatka * mes));
+  setT('h_uroky', fmt(splatka * mes - hypo));
 
   // LTV tabulka
-  const tabulka = document.getElementById("h_ltv_tabulka");
-  const tbody = document.getElementById("h_ltv_tbody");
+  const tabulka = document.getElementById('h_ltv_tabulka');
+  const tbody = document.getElementById('h_ltv_tbody');
   if (tabulka && tbody) {
-    tabulka.style.display = "block";
-    tbody.innerHTML = "";
-    [10,15,20,25].forEach(pct => {
-      const vl = Math.round(cena*pct/100);
+    tabulka.style.display = 'block';
+    tbody.innerHTML = '';
+    [10, 15, 20, 25].filter(pct => pct >= minPct).forEach(pct => {
+      const vl = Math.round(cena * pct / 100);
       const hp = cena - vl;
       const sp = monthlyPayment(hp, sazba, mes);
-      const isActive = pct === activeLTV;
-      const tr = document.createElement("tr");
-      tr.style.cssText = "border-bottom:1px solid var(--border)"+(isActive?";background:var(--accent-dim)":"");
+      const isActive = Math.abs(vlastni - vl) < 1000;
+      const tr = document.createElement('tr');
+      tr.style.cssText = 'border-bottom:1px solid var(--border)' + (isActive ? ';background:var(--accent-dim)' : '');
       tr.innerHTML =
-        "<td style='padding:6px 8px;font-weight:"+(isActive?"600":"400")+";color:"+(isActive?"var(--accent)":"var(--text2)")+"'>"+pct+" % <span style='font-size:11px;color:var(--text3)'>(LTV "+(100-pct)+" %)</span></td>"+
-        "<td style='text-align:right;padding:6px 8px;font-variant-numeric:tabular-nums'>"+fmt(vl)+"</td>"+
-        "<td style='text-align:right;padding:6px 8px;font-variant-numeric:tabular-nums;color:var(--green)'>"+fmt(hp)+"</td>"+
-        "<td style='text-align:right;padding:6px 8px;font-variant-numeric:tabular-nums'>"+fmt(sp)+"/m</td>";
+        "<td style='padding:6px 8px;font-weight:" + (isActive?'600':'400') + ";color:" + (isActive?'var(--accent)':'var(--text2)') + "'>" + pct + " % <span style='font-size:11px;color:var(--text3)'>(LTV " + (100-pct) + " %)</span></td>" +
+        "<td style='text-align:right;padding:6px 8px;font-variant-numeric:tabular-nums'>" + fmt(vl) + "</td>" +
+        "<td style='text-align:right;padding:6px 8px;font-variant-numeric:tabular-nums;color:var(--green)'>" + fmt(hp) + "</td>" +
+        "<td style='text-align:right;padding:6px 8px;font-variant-numeric:tabular-nums'>" + fmt(sp) + "/m</td>";
       tbody.appendChild(tr);
     });
   }
 }
+
+function toggleHypoSazby() {
+  const panel = document.getElementById('hypo-sazby-panel');
+  const arrow = document.getElementById('hypo-sazby-arrow');
+  if (panel.style.display === 'none') {
+    panel.style.display = 'block'; arrow.textContent = '▲';
+    renderHypoSazby();
+  } else { panel.style.display = 'none'; arrow.textContent = '▼'; }
+}
+
+function renderHypoSazby() {
+  const list = document.getElementById('hypo-sazby-list');
+  if (!list || !sazby || sazby.length === 0) {
+    if (list) list.innerHTML = "<div style='color:var(--text3);font-size:13px'>Otevřete nejprve záložku Refinancování.</div>";
+    return;
+  }
+  list.innerHTML = '';
+  [...sazby].sort((a,b) => a.sazba - b.sazba).forEach((s, i) => {
+    const div = document.createElement('div');
+    div.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)';
+    div.innerHTML = "<div><div style='font-size:13px;font-weight:500;color:var(--text)'>" + s.nazev + "</div><div style='font-size:11px;color:var(--text3)'>" + s.partner + "</div></div>" +
+      "<div style='font-family:Syne,sans-serif;font-size:20px;font-weight:700;color:" + (i===0?'var(--accent)':'var(--text)') + "'>" + s.sazba.toFixed(2) + " %</div>";
+    list.appendChild(div);
+  });
+}
+
 
 // INIT
 document.getElementById("k_jistina_preview").textContent = "";
