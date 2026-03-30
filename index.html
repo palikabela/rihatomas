@@ -1222,14 +1222,13 @@ function monthlyPayment(jistina, sazbaRocni, mesice) {
 let kalkMode = "uver";
 
 function syncRDluh(val, fromSlider) {
-  const parsed = parseInt(String(val).replace(/\s/g, '').replace(/,/g, ''));
+  const parsed = parseInt(String(val).replace(/[^0-9]/g, ''));
   if (!parsed || parsed <= 0) {
-    if (!fromSlider) document.getElementById("r_dluh").value = "";
     document.getElementById("r_dluh_slider").value = 0;
     calcRefi(); return;
   }
   const v = Math.min(parsed, 100000000);
-  document.getElementById("r_dluh").value = v;
+  if (fromSlider || fromSlider === "btn") document.getElementById("r_dluh").value = v;
   document.getElementById("r_dluh_slider").value = v;
   calcRefi();
 }
@@ -1278,14 +1277,14 @@ function syncKSazba(val, fromSlider) {
 }
 
 function syncJistina(val, fromSlider) {
-  const parsed = parseInt(String(val).replace(/\s/g, '').replace(/,/g, ''));
+  const parsed = parseInt(String(val).replace(/[^0-9]/g, ''));
   if (!parsed || parsed <= 0) {
-    if (!fromSlider) document.getElementById("k_jistina").value = "";
     document.getElementById("k_jistina_slider").value = 0;
     calcKalk(); return;
   }
   const v = Math.min(parsed, 100000000);
-  document.getElementById("k_jistina").value = v;
+  // Only overwrite input when coming from slider or buttons (not while typing)
+  if (fromSlider || fromSlider === "btn") document.getElementById("k_jistina").value = v;
   document.getElementById("k_jistina_slider").value = v;
   calcKalk();
 }
