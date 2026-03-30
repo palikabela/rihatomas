@@ -1396,7 +1396,7 @@ function calcKalk() {
 
   const j = getRaw("k_jistina");
   const prev = document.getElementById("k_jistina_preview");
-  if (prev) prev.textContent = "";
+  if (prev) prev.textContent = j > 0 ? fmt(j) : "";
   if (j <= 0) return;
   const splatka = monthlyPayment(j, s, m);
   const celkem = splatka * m;
