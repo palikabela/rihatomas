@@ -87,8 +87,8 @@ nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:b
 
 .metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .metric{background:var(--surface2);border-radius:8px;padding:.85rem 1rem;border:1px solid var(--border);transition:background 0.3s, border-color 0.3s}
-.metric-label{font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:400;letter-spacing:0.04em;text-transform:uppercase}
-.metric-value{font-family:'Inter',sans-serif;font-variant-numeric:tabular-nums;font-size:18px;font-weight:700;color:var(--text);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.metric-label{font-size:10px;color:var(--text3);margin-bottom:4px;font-weight:400;letter-spacing:0.03em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.metric-value{font-family:'Inter',sans-serif;font-variant-numeric:tabular-nums;font-size:17px;font-weight:700;color:var(--text);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .metric-value.green{color:var(--green)}
 .metric-value.red{color:var(--red)}
 
@@ -536,7 +536,7 @@ input[type="range"]::-webkit-slider-runnable-track {
       </div>
       <div class="card">
         <div class="card-label">Výsledek výpočtu</div>
-        <div class="metrics">
+        <div class="metrics" style="grid-template-columns:1fr 1fr">
           <div class="metric"><div class="metric-label">Měsíční splátka</div><div class="metric-value green" id="k_splatka">—</div></div>
           <div class="metric"><div class="metric-label" id="k_celkem_label">Celkem zaplatíte</div><div class="metric-value" id="k_celkem">—</div></div>
           <div class="metric"><div class="metric-label">Přeplatek úroky</div><div class="metric-value red" id="k_uroky">—</div></div>
@@ -633,7 +633,7 @@ input[type="range"]::-webkit-slider-runnable-track {
 <div id="invest" class="section">
     <div style="display:flex;gap:8px;margin-bottom:1.5rem">
       <button class="invest-tab active" id="itab-srovnani" onclick="showInvestTab('srovnani')">Srovnání produktů</button>
-      <button class="invest-tab" id="itab-cil" onclick="showInvestTab('cil')">Kolik musím investovat?</button>
+      <button class="invest-tab" id="itab-cil" onclick="showInvestTab('cil')">Cílová částka</button>
     </div>
 
     <div id="invest-srovnani">
@@ -1095,7 +1095,7 @@ input[type="range"]::-webkit-slider-runnable-track {
 
 
   <div id="hypo" class="section">
-    <div class="grid2" style="margin-bottom:14px">
+    <div class="grid2" style="margin-bottom:14px;align-items:start">
 
       <!-- PARAMETRY -->
       <div class="card">
@@ -1190,7 +1190,7 @@ input[type="range"]::-webkit-slider-runnable-track {
       <!-- VÝSLEDKY -->
       <div class="card">
         <div class="card-label">Výsledek výpočtu</div>
-        <div class="metrics">
+        <div class="metrics" style="grid-template-columns:1fr 1fr">
           <div class="metric"><div class="metric-label">Výše hypotéky</div><div class="metric-value green" id="h_res_hypo">—</div></div>
           <div class="metric"><div class="metric-label">Vlastní zdroje / Zástava</div><div class="metric-value" id="h_res_vlastni">—</div></div>
           <div class="metric"><div class="metric-label">Měsíční splátka</div><div class="metric-value green" id="h_res_splatka">—</div></div>
@@ -2461,7 +2461,13 @@ function hSliderCena(val) {
 }
 
 function hVlastniIn(el) { hCalc(); }
-function hZastavaIn(el) { hCalc(); }
+function hZastavaIn(el) {
+  const v = parseInt(el.value.replace(/[^0-9]/g,''))||0;
+  const sl = document.getElementById('h_cena_sl');
+  const maxVal = sl ? parseInt(sl.max) : 30000000;
+  if (v > maxVal) el.value = maxVal.toLocaleString('cs-CZ');
+  hCalc();
+}
 
 function hSazbaSlider(val) {
   const v = Math.round(parseFloat(val)*10)/10;
@@ -2603,7 +2609,7 @@ function hCalc() {
 
     const vlEl = document.getElementById('h_res_vlastni');
     if (vlEl) {
-      vlEl.textContent = zastava > 0 ? fmt(zastava) + ' (zástava)' : 'Zástava nem.';
+      vlEl.textContent = zastava > 0 ? fmt(zastava) : 'Zástava nem.';
       vlEl.style.color = ok ? 'var(--green)' : 'var(--red)';
     }
   }
