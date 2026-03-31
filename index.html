@@ -465,6 +465,7 @@ input[type="range"]::-webkit-slider-runnable-track {
     <button class="tab" onclick="showTab('hypo')">Hypotéka</button>
     <button class="tab" onclick="showTab('refi')">Refinancování</button>
     <button class="tab" onclick="showTab('invest')">Investice</button>
+    <button class="tab" onclick="showTab('dluhopis')">Dluhopisy</button>
     <button class="tab" onclick="showTab('penze')">Kalkulace penze</button>
     <button class="tab" onclick="showTab('rc')">Rodné číslo</button>
   </div>
@@ -817,6 +818,73 @@ input[type="range"]::-webkit-slider-runnable-track {
 
     <p class="note">Výpočty jsou orientační. Historická výnosnost nezaručuje budoucí výsledky. Státní příspěvky na DIP a penzijko nejsou zahrnuty.</p>
   </div>
+
+  <div id="dluhopis" class="section">
+    <div class="grid2" style="margin-bottom:14px;align-items:start">
+      <div class="card">
+        <div class="card-label">Parametry investice</div>
+        <div class="field">
+          <label>Výše investice (Kč)</label>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <button onclick="dlAdj(-50000)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <input type="text" id="dl_castka" placeholder="např. 500 000" class="fmt-input" oninput="dlCastkaIn(this)" onblur="formatInputValue(this);dlCalc()" style="flex:1;text-align:center">
+            <button onclick="dlAdj(50000)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+          </div>
+          <input type="range" id="dl_slider" min="50000" max="5000000" value="50000" step="50000" oninput="dlSlider(this.value)" style="width:100%;accent-color:var(--accent);cursor:pointer">
+          <div class="field-preview" id="dl_prev"></div>
+        </div>
+        <div class="field">
+          <label>Výběr emise</label>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button id="dl_btn_xv" onclick="dlSetEmise('xv')" style="width:100%;padding:12px 14px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:#0E0F11;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;text-align:left;display:flex;justify-content:space-between;align-items:center">
+              <span>EAG – XV. &nbsp;<span style="font-weight:400;opacity:0.8">3 roky · kvartálně</span></span>
+              <span style="font-size:18px;font-family:'Syne',sans-serif">6,80 % p.a.</span>
+            </button>
+            <button id="dl_btn_xvi" onclick="dlSetEmise('xvi')" style="width:100%;padding:12px 14px;border-radius:8px;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;text-align:left;display:flex;justify-content:space-between;align-items:center">
+              <span>EAG – XVI. &nbsp;<span style="font-weight:400;opacity:0.8">5 let · kvartálně</span></span>
+              <span style="font-size:18px;font-family:'Syne',sans-serif">7,80 % p.a.</span>
+            </button>
+          </div>
+        </div>
+        <div id="dl_emise_info" style="margin-top:4px;padding:12px 14px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);font-size:12px;color:var(--text2);line-height:2">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px 12px">
+            <span style="color:var(--text3)">Datum emise</span><span>1. 12. 2025</span>
+            <span style="color:var(--text3)">Splatnost</span><span id="dl_splatnost_datum">1. 12. 2028</span>
+            <span style="color:var(--text3)">Měna</span><span>CZK</span>
+            <span style="color:var(--text3)">Jmenovitá hodnota</span><span>50 000 Kč / ks</span>
+            <span style="color:var(--text3)">ISIN</span><span id="dl_isin">CZ0003578684</span>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">Výsledek výpočtu</div>
+        <div class="metrics">
+          <div class="metric"><div class="metric-label">Počet dluhopisů</div><div class="metric-value" id="dl_pocet">—</div></div>
+          <div class="metric"><div class="metric-label">Skutečná investice</div><div class="metric-value" id="dl_skutecna">—</div></div>
+          <div class="metric"><div class="metric-label">Kvartal. výnos (hrubý)</div><div class="metric-value green" id="dl_kvartal_hruby">—</div></div>
+          <div class="metric"><div class="metric-label">Kvartal. výnos (čistý)</div><div class="metric-value green" id="dl_kvartal_cisty">—</div></div>
+          <div class="metric"><div class="metric-label">Celkový výnos (hrubý)</div><div class="metric-value" id="dl_celkem_hruby">—</div></div>
+          <div class="metric"><div class="metric-label">Celkový výnos (čistý)</div><div class="metric-value green" id="dl_celkem_cisty">—</div></div>
+        </div>
+        <div style="margin-top:1.25rem">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:.5rem">Přehled výnosů po kvartalách</div>
+          <table style="width:100%;border-collapse:collapse;font-size:12px">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border)">
+                <th style="text-align:left;padding:6px 8px;color:var(--text3);font-weight:500">Kvartal</th>
+                <th style="text-align:right;padding:6px 8px;color:var(--text3);font-weight:500">Hrubý výnos</th>
+                <th style="text-align:right;padding:6px 8px;color:var(--text3);font-weight:500">Daň 15 %</th>
+                <th style="text-align:right;padding:6px 8px;color:var(--text3);font-weight:500">Čistý výnos</th>
+              </tr>
+            </thead>
+            <tbody id="dl_tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
 
 
   <div id="penze" class="section">
@@ -1296,6 +1364,7 @@ const pageContent = {
   kalk: { tag: "Finanční kalkulačka", title: "Spočítejte si<br>úvěr <em>přesně</em>", desc: "Zadejte parametry a okamžitě uvidíte měsíční splátku, přeplatek a aktuální nabídky refinancování." },
   refi: { tag: "Optimalizace úvěru", title: "Spočítejte si,<br>kolik <em>přeplácíte</em>", desc: "Zjistěte, kolik můžete ušetřit refinancováním na nižší úrok u konkurenčních bank." },
   invest: { tag: "Investiční strategie", title: "Zjistěte, kde<br>lépe <em>investovat</em>", desc: "Porovnejte výnosy ETF, DIPu, penzijka, stavebního spoření a dopady inflace." },
+  dluhopis: { tag: "Dluhopisy", title: "Kalkulačka<br><em>dluhopisů</em>", desc: "Výpočet kvartálního a celkového výnosu firemních dluhopisů EAG před a po zdanění." },
   penze: { tag: "Penzijní spoření", title: "Srovnání<br><em>penzijních fondů</em>", desc: "Porovnejte TF a DPS, zjistěte daňové výhody a kolik získáte převodem do účastnického fondu." },
   hypo: { tag: "Hypotéka", title: "Kalkulačka<br><em>hypotéky</em>", desc: "LTV, vlastní zdroje a maximální splatnost dle věku." },
   rc: { tag: "Nástroje", title: "Užitečné<br><em>kalkulačky</em>", desc: "Pomocné nástroje pro finanční poradce a jejich klienty." }
@@ -1600,7 +1669,7 @@ function calcRefi() {
 
 // TABS
 function showTab(id) {
-  const ids = ["kalk", "hypo", "refi", "invest", "penze", "rc"];
+  const ids = ["kalk", "hypo", "refi", "invest", "dluhopis", "penze", "rc"];
   document.querySelectorAll(".tab").forEach((t, i) => {
     t.classList.toggle("active", ids[i] === id);
   });
@@ -2285,7 +2354,7 @@ function formatInputValue(input) {
 }
 
 function parseInputValue(input) {
-  return parseInt(input.value.replace(/\s/g, '').replace(/\u00a0/g, '')) || 0;
+  return parseInt(input.value.replace(/\s/g, '').replace(/ /g, '')) || 0;
 }
 
 // FORMAT HELPERS
@@ -2688,6 +2757,111 @@ function hRenderSazby() {
   });
 }
 
+
+
+// DLUHOPISY
+let dlEmise = 'xv';
+const dlData = {
+  xv:  { sazba: 6.80, roky: 3, splatnost: '1. 12. 2028', isin: 'CZ0003578684' },
+  xvi: { sazba: 7.80, roky: 5, splatnost: '1. 12. 2030', isin: 'CZ0003578692' }
+};
+
+function dlSetEmise(emise) {
+  dlEmise = emise;
+  const d = dlData[emise];
+  ['xv','xvi'].forEach(k => {
+    const btn = document.getElementById('dl_btn_' + k);
+    if (!btn) return;
+    const active = k === emise;
+    btn.style.borderColor = active ? 'var(--accent)' : 'var(--border2)';
+    btn.style.background  = active ? 'var(--accent)' : 'transparent';
+    btn.style.color       = active ? '#0E0F11' : 'var(--text2)';
+  });
+  const isin  = document.getElementById('dl_isin');
+  const splat = document.getElementById('dl_splatnost_datum');
+  if (isin)  isin.textContent  = d.isin;
+  if (splat) splat.textContent = d.splatnost;
+  dlCalc();
+}
+
+function dlCastkaIn(el) {
+  const v = parseInt(el.value.replace(/[^0-9]/g,''))||0;
+  const sl = document.getElementById('dl_slider');
+  if (sl) sl.value = Math.min(v, 5000000);
+  const prev = document.getElementById('dl_prev');
+  if (prev) prev.textContent = v > 0 ? fmt(v) : '';
+  dlCalc();
+}
+
+function dlSlider(val) {
+  const v = parseInt(val)||0;
+  const el = document.getElementById('dl_castka');
+  if (el) el.value = v > 0 ? v.toLocaleString('cs-CZ') : '';
+  const prev = document.getElementById('dl_prev');
+  if (prev) prev.textContent = '';
+  dlCalc();
+}
+
+function dlAdj(delta) {
+  const cur = parseInt((document.getElementById('dl_castka').value||'').replace(/[^0-9]/g,''))||0;
+  const v = Math.max(50000, Math.min(cur + delta, 5000000));
+  document.getElementById('dl_castka').value = v.toLocaleString('cs-CZ');
+  document.getElementById('dl_slider').value = v;
+  const prev = document.getElementById('dl_prev');
+  if (prev) prev.textContent = '';
+  dlCalc();
+}
+
+function dlCalc() {
+  const castka = parseInt((document.getElementById('dl_castka').value||'').replace(/[^0-9]/g,''))||0;
+  const d = dlData[dlEmise];
+  const setT = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+
+  if (castka <= 0) {
+    ['dl_pocet','dl_skutecna','dl_kvartal_hruby','dl_kvartal_cisty','dl_celkem_hruby','dl_celkem_cisty'].forEach(id => setT(id, '—'));
+    const tbody = document.getElementById('dl_tbody');
+    if (tbody) tbody.innerHTML = '';
+    return;
+  }
+
+  const pocet       = Math.floor(castka / 50000);
+  const skutecna    = pocet * 50000;
+  const kvHruby     = skutecna * (d.sazba / 100) / 4;
+  const kvDan       = kvHruby * 0.15;
+  const kvCisty     = kvHruby - kvDan;
+  const pocetKv     = d.roky * 4;
+  const celkHruby   = kvHruby * pocetKv;
+  const celkCisty   = kvCisty * pocetKv;
+
+  setT('dl_pocet',         pocet + ' ks');
+  setT('dl_skutecna',      fmt(skutecna));
+  setT('dl_kvartal_hruby', fmt(Math.round(kvHruby)));
+  setT('dl_kvartal_cisty', fmt(Math.round(kvCisty)));
+  setT('dl_celkem_hruby',  fmt(Math.round(celkHruby)));
+  setT('dl_celkem_cisty',  fmt(Math.round(celkCisty)));
+
+  const tbody = document.getElementById('dl_tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  for (let q = 1; q <= pocetKv; q++) {
+    const tr = document.createElement('tr');
+    tr.style.cssText = 'border-bottom:1px solid var(--border)';
+    tr.innerHTML =
+      "<td style='padding:5px 8px;color:var(--text2)'>" + q + ". kvartál</td>" +
+      "<td style='text-align:right;padding:5px 8px;font-variant-numeric:tabular-nums'>" + fmt(Math.round(kvHruby)) + "</td>" +
+      "<td style='text-align:right;padding:5px 8px;font-variant-numeric:tabular-nums;color:var(--red)'>−" + fmt(Math.round(kvDan)) + "</td>" +
+      "<td style='text-align:right;padding:5px 8px;font-variant-numeric:tabular-nums;color:var(--green)'>" + fmt(Math.round(kvCisty)) + "</td>";
+    tbody.appendChild(tr);
+  }
+  const trSum = document.createElement('tr');
+  trSum.style.cssText = 'border-top:2px solid var(--border);background:var(--surface2);font-weight:700';
+  trSum.innerHTML =
+    "<td style='padding:6px 8px'>Celkem</td>" +
+    "<td style='text-align:right;padding:6px 8px;font-variant-numeric:tabular-nums'>" + fmt(Math.round(celkHruby)) + "</td>" +
+    "<td style='text-align:right;padding:6px 8px;font-variant-numeric:tabular-nums;color:var(--red)'>−" + fmt(Math.round(celkHruby * 0.15)) + "</td>" +
+    "<td style='text-align:right;padding:6px 8px;font-variant-numeric:tabular-nums;color:var(--green)'>" + fmt(Math.round(celkCisty)) + "</td>";
+  tbody.appendChild(trSum);
+}
 
 // INIT
 document.getElementById("k_jistina_preview").textContent = "";
