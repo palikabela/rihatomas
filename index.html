@@ -707,10 +707,10 @@ input[type="range"]::-webkit-slider-runnable-track {
     </div>
     <div id="i-sazby-content" style="display:none">
       <div class="sazby-fields-grid">
-        <div class="sazby-f"><label>ETF (% p.a.)</label><input type="number" id="s_etf" value="8.0" step="0.1" oninput="calcInvest()"></div>
-        <div class="sazby-f"><label>DIP (% p.a.)</label><input type="number" id="s_dip" value="6.0" step="0.1" oninput="calcInvest()"></div>
-        <div class="sazby-f"><label>Stavební spoření (% p.a.)</label><input type="number" id="s_stavebko" value="3.5" step="0.1" oninput="calcInvest()"></div>
-        <div class="sazby-f"><label>Penzijko (% p.a.)</label><input type="number" id="s_penzijko" value="4.5" step="0.1" oninput="calcInvest()"></div>
+        <div class="sazby-f"><label>ETF (% p.a.)</label><input type="number" id="s_etf" value="9.0" step="0.1" oninput="calcInvest()"></div>
+        <div class="sazby-f"><label>DIP (% p.a.)</label><input type="number" id="s_dip" value="7.5" step="0.1" oninput="calcInvest()"></div>
+        <div class="sazby-f"><label>Stavební spoření (% p.a.)</label><input type="number" id="s_stavebko" value="2.0" step="0.1" oninput="calcInvest()"></div>
+        <div class="sazby-f"><label>Penzijko (% p.a.)</label><input type="number" id="s_penzijko" value="7.0" step="0.1" oninput="calcInvest()"></div>
         <div class="sazby-f"><label>Spořicí účet (% p.a.)</label><input type="number" id="s_sporici" value="3.0" step="0.1" oninput="calcInvest()"></div>
         <div class="sazby-f"><label>Běžný účet (% p.a.)</label><input type="number" id="s_bezny" value="0.1" step="0.1" oninput="calcInvest()"></div>
       </div>
@@ -884,12 +884,12 @@ input[type="range"]::-webkit-slider-runnable-track {
       </div>
       <div class="card" style="border-color:rgba(200,240,74,0.35)">
         <div class="card-label" style="color:var(--accent)">DPS — Účastnický fond</div>
-        <div style="font-size:11px;color:var(--text3);margin-bottom:.75rem">~10 % p.a. + státní příspěvek</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:.75rem">~7 % p.a. + státní příspěvek</div>
         <div class="metrics">
           <div class="metric"><div class="metric-label">Naspořeno celkem</div><div class="metric-value green" id="dps_celkem">—</div></div>
           <div class="metric"><div class="metric-label">Z toho výnos</div><div class="metric-value green" id="dps_vynos">—</div></div>
           <div class="metric"><div class="metric-label">Měsíční renta</div><div class="metric-value green" id="dps_renta">—</div></div>
-          <div class="metric"><div class="metric-label">Zhodnocení p.a.</div><div class="metric-value green">10 %</div></div>
+          <div class="metric"><div class="metric-label">Zhodnocení p.a.</div><div class="metric-value green">7 %</div></div>
         </div>
       </div>
     </div>
@@ -2029,8 +2029,8 @@ function calcPenze() {
   const tfVlozeno = celkMesicni * mesice;
   const tfVynos = Math.max(tfCelkem - tfVlozeno - prevod, 0);
   const tfRenta = tfCelkem / (20 * 12);
-  const dpsNove = calcFVPenze(celkMesicni, 10, mesice);
-  const dpsPrevodZh = prevod * Math.pow(1 + 0.10/12, mesice);
+  const dpsNove = calcFVPenze(celkMesicni, 7, mesice);
+  const dpsPrevodZh = prevod * Math.pow(1 + 0.07/12, mesice);
   const dpsCelkem = dpsNove + dpsPrevodZh;
   const dpsVynos = dpsCelkem - tfVlozeno - prevod;
   const dpsRenta = dpsCelkem / (20 * 12);
@@ -2058,7 +2058,7 @@ function calcPenze() {
     labels.push(y === 0 ? "Dnes" : y + "r");
     const m = y * 12;
     tfData.push(Math.round(calcFVPenze(celkMesicni, 1.5, m) + prevod * Math.pow(1 + 0.015/12, m)));
-    dpsData.push(Math.round(calcFVPenze(celkMesicni, 10, m) + prevod * Math.pow(1 + 0.10/12, m)));
+    dpsData.push(Math.round(calcFVPenze(celkMesicni, 7, m) + prevod * Math.pow(1 + 0.10/12, m)));
   }
   // KOLÁČ — celkové příspěvky za celé období
   const vkladCelkem = vklad * mesice;
