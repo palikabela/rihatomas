@@ -335,7 +335,7 @@ input[type="range"]::-webkit-slider-runnable-track {
   border: 3px solid var(--bg);
 }
 
-#i_vklad_slider, #i_roky_slider, #ci_roky_slider, #ci_cil_slider {
+#i_vklad_slider, #i_roky_slider, #ci_roky_slider, #ci_cil_slider, #i_jednoraz_slider {
   -webkit-appearance: none;
   appearance: none;
   height: 8px;
@@ -347,7 +347,8 @@ input[type="range"]::-webkit-slider-runnable-track {
 #i_vklad_slider::-webkit-slider-thumb,
 #i_roky_slider::-webkit-slider-thumb,
 #ci_roky_slider::-webkit-slider-thumb,
-#ci_cil_slider::-webkit-slider-thumb {
+#ci_cil_slider::-webkit-slider-thumb,
+#i_jednoraz_slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 28px;
   height: 28px;
@@ -360,7 +361,8 @@ input[type="range"]::-webkit-slider-runnable-track {
 #i_vklad_slider::-moz-range-thumb,
 #i_roky_slider::-moz-range-thumb,
 #ci_roky_slider::-moz-range-thumb,
-#ci_cil_slider::-moz-range-thumb {
+#ci_cil_slider::-moz-range-thumb,
+#i_jednoraz_slider::-moz-range-thumb {
   width: 28px;
   height: 28px;
   border-radius: 50%;
@@ -643,18 +645,25 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div class="field">
           <label>Měsíční vklad (Kč)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <button onclick="syncIVklad(getRaw('i_vklad')-500,false)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <button onclick="syncIVklad(getRaw('i_vklad')-100,false)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
             <input type="text" id="i_vklad" value="" placeholder="např. 5 000" class="fmt-input" oninput="syncIVklad(this.value.replace(/[^\d]/g,''),false)" onblur="formatInputValue(this)" style="flex:1;text-align:center">
-            <button onclick="syncIVklad(getRaw('i_vklad')+500,false)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+            <button onclick="syncIVklad(getRaw('i_vklad')+100,false)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
           <div class="field-preview" id="i_vklad_preview"></div>
-          <input type="range" id="i_vklad_slider" min="0" max="15000" value="0" step="500"
+          <input type="range" id="i_vklad_slider" min="0" max="15000" value="0" step="100"
             oninput="syncIVklad(this.value,true)"
             style="width:100%;accent-color:var(--accent);cursor:pointer;margin-bottom:4px">
         </div>
         <div class="field">
           <label>Jednorázový vklad (Kč)</label>
-          <input type="number" id="i_jednoraz" value="" placeholder="např. 100 000" min="0" step="1000" oninput="calcInvest()">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <button onclick="syncIJednoraz((parseInt(document.getElementById('i_jednoraz').value)||0)-1000)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <input type="number" id="i_jednoraz" value="" placeholder="např. 100 000" min="0" step="1000" oninput="syncIJednoraz(this.value)" style="flex:1;text-align:center">
+            <button onclick="syncIJednoraz((parseInt(document.getElementById('i_jednoraz').value)||0)+1000)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+          </div>
+          <input type="range" id="i_jednoraz_slider" min="0" max="5000000" value="0" step="1000"
+            oninput="syncIJednoraz(this.value, true)"
+            style="width:100%;accent-color:var(--accent);cursor:pointer;margin-bottom:4px">
           <div class="field-preview" id="i_jednoraz_preview"></div>
         </div>
         <div class="field">
@@ -1707,6 +1716,19 @@ function calcFV(mesicni, sazbaRocni, roky) {
   const r = sazbaRocni / 100 / 12;
   const n = roky * 12;
   return mesicni * ((Math.pow(1+r, n) - 1) / r) * (1+r);
+}
+
+function syncIJednoraz(val, fromSlider) {
+  const parsed = parseInt(val);
+  if (!parsed || parsed <= 0) {
+    if (!fromSlider) document.getElementById("i_jednoraz").value = "";
+    document.getElementById("i_jednoraz_slider").value = 0;
+    calcInvest(); return;
+  }
+  const v = Math.min(Math.max(parsed, 0), 5000000);
+  document.getElementById("i_jednoraz").value = v;
+  document.getElementById("i_jednoraz_slider").value = v;
+  calcInvest();
 }
 
 function syncIVklad(val, fromSlider) {
