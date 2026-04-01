@@ -893,13 +893,22 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div class="card-label">Parametry spoření</div>
         <div class="field">
           <label>Měsíční příspěvek klienta (Kč)</label>
-          <input type="number" id="p_vklad" value="" min="0" step="100" placeholder="např. 1 700" oninput="calcPenze()">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <button onclick="pAdjVklad(-100)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <input type="number" id="p_vklad" value="" min="0" step="100" placeholder="např. 1 700" oninput="pVkladSync(this.value)" style="flex:1;text-align:center">
+            <button onclick="pAdjVklad(100)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+          </div>
+          <input type="range" id="p_vklad_slider" min="0" max="5000" value="0" step="100" oninput="pVkladSync(this.value, true)" style="width:100%;accent-color:var(--accent);cursor:pointer">
           <div class="field-preview" id="p_vklad_preview"></div>
         </div>
         <div class="field">
-          <label>Věk klienta</label>
-          <input type="number" id="p_vek" value="" min="18" max="70" placeholder="např. 35" oninput="calcPenze()">
-          <div class="field-preview" id="p_vek_info" style="color:var(--text2)"></div>
+          <label>Rok narození</label>
+          <div style="display:flex;align-items:center;gap:8px">
+            <button onclick="pAdjRok(-1)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <input type="number" id="p_vek" value="" min="1940" max="2005" placeholder="např. 1985" oninput="calcPenze()" style="flex:1;text-align:center">
+            <button onclick="pAdjRok(1)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+          </div>
+          <div class="field-preview" id="p_vek_info" style="color:var(--text2);margin-top:6px"></div>
         </div>
 
         <div class="field">
@@ -2044,9 +2053,36 @@ function calcFVPenze(mesicniVklad, sazbaRocni, mesice) {
   return mesicniVklad * ((Math.pow(1+r, mesice) - 1) / r) * (1+r);
 }
 
+function pAdjVklad(delta) {
+  const el = document.getElementById("p_vklad");
+  const sl = document.getElementById("p_vklad_slider");
+  const cur = parseInt(el.value) || 0;
+  const v = Math.max(0, Math.min(cur + delta, 5000));
+  el.value = v;
+  if (sl) sl.value = v;
+  calcPenze();
+}
+
+function pVkladSync(val, fromSlider) {
+  const v = parseInt(val) || 0;
+  const el = document.getElementById("p_vklad");
+  const sl = document.getElementById("p_vklad_slider");
+  if (fromSlider && el) el.value = v;
+  if (sl && !fromSlider) sl.value = Math.min(v, 5000);
+  calcPenze();
+}
+
+function pAdjRok(delta) {
+  const el = document.getElementById("p_vek");
+  const cur = parseInt(el.value) || 1985;
+  el.value = Math.max(1940, Math.min(cur + delta, 2005));
+  calcPenze();
+}
+
 function calcPenze() {
   const vklad = parseFloat(document.getElementById("p_vklad").value) || 0;
-  const vek = parseInt(document.getElementById("p_vek").value) || 35;
+  const rokNarozeni = parseInt(document.getElementById("p_vek").value) || 0;
+  const vek = rokNarozeni > 1900 ? new Date().getFullYear() - rokNarozeni : 0;
   const zamest = parseFloat(document.getElementById("p_zamest").value) || 0;
   const prevod = parseFloat(document.getElementById("p_prevod").value) || 0;
   const setP = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val > 0 ? fmt(val) : ""; };
@@ -2055,7 +2091,7 @@ function calcPenze() {
 
   // Require both vklad and vek to be filled
   const vekRaw = document.getElementById("p_vek").value;
-  if (!vekRaw || vek <= 0 || vek >= 65) {
+  if (!vekRaw || rokNarozeni < 1940 || vek <= 0 || vek >= 65) {
     ["tf_celkem","tf_vynos","tf_renta","dps_celkem","dps_vynos","dps_renta","p_rozdil_celkem","p_rozdil_renta","p_stat","p_stat_rok","p_dan_uspora","p_rocni_vyhoda","p_roky_do","p_vlozeno"].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = "—"; });
     const dop = document.getElementById("p_doporuceni"); if (dop) dop.style.display = "none";
     const di = document.getElementById("p_dan_info"); if (di) di.style.display = "none";
@@ -2076,7 +2112,7 @@ function calcPenze() {
   setT("p_rocni_vyhoda", fmt(rocniVyhoda) + "/rok");
   setT("p_roky_do", roky + " let");
   const vekInfo = document.getElementById("p_vek_info");
-  if (vekInfo) vekInfo.textContent = "Do důchodu (65 let) zbývá " + roky + " let";
+  if (vekInfo) vekInfo.textContent = "Věk: " + vek + " let — do důchodu zbývá " + roky + " let";
   setT("p_vlozeno", vklad > 0 ? fmt(celkMesicni * mesice) : "—");
   const danInfo = document.getElementById("p_dan_info");
   if (danInfo) {
