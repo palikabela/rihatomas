@@ -658,9 +658,9 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div class="field">
           <label>Jednorázový vklad (Kč)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <button onclick="syncIJednoraz((parseInt(document.getElementById('i_jednoraz').value)||0)-1000)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <button onclick="syncIJednoraz((parseInt((document.getElementById('i_jednoraz').value||'').replace(/[^0-9]/g,''))||0)-1000)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
             <input type="number" id="i_jednoraz" value="" placeholder="např. 100 000" min="0" step="1000" oninput="syncIJednoraz(this.value)" style="flex:1;text-align:center">
-            <button onclick="syncIJednoraz((parseInt(document.getElementById('i_jednoraz').value)||0)+1000)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+            <button onclick="syncIJednoraz((parseInt((document.getElementById('i_jednoraz').value||'').replace(/[^0-9]/g,''))||0)+1000)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
           <input type="range" id="i_jednoraz_slider" min="0" max="5000000" value="0" step="1000"
             oninput="syncIJednoraz(this.value, true)"
@@ -1788,9 +1788,10 @@ function calcFV(mesicni, sazbaRocni, roky) {
 }
 
 function syncIJednoraz(val, fromSlider) {
-  const parsed = parseInt(val);
+  const parsed = parseInt(String(val).replace(/[^0-9]/g,''));
   if (!parsed || parsed <= 0) {
-    if (!fromSlider) document.getElementById("i_jednoraz").value = "";
+    const el = document.getElementById("i_jednoraz");
+    if (el) { el.value = ""; }
     document.getElementById("i_jednoraz_slider").value = 0;
     calcInvest(); return;
   }
@@ -1803,7 +1804,8 @@ function syncIJednoraz(val, fromSlider) {
 function syncIVklad(val, fromSlider) {
   const parsed = parseInt(val);
   if (!parsed || parsed <= 0) {
-    if (!fromSlider) document.getElementById("i_vklad").value = "";
+    const el = document.getElementById("i_vklad");
+    if (!fromSlider && el) { el.value = ""; el.dataset.raw = ""; }
     document.getElementById("i_vklad_slider").value = 0;
     calcInvest(); return;
   }
@@ -1823,7 +1825,7 @@ function syncIRoky(val) {
 
 function calcInvest() {
   const vklad = getRaw("i_vklad");
-  const jednoraz = parseFloat(document.getElementById("i_jednoraz").value) || 0;
+  const jednoraz = parseInt((document.getElementById("i_jednoraz").value||"").replace(/[^0-9]/g,""))||0;
   const roky = parseInt(document.getElementById("i_roky").value) || 1;
   const inflace = parseFloat(document.getElementById("i_inflace").value) || 0;
   const sEtf = parseFloat(document.getElementById("s_etf").value) || 0;
