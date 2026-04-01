@@ -21,18 +21,26 @@ function calcFVPenze(mesicniVklad, sazbaRocni, mesice) {
   return mesicniVklad * ((Math.pow(1+r, mesice) - 1) / r) * (1+r);
 }
 
+function pAdjRok(delta) {
+  const el = document.getElementById("p_rok");
+  const cur = parseInt(el.value) || 1985;
+  el.value = Math.max(1950, Math.min(cur + delta, 2005));
+  calcPenze();
+}
+
 function calcPenze() {
   const vklad = parseFloat(document.getElementById("p_vklad").value) || 0;
-  const vek = parseInt(document.getElementById("p_vek").value) || 35;
+  const rokNarozeni = parseInt(document.getElementById("p_rok").value) || 0;
+  const vek = rokNarozeni > 0 ? new Date().getFullYear() - rokNarozeni : 0;
   const zamest = parseFloat(document.getElementById("p_zamest").value) || 0;
   const prevod = parseFloat(document.getElementById("p_prevod").value) || 0;
   const setP = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val > 0 ? fmt(val) : ""; };
   setP("p_vklad_preview", vklad); setP("p_zamest_preview", zamest); setP("p_prevod_preview", prevod);
   const setT = (id, text) => { const el = document.getElementById(id); if(el) el.textContent = text; };
 
-  // Require both vklad and vek to be filled
-  const vekRaw = document.getElementById("p_vek").value;
-  if (!vekRaw || vek <= 0 || vek >= 65) {
+  // Require both vklad and rok to be filled
+  const rokRaw = document.getElementById("p_rok").value;
+  if (!rokRaw || vek <= 0 || vek >= 65) {
     ["tf_celkem","tf_vynos","tf_renta","dps_celkem","dps_vynos","dps_renta","p_rozdil_celkem","p_rozdil_renta","p_stat","p_stat_rok","p_dan_uspora","p_rocni_vyhoda","p_roky_do","p_vlozeno"].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = "—"; });
     const dop = document.getElementById("p_doporuceni"); if (dop) dop.style.display = "none";
     const di = document.getElementById("p_dan_info"); if (di) di.style.display = "none";
@@ -53,7 +61,7 @@ function calcPenze() {
   setT("p_rocni_vyhoda", fmt(rocniVyhoda) + "/rok");
   setT("p_roky_do", roky + " let");
   const vekInfo = document.getElementById("p_vek_info");
-  if (vekInfo) vekInfo.textContent = "Do důchodu (65 let) zbývá " + roky + " let";
+  if (vekInfo) vekInfo.textContent = "Věk: " + vek + " let — do důchodu (65 let) zbývá " + roky + " let";
   setT("p_vlozeno", vklad > 0 ? fmt(celkMesicni * mesice) : "—");
   const danInfo = document.getElementById("p_dan_info");
   if (danInfo) {
@@ -177,4 +185,3 @@ function calcPenze() {
     }
   });
 }
-
