@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hypoteční dotazník – TRfin</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #F9FAFB;
+    --bg2: #FFFFFF;
+    --bg3: #F3F4F6;
+    --border: rgba(0,0,0,0.08);
+    --border2: rgba(0,0,0,0.12);
+    --accent: #A6CC2B;
+    --accent-dim: rgba(166,204,43,0.15);
+    --text: #111827;
+    --text2: #4B5563;
+    --text3: #6B7280;
+    --green: #16A34A;
+    --red: #DC2626;
+    --radius: 10px;
+    --section-gap: 2rem;
+  }
+
+  *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(249,250,251,0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px; font-weight: 700;
+    color: var(--text); letter-spacing: -0.02em;
+  }
+  .nav-logo span { color: var(--accent); }
+  .nav-actions { display: flex; gap: 10px; align-items: center; }
+  .autosave {
+    font-size: 13px; color: var(--text3);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .autosave-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 6px var(--green);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 11px 22px;
+    border-radius: 50px; border: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px; font-weight: 500;
+    cursor: pointer; transition: all 0.18s;
+    white-space: nowrap;
+  }
+  .btn-primary { background: var(--accent); color: #111827; font-weight: 600; }
+  .btn-primary:hover { filter: brightness(1.08); transform: translateY(-1px); }
+  .btn-ghost {
+    background: transparent; color: var(--text2);
+    border: 1px solid var(--border2);
+  }
+  .btn-ghost:hover { color: var(--text); border-color: var(--text3); }
+  .btn-sm { padding: 7px 14px; font-size: 13px; }
+  .btn-danger {
+    background: rgba(220,38,38,0.07); color: var(--red);
+    border: 1px solid rgba(220,38,38,0.18);
+    border-radius: 8px;
+  }
+  .btn-danger:hover { background: rgba(220,38,38,0.14); }
+
+  /* ── LAYOUT ── */
+  .container { max-width: 960px; margin: 0 auto; padding: 2.5rem 1.5rem 6rem; }
+
+  /* ── PROGRESS ── */
+  .progress-wrap { margin-bottom: 2rem; }
+  .progress-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .progress-title { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; color: var(--text2); letter-spacing: 0.04em; text-transform: uppercase; }
+  .progress-pct { font-size: 13px; color: var(--text3); }
+  .progress-track { height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.5s cubic-bezier(.4,0,.2,1); }
+
+  /* ── SECTION CARD ── */
+  .section {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .section-header {
+    padding: 1.1rem 1.75rem;
+    display: flex; align-items: center; gap: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-icon {
+    font-size: 20px;
+    width: 40px; height: 40px;
+    background: var(--bg3);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.05rem; font-weight: 700;
+    color: var(--text); letter-spacing: -0.01em;
+  }
+  .section-body { padding: 1.1rem 1.5rem; }
+
+  /* ── FORM FIELDS ── */
+  .field { margin-bottom: 0.9rem; }
+  .field:last-child { margin-bottom: 0; }
+  .field label {
+    display: block;
+    font-size: 12px; font-weight: 500;
+    color: var(--text2); margin-bottom: 5px;
+  }
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    padding: 9px 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    background: var(--bg2);
+    color: var(--text);
+    transition: border-color 0.15s, box-shadow 0.15s;
+    appearance: none; -webkit-appearance: none;
+    outline: none;
+    resize: vertical;
+  }
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(166,204,43,0.18);
+    background: var(--bg2);
+  }
+  .field input::placeholder,
+  .field textarea::placeholder { color: var(--text3); }
+  .field textarea { min-height: 80px; line-height: 1.5; }
+  .field select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 40px; }
+
+  /* ── GRIDS ── */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  @media(max-width:640px) { .grid2,.grid3 { grid-template-columns: 1fr; } }
+
+  /* ── DUAL APPLICANT ── */
+  .dual-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+  .dual-col { padding: 0 1.25rem; }
+  .dual-col:first-child { border-right: 1px solid var(--border); padding-left: 0; }
+  .dual-col:last-child { padding-right: 0; }
+  .col-label {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem; padding-bottom: 10px;
+    border-bottom: 2px solid var(--accent-dim);
+  }
+  @media(max-width:640px) {
+    .dual-grid { grid-template-columns: 1fr; }
+    .dual-col:first-child { border-right: none; border-bottom: 1px solid var(--border); padding: 0 0 1.25rem 0; }
+    .dual-col:last-child { padding: 1.25rem 0 0 0; }
+  }
+
+  /* ── RADIO PILLS (like web) ── */
+  .radio-group { display: flex; gap: 8px; flex-wrap: wrap; }
+  .radio-group label {
+    padding: 7px 16px;
+    border: 1px solid var(--border2);
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 13px; color: var(--text2);
+    transition: all 0.15s;
+    font-weight: 400;
+    margin-bottom: 0 !important;
+    background: var(--bg2);
+  }
+  .radio-group input[type=radio] { display: none; }
+  .radio-group label.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #111827;
+    font-weight: 600;
+  }
+
+  /* ── DIVIDER ── */
+  .divider { height: 1px; background: var(--border); margin: 1.25rem 0; }
+
+  /* ── ÚVĚR CARD (inside vydaje) ── */
+  .uver-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 12px;
+  }
+  .uver-card-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 1rem;
+  }
+  .uver-card-title { font-size: 13px; font-weight: 600; color: var(--text2); }
+
+  /* ── ADD ROW BTN ── */
+  .add-row-wrap { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .add-row-label { font-size: 13px; font-weight: 600; color: var(--text2); letter-spacing: 0.03em; text-transform: uppercase; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 24px; right: 24px;
+    background: var(--text); color: var(--bg2);
+    border-radius: 12px; padding: 13px 20px;
+    font-size: 14px; font-weight: 500;
+    display: flex; align-items: center; gap: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    transform: translateY(80px); opacity: 0;
+    transition: all 0.3s cubic-bezier(.4,0,.2,1);
+    z-index: 999;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* ── BOTTOM BAR ── */
+  .bottom-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: rgba(249,250,251,0.95);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border);
+    padding: 12px 2rem;
+    display: flex; justify-content: flex-end; gap: 10px;
+    z-index: 90;
+  }
+
+  @media(max-width:620px) {
+    nav { padding: 0 1rem; }
+    .container { padding: 1.5rem 1rem 5rem; }
+    .section-body { padding: 1.25rem 1rem; }
+    .section-header { padding: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">TR<span>fin</span></div>
+  <div class="nav-actions">
+    <div class="autosave"><div class="autosave-dot"></div> Průběžně ukládáno</div>
+    <button class="btn btn-ghost btn-sm" onclick="clearForm()">🗑 Vymazat</button>
+    <button class="btn btn-primary btn-sm" onclick="generatePDF()">⬇ Uložit PDF</button>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="container">
+
+  <!-- HERO -->
+  <div style="text-align:center;padding:1.5rem 0 2rem;max-width:560px;margin:0 auto">
+    <div style="display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);background:var(--accent-dim);padding:4px 14px;border-radius:20px;margin-bottom:.75rem;border:1px solid rgba(166,204,43,0.25)">Hypoteční dotazník</div>
+    <h1 style="font-family:'Syne',sans-serif;font-size:clamp(24px,3vw,34px);font-weight:700;letter-spacing:-0.04em;line-height:1.1;margin-bottom:.5rem">Vyplňte <em style="color:var(--accent);font-style:normal">údaje klienta</em></h1>
+    <p style="font-size:14px;color:var(--text2)">Data se průběžně ukládají. Po vyplnění exportujte jako PDF.</p>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap">
+    <div class="progress-top">
+      <span class="progress-title">Vyplněnost</span>
+      <span class="progress-pct" id="progress-label">0 %</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+
+  <!-- ZPRACOVATEL -->
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1rem 1.5rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:16px;box-shadow:0 1px 3px rgba(0,0,0,0.04)">
+    <div style="font-size:13px;font-weight:600;color:var(--text2);white-space:nowrap">👤 Zpracovatel</div>
+    <input type="text" id="zpracovatel" placeholder="Jméno a příjmení poradce" oninput="save()" style="flex:1;padding:10px 14px;font-family:'Inter',sans-serif;font-size:15px;border:1px solid var(--border2);border-radius:8px;background:var(--bg);color:var(--text);outline:none;transition:border-color 0.15s" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border2)'">
+  </div>
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon">🏠</div>
+      <div class="section-title">Úvěr — základní parametry</div>
+    </div>
+    <div class="section-body fields-single">
+      <div class="field">
+        <label>Účel úvěru</label>
+        <div class="radio-group" id="rg-ucel">
+          <label onclick="setRadio('ucel','koupě')"><input type="radio" name="ucel" value="koupě"><span>Koupě</span></label>
+          <label onclick="setRadio('ucel','výstavba')"><input type="radio" name="ucel" value="výstavba"><span>Výstavba</span></label>
+          <label onclick="setRadio('ucel','rekonstrukce')"><input type="radio" name="ucel" value="rekonstrukce"><span>Rekonstrukce</span></label>
+          <label onclick="setRadio('ucel','refinancování')"><input type="radio" name="ucel" value="refinancování"><span>Refinancování</span></label>
+          <label onclick="setRadio('ucel','jiné')"><input type="radio" name="ucel" value="jiné"><span>Jiné</span></label>
+        </div>
+        <input type="text" id="ucel-jine" placeholder="Upřesnění / jiný účel" style="margin-top:8px" oninput="save()">
+      </div>
+
+      <div class="grid3">
+        <div class="field">
+          <label>Celkový záměr (Kč)</label>
+          <input type="text" id="celkovy-zamer" placeholder="5 000 000" oninput="fmtField(this);save()">
+        </div>
+        <div class="field">
+          <label>Vlastní zdroje (Kč)</label>
+          <input type="text" id="vlastni-zdroje" placeholder="1 000 000" oninput="fmtField(this);save()">
+        </div>
+        <div class="field">
+          <label>Výše úvěru (Kč)</label>
+          <input type="text" id="vyse-uveru" placeholder="4 000 000" oninput="fmtField(this);save()">
+        </div>
+      </div>
+
+      <div class="grid3">
+        <div class="field">
+          <label>Splatnost (let)</label>
+          <input type="number" id="splatnost" placeholder="30" min="1" max="35" oninput="save()">
+        </div>
+        <div class="field">
+          <label>Délka fixace</label>
+          <select id="fixace" onchange="save()">
+            <option value="">— vyberte —</option>
+            <option>1 rok</option>
+            <option>2 roky</option>
+            <option>3 roky</option>
+            <option>5 let</option>
+            <option>7 let</option>
+            <option>10 let</option>
+            <option>Float (variabilní)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Max. měsíční splátka (Kč)</label>
+          <input type="text" id="max-splatka" placeholder="25 000" oninput="fmtField(this);save()">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Předpokládaná odhadní cena nemovitosti do zástavy (Kč)</label>
+        <input type="text" id="odhad-cena" placeholder="6 000 000" oninput="fmtField(this);save()">
+      </div>
+
+      <div class="field">
+        <label>Jak nyní klient řeší bydlení</label>
+        <div class="radio-group" id="rg-bydleni">
+          <label onclick="setRadio('bydleni','vlastní')"><input type="radio" name="bydleni" value="vlastní"><span>Vlastní byt/dům</span></label>
+          <label onclick="setRadio('bydleni','nájem')"><input type="radio" name="bydleni" value="nájem"><span>Nájem</span></label>
+          <label onclick="setRadio('bydleni','s rodiči')"><input type="radio" name="bydleni" value="s rodiči"><span>S rodiči</span></label>
+          <label onclick="setRadio('bydleni','jiné')"><input type="radio" name="bydleni" value="jiné"><span>Jiné</span></label>
+        </div>
+        <input type="text" id="bydleni-jine" placeholder="Upřesnění" style="margin-top:8px" oninput="save()">
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. KLIENTI -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon">👤</div>
+      <div class="section-title">Klienti</div>
+    </div>
+    <div class="section-body">
+      <div class="dual-grid">
+        <div class="dual-col">
+          <div class="col-label">1. žadatel</div>
+          <div class="field"><label>Jméno a příjmení</label><input type="text" id="k1-jmeno" oninput="save()"></div>
+          <div class="field"><label>Datum narození</label><input type="text" id="k1-narozeni" placeholder="1. 1. 1985" oninput="save()"></div>
+          <div class="field"><label>Rodné číslo</label><input type="text" id="k1-rc" placeholder="000101/0001" oninput="save()"></div>
+          <div class="field">
+            <label>Rodinný stav</label>
+            <select id="k1-stav" onchange="save()">
+              <option value="">—</option>
+              <option>Svobodný/á</option>
+              <option>Ženatý/Vdaná</option>
+              <option>Druh/Družka</option>
+              <option>Rozvedený/á</option>
+              <option>Vdovec/Vdova</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Nejvyšší vzdělání</label>
+            <select id="k1-vzdelani" onchange="save()">
+              <option value="">—</option>
+              <option>Základní</option>
+              <option>Středoškolské bez maturity</option>
+              <option>Středoškolské s maturitou</option>
+              <option>Vyšší odborné (VOŠ)</option>
+              <option>Vysokoškolské (Bc.)</option>
+              <option>Vysokoškolské (Mgr./Ing.)</option>
+              <option>Vysokoškolské (Ph.D.)</option>
+            </select>
+          </div>
+          <div class="field"><label>Státní příslušnost</label><input type="text" id="k1-statni" placeholder="ČR" oninput="save()"></div>
+          <div class="field"><label>Pobyt (cizinci)</label><input type="text" id="k1-pobyt" placeholder="trvalý / přechodný" oninput="save()"></div>
+          <div class="field"><label>Ulice, č.p.</label><input type="text" id="k1-ulice" oninput="save()"></div>
+          <div class="field"><label>Obec, PSČ</label><input type="text" id="k1-obec" oninput="save()"></div>
+          <div class="field"><label>Jména dětí, data nar.</label><textarea id="k1-deti" oninput="save()" placeholder="Jan 15.3.2018, Marie 2.6.2021"></textarea></div>
+          <div class="field"><label>Telefon / mobil</label><input type="tel" id="k1-tel" oninput="save()"></div>
+          <div class="field"><label>Email</label><input type="email" id="k1-email" oninput="save()"></div>
+        </div>
+        <div class="dual-col">
+          <div class="col-label">2. žadatel</div>
+          <div class="field"><label>Jméno a příjmení</label><input type="text" id="k2-jmeno" oninput="save()"></div>
+          <div class="field"><label>Datum narození</label><input type="text" id="k2-narozeni" placeholder="1. 1. 1985" oninput="save()"></div>
+          <div class="field"><label>Rodné číslo</label><input type="text" id="k2-rc" placeholder="000101/0001" oninput="save()"></div>
+          <div class="field">
+            <label>Vztah k 1. žadateli</label>
+            <select id="k2-vztah" onchange="save()">
+              <option value="">—</option>
+              <option>Manžel/Manželka</option>
+              <option>Druh/Družka</option>
+              <option>Partner/ka</option>
+              <option>Rodič</option>
+              <option>Jiný</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Nejvyšší vzdělání</label>
+            <select id="k2-vzdelani" onchange="save()">
+              <option value="">—</option>
+              <option>Základní</option>
+              <option>Středoškolské bez maturity</option>
+              <option>Středoškolské s maturitou</option>
+              <option>Vyšší odborné (VOŠ)</option>
+              <option>Vysokoškolské (Bc.)</option>
+              <option>Vysokoškolské (Mgr./Ing.)</option>
+              <option>Vysokoškolské (Ph.D.)</option>
+            </select>
+          </div>
+          <div class="field"><label>Státní příslušnost</label><input type="text" id="k2-statni" placeholder="ČR" oninput="save()"></div>
+          <div class="field"><label>Pobyt (cizinci)</label><input type="text" id="k2-pobyt" placeholder="trvalý / přechodný" oninput="save()"></div>
+          <div class="field"><label>Ulice, č.p.</label><input type="text" id="k2-ulice" oninput="save()"></div>
+          <div class="field"><label>Obec, PSČ</label><input type="text" id="k2-obec" oninput="save()"></div>
+          <div class="field"><label>Jména dětí, data nar.</label><textarea id="k2-deti" oninput="save()" placeholder="společné s 1. žadatelem"></textarea></div>
+          <div class="field"><label>Telefon / mobil</label><input type="tel" id="k2-tel" oninput="save()"></div>
+          <div class="field"><label>Email</label><input type="email" id="k2-email" oninput="save()"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. PŘÍJMY -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon">💼</div>
+      <div class="section-title">Příjmy</div>
+    </div>
+    <div class="section-body">
+      <div class="dual-grid">
+        <div class="dual-col">
+          <div class="col-label">1. žadatel</div>
+          <div class="field">
+            <label>Typ pracovního poměru</label>
+            <select id="k1-typ-prijmu" onchange="save()">
+              <option value="">—</option>
+              <option>Zaměstnanec — doba neurčitá</option>
+              <option>Zaměstnanec — doba určitá</option>
+              <option>OSVČ</option>
+              <option>Zaměstnaný ve vlastní firmě</option>
+              <option>Mateřská/rodičovská dovolená</option>
+              <option>Důchodce</option>
+              <option>Bez příjmu</option>
+            </select>
+          </div>
+          <div class="field"><label>Průměr čistého příjmu — posl. 12 měs. (Kč)</label><input type="text" id="k1-p12" oninput="fmtField(this);save()"></div>
+          <div class="field"><label>Průměr čistého příjmu — posl. 3 měs. (Kč)</label><input type="text" id="k1-p3" oninput="fmtField(this);save()"></div>
+          <div class="field"><label>Pracovní poměr (u doby určité: od kdy do kdy, prodlužován?)</label><textarea id="k1-pp" oninput="save()"></textarea></div>
+          <div class="field"><label>Mzda na účet / hotovost</label>
+            <select id="k1-mzda-ucet" onchange="save()">
+              <option value="">—</option>
+              <option>Celá na účet</option>
+              <option>Část na účet, zbytek hotovost</option>
+              <option>Celá hotovost</option>
+            </select>
+          </div>
+          <div class="field"><label>Oprávnění k podnikání (i jako zaměstnanec)?</label>
+            <select id="k1-podnikani" onchange="save()">
+              <option value="">—</option>
+              <option>Ano</option>
+              <option>Ne</option>
+            </select>
+          </div>
+          <div class="field"><label>DP za loňský rok — ve ztrátě?</label>
+            <select id="k1-ztrata" onchange="save()">
+              <option value="">—</option>
+              <option>Není ve ztrátě</option>
+              <option>Ve ztrátě</option>
+              <option>Nepodniká</option>
+            </select>
+          </div>
+        </div>
+        <div class="dual-col">
+          <div class="col-label">2. žadatel</div>
+          <div class="field">
+            <label>Typ pracovního poměru</label>
+            <select id="k2-typ-prijmu" onchange="save()">
+              <option value="">—</option>
+              <option>Zaměstnanec — doba neurčitá</option>
+              <option>Zaměstnanec — doba určitá</option>
+              <option>OSVČ</option>
+              <option>Zaměstnaný ve vlastní firmě</option>
+              <option>Mateřská/rodičovská dovolená</option>
+              <option>Důchodce</option>
+              <option>Bez příjmu</option>
+            </select>
+          </div>
+          <div class="field"><label>Průměr čistého příjmu — posl. 12 měs. (Kč)</label><input type="text" id="k2-p12" oninput="fmtField(this);save()"></div>
+          <div class="field"><label>Průměr čistého příjmu — posl. 3 měs. (Kč)</label><input type="text" id="k2-p3" oninput="fmtField(this);save()"></div>
+          <div class="field"><label>Pracovní poměr (u doby určité: od kdy do kdy, prodlužován?)</label><textarea id="k2-pp" oninput="save()"></textarea></div>
+          <div class="field"><label>Mzda na účet / hotovost</label>
+            <select id="k2-mzda-ucet" onchange="save()">
+              <option value="">—</option>
+              <option>Celá na účet</option>
+              <option>Část na účet, zbytek hotovost</option>
+              <option>Celá hotovost</option>
+            </select>
+          </div>
+          <div class="field"><label>Oprávnění k podnikání (i jako zaměstnanec)?</label>
+            <select id="k2-podnikani" onchange="save()">
+              <option value="">—</option>
+              <option>Ano</option>
+              <option>Ne</option>
+            </select>
+          </div>
+          <div class="field"><label>DP za loňský rok — ve ztrátě?</label>
+            <select id="k2-ztrata" onchange="save()">
+              <option value="">—</option>
+              <option>Není ve ztrátě</option>
+              <option>Ve ztrátě</option>
+              <option>Nepodniká</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. VÝDAJE -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon">📋</div>
+      <div class="section-title">Výdaje a závazky</div>
+    </div>
+    <div class="section-body fields-single">
+
+      <div class="grid2">
+        <div class="field"><label>Celkové výdaje za domácnost / měs. (Kč)</label><input type="text" id="vydaje-domacnost" oninput="fmtField(this);save()"></div>
+        <div class="field"><label>Výživné / měs. (Kč)</label><input type="text" id="vyzivne" oninput="fmtField(this);save()"></div>
+      </div>
+
+      <div class="add-row-wrap">
+        <div class="add-row-label">Stávající úvěry</div>
+        <button class="btn btn-ghost btn-sm" onclick="addUver()">+ Přidat úvěr</button>
+      </div>
+      <div id="uvery-list"></div>
+
+      <div class="divider"></div>
+
+      <div class="grid2">
+        <div class="field">
+          <label>Kontokorent — limit (Kč) + instituce</label>
+          <input type="text" id="kontokorent" oninput="save()" placeholder="50 000 Kč – Raiffeisenbank">
+        </div>
+        <div class="field">
+          <label>Kreditní karta — limit (Kč) + instituce</label>
+          <input type="text" id="kreditka" oninput="save()" placeholder="100 000 Kč – Česká spořitelna">
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="field">
+          <label>Splátkový prodej (HOME CR., Cetelem…)</label>
+          <input type="text" id="splatky" oninput="save()">
+        </div>
+        <div class="field">
+          <label>Vedení jako spoludlužník nebo ručitel</label>
+          <select id="rucitel" onchange="save()">
+            <option value="">—</option>
+            <option>Ne</option>
+            <option>Ano — 1. žadatel</option>
+            <option>Ano — 2. žadatel</option>
+            <option>Ano — oba</option>
+          </select>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 5. ZAJIŠTĚNÍ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon">🔐</div>
+      <div class="section-title">Zajištění úvěru</div>
+    </div>
+    <div class="section-body fields-single">
+      <div class="field"><label>U stávajícího úvěru — co je v zástavě</label><input type="text" id="stav-zastava" oninput="save()"></div>
+      <div class="field"><label>U nového úvěru — co půjde do zástavy</label><input type="text" id="nova-zastava" oninput="save()"></div>
+
+      <div class="divider"></div>
+
+      <div style="font-size:12px;font-weight:600;color:var(--text2);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:10px">Nemovitost do zástavy</div>
+
+      <div class="field"><label>Vlastník nemovitosti (prodávající, rodiče…)</label><input type="text" id="nem-vlastnik" oninput="save()"></div>
+
+      <div class="field">
+        <label>Typ nemovitosti</label>
+        <div class="radio-group" id="rg-nemtyp">
+          <label onclick="setRadio('nemtyp','byt-ov')"><input type="radio" name="nemtyp" value="byt-ov"><span>Byt — osobní vlastnictví</span></label>
+          <label onclick="setRadio('nemtyp','byt-druzstevni')"><input type="radio" name="nemtyp" value="byt-druzstevni"><span>Byt — družstevní</span></label>
+          <label onclick="setRadio('nemtyp','rd')"><input type="radio" name="nemtyp" value="rd"><span>Rodinný dům</span></label>
+          <label onclick="setRadio('nemtyp','pozemek')"><input type="radio" name="nemtyp" value="pozemek"><span>Pozemek</span></label>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="field"><label>Číslo bytu (pro byt)</label><input type="text" id="nem-cislo" oninput="save()"></div>
+        <div class="field"><label>Adresa nemovitosti</label><input type="text" id="nem-adresa" oninput="save()"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. OSTATNÍ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon">📝</div>
+      <div class="section-title">Ostatní</div>
+    </div>
+    <div class="section-body fields-single">
+      <div class="field"><label>Osobní účet — u které banky (+ číslo účtu)</label><textarea id="osobni-ucty" oninput="save()" placeholder="Raiffeisenbank – 1234567890/5500, Česká spořitelna – 9876543210/0800"></textarea></div>
+      <div class="field">
+        <label>Souhlas se založením nového účtu u úvěrující banky</label>
+        <select id="souhlas-ucet" onchange="save()">
+          <option value="">—</option>
+          <option>Ano</option>
+          <option>Ne</option>
+          <option>Záleží na podmínkách</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Stavební spoření</label>
+        <select id="stavebni-sporeni" onchange="save()">
+          <option value="">—</option>
+          <option>Ne</option>
+          <option>Ano — 1. žadatel</option>
+          <option>Ano — 2. žadatel</option>
+          <option>Ano — oba</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Životní pojištění (na co, limity — zvl. pro případ smrti)</label>
+        <textarea id="zivotni-pojisteni" oninput="save()" placeholder="Smrt: 3 000 000 Kč / Trvalá invalidita: 2 000 000 Kč — Česká pojišťovna, smlouva č. 123456789"></textarea>
+      </div>
+      <div class="field">
+        <label>Poznámky poradce</label>
+        <textarea id="poznamky" oninput="save()" style="min-height:80px"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- spacer for bottom bar -->
+  <div style="height:20px"></div>
+
+</div>
+
+<!-- BOTTOM BAR -->
+<div class="bottom-bar">
+  <button class="btn btn-ghost" onclick="clearForm()">🗑 Vymazat formulář</button>
+  <button class="btn btn-primary" onclick="generatePDF()">⬇ Uložit jako PDF</button>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span id="toast-msg">Uloženo</span></div>
+
+<script>
+// ─── RADIO GROUPS ─────────────────────────────────────────────
+const radioValues = {};
+function setRadio(group, value) {
+  radioValues[group] = value;
+  document.querySelectorAll(`#rg-${group} label`).forEach(l => {
+    const inp = l.querySelector('input');
+    l.classList.toggle('active', inp && inp.value === value);
+  });
+  save();
+}
+function getRadio(group) { return radioValues[group] || ''; }
+
+// ─── FORMAT NUMBER ─────────────────────────────────────────────
+function fmtField(input) {
+  const raw = input.value.replace(/\D/g,'');
+  if (!raw) return;
+  input.value = parseInt(raw,10).toLocaleString('cs-CZ');
+}
+function rawNum(id) {
+  const el = document.getElementById(id);
+  return el ? el.value.replace(/\s/g,'').replace(/\u00a0/g,'') : '';
+}
+
+// ─── DYNAMIC ÚVĚRY ────────────────────────────────────────────
+let uverCount = 0;
+const uvery = [];
+
+function addUver() {
+  const idx = uverCount++;
+  uvery.push({ id: idx });
+  renderUvery();
+  save();
+}
+function removeUver(idx) {
+  const pos = uvery.findIndex(u => u.id === idx);
+  if (pos > -1) uvery.splice(pos, 1);
+  renderUvery();
+  save();
+}
+function renderUvery() {
+  const list = document.getElementById('uvery-list');
+  if (uvery.length === 0) {
+    list.innerHTML = '<div style="font-size:14px;color:var(--text3);padding:8px 0 16px 0">Žádné stávající úvěry.</div>';
+    return;
+  }
+  list.innerHTML = uvery.map(u => `
+    <div class="uver-card" id="uver-${u.id}">
+      <div class="uver-card-header">
+        <span class="uver-card-title">Úvěr #${uvery.indexOf(u)+1}</span>
+        <button class="btn btn-danger" onclick="removeUver(${u.id})">× Odebrat</button>
+      </div>
+      <div class="grid3" style="margin-bottom:12px">
+        <div class="field" style="margin:0"><label>Typ úvěru</label>
+          <select id="uv${u.id}-typ" onchange="save()">
+            <option>—</option><option>Hypotéka</option><option>Hotovostní úvěr</option>
+            <option>Americká hypotéka</option><option>Leasing</option><option>Kreditní karta</option><option>Kontokorent</option>
+          </select></div>
+        <div class="field" style="margin:0"><label>Instituce</label><input type="text" id="uv${u.id}-instituce" oninput="save()" placeholder="Raiffeisenbank"></div>
+        <div class="field" style="margin:0"><label>Datum poskytnutí</label><input type="text" id="uv${u.id}-datum" oninput="save()" placeholder="1. 1. 2020"></div>
+      </div>
+      <div class="grid2" style="grid-template-columns:1fr 1fr 1fr 1fr">
+        <div class="field" style="margin:0"><label>Výše úvěru (Kč)</label><input type="text" id="uv${u.id}-vyse" oninput="fmtField(this);save()"></div>
+        <div class="field" style="margin:0"><label>Zbývá doplatit (Kč)</label><input type="text" id="uv${u.id}-zbytek" oninput="fmtField(this);save()"></div>
+        <div class="field" style="margin:0"><label>Měs. splátka (Kč)</label><input type="text" id="uv${u.id}-splatka" oninput="fmtField(this);save()"></div>
+        <div class="field" style="margin:0"><label>Počet splátek celkem</label><input type="number" id="uv${u.id}-pocet" oninput="save()" placeholder="84"></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function getUvery() {
+  return uvery.map(u => ({
+    id: u.id,
+    typ: (document.getElementById(`uv${u.id}-typ`)||{}).value || '',
+    instituce: (document.getElementById(`uv${u.id}-instituce`)||{}).value || '',
+    datum: (document.getElementById(`uv${u.id}-datum`)||{}).value || '',
+    vyse: rawNum(`uv${u.id}-vyse`),
+    zbytek: rawNum(`uv${u.id}-zbytek`),
+    splatka: rawNum(`uv${u.id}-splatka`),
+    pocet: (document.getElementById(`uv${u.id}-pocet`)||{}).value || '',
+  }));
+}
+
+// ─── FIELD IDs FOR SAVE/LOAD ─────────────────────────────────
+const FIELD_IDS = [
+  'zpracovatel',
+  'ucel-jine','celkovy-zamer','vlastni-zdroje','vyse-uveru','splatnost','max-splatka','odhad-cena','bydleni-jine',
+  'k1-jmeno','k1-narozeni','k1-rc','k1-stav','k1-vzdelani','k1-statni','k1-pobyt','k1-ulice','k1-obec','k1-deti','k1-tel','k1-email',
+  'k2-jmeno','k2-narozeni','k2-rc','k2-vztah','k2-vzdelani','k2-statni','k2-pobyt','k2-ulice','k2-obec','k2-deti','k2-tel','k2-email',
+  'k1-typ-prijmu','k1-p12','k1-p3','k1-pp','k1-mzda-ucet','k1-podnikani','k1-ztrata',
+  'k2-typ-prijmu','k2-p12','k2-p3','k2-pp','k2-mzda-ucet','k2-podnikani','k2-ztrata',
+  'vydaje-domacnost','vyzivne','kontokorent','kreditka','splatky','rucitel',
+  'stav-zastava','nova-zastava','nem-vlastnik','nem-cislo','nem-adresa',
+  'osobni-ucty','souhlas-ucet','stavebni-sporeni','zivotni-pojisteni','poznamky','fixace'
+];
+const RADIO_GROUPS = ['ucel','bydleni','nemtyp'];
+
+function save() {
+  const data = { fields: {}, radios: {}, uvery: getUvery(), uverCount };
+  FIELD_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) data.fields[id] = el.value;
+  });
+  RADIO_GROUPS.forEach(g => { data.radios[g] = radioValues[g] || ''; });
+  localStorage.setItem('trfin-dotaznik-v1', JSON.stringify(data));
+  updateProgress();
+}
+
+function load() {
+  const raw = localStorage.getItem('trfin-dotaznik-v1');
+  if (!raw) { renderUvery(); updateProgress(); return; }
+  try {
+    const data = JSON.parse(raw);
+    FIELD_IDS.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && data.fields[id] !== undefined) el.value = data.fields[id];
+    });
+    RADIO_GROUPS.forEach(g => { if (data.radios[g]) setRadio(g, data.radios[g]); });
+    // restore uvery
+    if (data.uvery && data.uvery.length) {
+      data.uvery.forEach(u => uvery.push({ id: u.id }));
+      uverCount = data.uverCount || data.uvery.length;
+      renderUvery();
+      // restore uver field values after render
+      setTimeout(() => {
+        data.uvery.forEach(u => {
+          ['typ','instituce','datum','vyse','zbytek','splatka','pocet'].forEach(f => {
+            const el = document.getElementById(`uv${u.id}-${f}`);
+            if (el && u[f]) el.value = u[f];
+          });
+        });
+      }, 50);
+    } else {
+      renderUvery();
+    }
+    updateProgress();
+  } catch(e) { renderUvery(); updateProgress(); }
+}
+
+function clearForm() {
+  if (!confirm('Opravdu vymazat celý dotazník? Tato akce nelze vrátit.')) return;
+  localStorage.removeItem('trfin-dotaznik-v1');
+  FIELD_IDS.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  RADIO_GROUPS.forEach(g => { radioValues[g] = ''; document.querySelectorAll(`#rg-${g} label`).forEach(l => l.classList.remove('active')); });
+  uvery.length = 0; uverCount = 0;
+  renderUvery();
+  updateProgress();
+  showToast('Formulář vymazán');
+}
+
+// ─── PROGRESS ────────────────────────────────────────────────
+function updateProgress() {
+  let total = 0, filled = 0;
+  FIELD_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    total++;
+    if (el.value && el.value.trim()) filled++;
+  });
+  RADIO_GROUPS.forEach(g => { total++; if (radioValues[g]) filled++; });
+  const pct = Math.round(filled / total * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = `${pct} %`;
+}
+
+// ─── TOAST ───────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ─── PDF GENERATION ──────────────────────────────────────────
+function v(id) {
+  const el = document.getElementById(id);
+  return el ? (el.value || '—') : '—';
+}
+function r(group) { return radioValues[group] || '—'; }
+
+// Transliterate Czech diacritics for jsPDF helvetica font
+function asc(s) {
+  if (!s) return s;
+  const map = {
+    'á':'a','č':'c','ď':'d','é':'e','ě':'e','í':'i','ň':'n','ó':'o','ř':'r','š':'s','ť':'t','ú':'u','ů':'u','ý':'y','ž':'z',
+    'Á':'A','Č':'C','Ď':'D','É':'E','Ě':'E','Í':'I','Ň':'N','Ó':'O','Ř':'R','Š':'S','Ť':'T','Ú':'U','Ů':'U','Ý':'Y','Ž':'Z',
+    '—':'-','·':'-'
+  };
+  return s.replace(/[áčďéěíňóřšťúůýžÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ—·]/g, c => map[c] || c);
+}
+
+// PDF helpers — v() and r() always return asc()-clean strings for doc.text()
+function vPdf(id) {
+  const el = document.getElementById(id);
+  return asc(el ? (el.value || '-') : '-');
+}
+function rPdf(group) { return asc(radioValues[group] || '-'); }
+
+function generatePDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+
+  const W = 210, ML = 14, MR = 14, CW = W - ML - MR;
+  let y = 0;
+
+  // colors — light theme matching rihatomas.com
+  const CLR_ACCENT = [140, 180, 20];   // žlutozelená (tisknutelná varianta #A6CC2B)
+  const CLR_DARK   = [17, 24, 39];     // #111827 hlavni text
+  const CLR_MID    = [75, 85, 99];     // #4B5563 popisky
+  const CLR_LIGHT  = [209, 213, 219];  // #D1D5DB oddelovace
+  const CLR_WHITE  = [255, 255, 255];
+  const CLR_BG     = [243, 244, 246];  // #F3F4F6 svetle pozadi bloku
+
+  function newPage() {
+    doc.addPage();
+    y = 14;
+    // subtle top border
+    doc.setFillColor(...CLR_ACCENT);
+    doc.rect(0, 0, W, 2, 'F');
+  }
+
+  function checkY(need = 20) {
+    if (y + need > 282) newPage();
+  }
+
+  // ── HEADER PAGE 1
+  doc.setFillColor(17, 24, 39);
+  doc.rect(0, 0, W, 38, 'F');
+  doc.setFillColor(...CLR_ACCENT);
+  doc.rect(0, 0, 5, 38, 'F');
+
+  const k1jmeno = asc(vPdf('k1-jmeno') !== '-' ? vPdf('k1-jmeno') : 'Klient');
+  const k2jmeno = vPdf('k2-jmeno') !== '-' ? ' & ' + asc(vPdf('k2-jmeno')) : '';
+  const klientNazev = k1jmeno + k2jmeno;
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(18);
+  doc.setTextColor(255, 255, 255);
+  doc.text('HYPOTECNI DOTAZNIK', 14, 15);
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(200, 210, 230);
+  doc.text('Klient: ' + klientNazev, 14, 24);
+
+  const now = new Date();
+  doc.setFontSize(8.5);
+  doc.setTextColor(140, 155, 180);
+  const zpracovatel = asc(vPdf('zpracovatel') !== '-' ? vPdf('zpracovatel') : 'TRfin management s.r.o.');
+  doc.text('Datum: ' + now.toLocaleDateString('cs-CZ') + '   Zpracoval: ' + zpracovatel, 14, 31);
+
+  y = 46;
+
+  // ── SECTION helper
+  function section(title, icon) {
+    checkY(16);
+    doc.setFillColor(...CLR_ACCENT);
+    doc.roundedRect(ML, y, CW, 8, 1.5, 1.5, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    doc.setTextColor(...CLR_WHITE);
+    doc.text(asc(title.toUpperCase()), ML + 4, y + 5.5);
+    y += 12;
+  }
+
+  // ── ROW helper (label: value) single line
+  function row(label, value, indent = 0) {
+    if (!value || value === '—') value = '-';
+    checkY(8);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    doc.setTextColor(...CLR_MID);
+    doc.text(asc(label), ML + indent, y);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(...CLR_DARK);
+    const maxW = CW - 55 - indent;
+    const lines = doc.splitTextToSize(asc(value), maxW);
+    doc.text(lines, ML + 55 + indent, y);
+    y += Math.max(lines.length * 5, 6);
+  }
+
+  // ── TWO-COL ROW helper
+  function row2(lbl1, val1, lbl2, val2) {
+    checkY(8);
+    const hw = CW / 2 - 2;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    doc.setTextColor(...CLR_MID);
+    doc.text(asc(lbl1), ML, y);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(...CLR_DARK);
+    doc.text(asc(val1 || '-'), ML + 28, y, { maxWidth: hw - 28 });
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...CLR_MID);
+    doc.text(asc(lbl2), ML + hw + 4, y);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(...CLR_DARK);
+    doc.text(asc(val2 || '-'), ML + hw + 4 + 28, y, { maxWidth: hw - 28 });
+    y += 6;
+  }
+
+  // ── DUAL COLUMN SECTION (clients)
+  function dualSection(title, icon, leftFn, rightFn) {
+    checkY(60);
+    section(title, icon);
+
+    // column headers
+    const hw = CW / 2 - 3;
+    doc.setFillColor(...CLR_BG);
+    doc.rect(ML, y, hw, 6, 'F');
+    doc.rect(ML + hw + 6, y, hw, 6, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    doc.setTextColor(...CLR_ACCENT);
+    doc.text(asc('1. ZADATEL'), ML + 3, y + 4.2);
+    doc.text(asc('2. ZADATEL'), ML + hw + 9, y + 4.2);
+    y += 8;
+
+    const startY = y;
+    // render left column items, tracking y
+    const leftItems = leftFn();
+    const midY = y;
+    y = startY;
+    const rightItems = rightFn();
+    const rightEnd = y;
+    y = Math.max(midY, rightEnd);
+
+    // vertical divider
+    doc.setDrawColor(...CLR_LIGHT);
+    doc.line(ML + hw + 3, startY - 2, ML + hw + 3, y);
+  }
+
+  function colItems(prefix, items) {
+    const hw = CW / 2 - 3;
+    const isLeft = prefix === 'L';
+    const xOff = isLeft ? 0 : hw + 6;
+    items.forEach(([lbl, val]) => {
+      checkY(7);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(7.5);
+      doc.setTextColor(...CLR_MID);
+      doc.text(asc(lbl), ML + xOff, y);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(...CLR_DARK);
+      const lines = doc.splitTextToSize(asc(val || '-'), hw - 30);
+      doc.text(lines, ML + xOff + 30, y);
+      y += Math.max(lines.length * 4.8, 5.5);
+    });
+  }
+
+  // ── TEXTAREA multiline row
+  function rowMulti(label, value) {
+    if (!value || value === '—') value = '-';
+    const lines = doc.splitTextToSize(asc(value), CW - 4);
+    const need = 7 + lines.length * 4.8 + 3;
+    checkY(need);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    doc.setTextColor(...CLR_MID);
+    doc.text(asc(label), ML, y);
+    y += 5.5;
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(...CLR_DARK);
+    doc.setFontSize(8.5);
+    doc.setFillColor(...CLR_BG);
+    doc.roundedRect(ML, y - 1, CW, lines.length * 4.8 + 4, 1.5, 1.5, 'F');
+    doc.text(lines, ML + 3, y + 3);
+    y += lines.length * 4.8 + 7;
+  }
+
+  function gap(n = 3) { y += n; }
+
+  // ── 1. UVER
+  section('Uver - zakladni parametry', '');
+  row('Ucel uveru', rPdf('ucel') + (vPdf('ucel-jine') !== '-' ? ' - ' + vPdf('ucel-jine') : ''));
+  row2('Celkovy zamer',   vPdf('celkovy-zamer') !== '-' ? vPdf('celkovy-zamer') + ' Kc' : '-',
+       'Vlastni zdroje',  vPdf('vlastni-zdroje') !== '-' ? vPdf('vlastni-zdroje') + ' Kc' : '-');
+  row2('Vyse uveru',  vPdf('vyse-uveru') !== '-' ? vPdf('vyse-uveru') + ' Kc' : '-',
+       'Max. splatka', vPdf('max-splatka') !== '-' ? vPdf('max-splatka') + ' Kc/mes.' : '-');
+  row2('Splatnost',    vPdf('splatnost') !== '-' ? vPdf('splatnost') + ' let' : '-',
+       'Delka fixace', vPdf('fixace'));
+  row('Odhadni cena zastavy', vPdf('odhad-cena') !== '-' ? vPdf('odhad-cena') + ' Kc' : '-');
+  row('Jak nyni bydli', rPdf('bydleni') + (vPdf('bydleni-jine') !== '-' ? ' - ' + vPdf('bydleni-jine') : ''));
+  gap();
+
+  // ── 2. KLIENTI
+  section('Klienti', '');
+  const k1Items = [
+    ['Jmeno',        vPdf('k1-jmeno')],
+    ['Datum nar.',   vPdf('k1-narozeni')],
+    ['Rodne cislo',  vPdf('k1-rc')],
+    ['Rodinny stav', vPdf('k1-stav')],
+    ['Vzdelani',     vPdf('k1-vzdelani')],
+    ['Prislusnost',  vPdf('k1-statni')],
+    ['Pobyt',        vPdf('k1-pobyt')],
+    ['Adresa',       vPdf('k1-ulice') + (vPdf('k1-obec') !== '-' ? ', ' + vPdf('k1-obec') : '')],
+    ['Deti',         vPdf('k1-deti')],
+    ['Telefon',      vPdf('k1-tel')],
+    ['Email',        vPdf('k1-email')],
+  ];
+  const k2Items = [
+    ['Jmeno',           vPdf('k2-jmeno')],
+    ['Datum nar.',      vPdf('k2-narozeni')],
+    ['Rodne cislo',     vPdf('k2-rc')],
+    ['Vztah k 1. zad.', vPdf('k2-vztah')],
+    ['Vzdelani',        vPdf('k2-vzdelani')],
+    ['Prislusnost',     vPdf('k2-statni')],
+    ['Pobyt',           vPdf('k2-pobyt')],
+    ['Adresa',          vPdf('k2-ulice') + (vPdf('k2-obec') !== '-' ? ', ' + vPdf('k2-obec') : '')],
+    ['Deti',            vPdf('k2-deti')],
+    ['Telefon',         vPdf('k2-tel')],
+    ['Email',           vPdf('k2-email')],
+  ];
+
+  const hw2 = CW / 2 - 3;
+  const colStartY = y;
+  colItems('L', k1Items);
+  const leftEnd = y;
+  y = colStartY;
+  k2Items.forEach(([lbl, val]) => {
+    checkY(7);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5); doc.setTextColor(...CLR_MID);
+    doc.text(lbl, ML + hw2 + 6, y);
+    doc.setFont('helvetica', 'normal'); doc.setTextColor(...CLR_DARK);
+    const lines = doc.splitTextToSize(val || '-', hw2 - 30);
+    doc.text(lines, ML + hw2 + 36, y);
+    y += Math.max(lines.length * 4.8, 5.5);
+  });
+  const rightEnd = y;
+  y = Math.max(leftEnd, rightEnd);
+  doc.setDrawColor(...CLR_LIGHT);
+  doc.line(ML + hw2 + 3, colStartY - 2, ML + hw2 + 3, y);
+  gap();
+
+  // ── 3. PRIJMY
+  section('Prijmy', '');
+  const p1Items = [
+    ['Typ',         vPdf('k1-typ-prijmu')],
+    ['Prijem 12M',  vPdf('k1-p12') !== '-' ? vPdf('k1-p12') + ' Kc' : '-'],
+    ['Prijem 3M',   vPdf('k1-p3')  !== '-' ? vPdf('k1-p3')  + ' Kc' : '-'],
+    ['Prac. pomer', vPdf('k1-pp')],
+    ['Mzda',        vPdf('k1-mzda-ucet')],
+    ['Podnikani',   vPdf('k1-podnikani')],
+    ['DP ztrata',   vPdf('k1-ztrata')],
+  ];
+  const p2Items = [
+    ['Typ',         vPdf('k2-typ-prijmu')],
+    ['Prijem 12M',  vPdf('k2-p12') !== '-' ? vPdf('k2-p12') + ' Kc' : '-'],
+    ['Prijem 3M',   vPdf('k2-p3')  !== '-' ? vPdf('k2-p3')  + ' Kc' : '-'],
+    ['Prac. pomer', vPdf('k2-pp')],
+    ['Mzda',        vPdf('k2-mzda-ucet')],
+    ['Podnikani',   vPdf('k2-podnikani')],
+    ['DP ztrata',   vPdf('k2-ztrata')],
+  ];
+  const p1Y = y;
+  colItems('L', p1Items);
+  const p1End = y; y = p1Y;
+  p2Items.forEach(([lbl, val]) => {
+    checkY(7);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5); doc.setTextColor(...CLR_MID);
+    doc.text(lbl, ML + hw2 + 6, y);
+    doc.setFont('helvetica', 'normal'); doc.setTextColor(...CLR_DARK);
+    const lines = doc.splitTextToSize(val || '-', hw2 - 30);
+    doc.text(lines, ML + hw2 + 36, y);
+    y += Math.max(lines.length * 4.8, 5.5);
+  });
+  y = Math.max(p1End, y);
+  doc.setDrawColor(...CLR_LIGHT);
+  doc.line(ML + hw2 + 3, p1Y - 2, ML + hw2 + 3, y);
+  gap();
+
+  // ── 4. VYDAJE
+  section('Vydaje a zavazky', '');
+  row2('Vydaje domacnost', vPdf('vydaje-domacnost') !== '-' ? vPdf('vydaje-domacnost') + ' Kc/mes.' : '-',
+       'Vyzivne',          vPdf('vyzivne')          !== '-' ? vPdf('vyzivne')          + ' Kc/mes.' : '-');
+  row2('Kontokorent',     vPdf('kontokorent'),
+       'Kreditni karta',  vPdf('kreditka'));
+  row2('Splatkovy prodej',    vPdf('splatky'),
+       'Rucitel/spoludluznik', vPdf('rucitel'));
+
+  const currentUvery = getUvery();
+  if (currentUvery.length > 0) {
+    gap(2);
+    checkY(12);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(8); doc.setTextColor(...CLR_MID);
+    doc.text('STAVAJICI UVERY', ML, y); y += 6;
+    currentUvery.forEach((u, i) => {
+      checkY(22);
+      doc.setFillColor(...CLR_BG);
+      doc.roundedRect(ML, y - 1, CW, 20, 1.5, 1.5, 'F');
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5); doc.setTextColor(...CLR_ACCENT);
+      doc.text(`Uver #${i+1}`, ML + 2, y + 3);
+      y += 5;
+      const cols = [
+        ['Typ',            asc(u.typ)       ],
+        ['Instituce',      asc(u.instituce) ],
+        ['Datum',          asc(u.datum)     ],
+        ['Vyse',           u.vyse    ? u.vyse    + ' Kc' : '-'],
+        ['Zbytek',         u.zbytek  ? u.zbytek  + ' Kc' : '-'],
+        ['Splatka',        u.splatka ? u.splatka + ' Kc' : '-'],
+        ['Splatek celkem', asc(u.pocet) || '-'],
+      ];
+      const colW = CW / 4;
+      let cx = ML;
+      cols.forEach(([lbl, val], ci) => {
+        if (ci > 0 && ci % 4 === 0) { y += 5; cx = ML; }
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor(...CLR_MID);
+        doc.text(lbl, cx + 2, y);
+        doc.setFont('helvetica', 'normal'); doc.setTextColor(...CLR_DARK);
+        doc.text(val || '-', cx + 2, y + 4, { maxWidth: colW - 4 });
+        cx += colW;
+      });
+      y += 10;
+    });
+  }
+  gap();
+
+  // ── 5. ZAJISTENI
+  section('Zajisteni uveru', '');
+  row('Zastavy stav. uver', vPdf('stav-zastava'));
+  row('Zastavy novy uver',  vPdf('nova-zastava'));
+  row('Vlastnik nem.',      vPdf('nem-vlastnik'));
+  row('Typ nemovitosti',    rPdf('nemtyp'));
+  row2('Cislo bytu', vPdf('nem-cislo'), 'Adresa', vPdf('nem-adresa'));
+  gap();
+
+  // ── 6. OSTATNI
+  section('Ostatni', '');
+  rowMulti('Osobni ucty',       vPdf('osobni-ucty'));
+  row('Souhlas novy ucet',      vPdf('souhlas-ucet'));
+  row('Stavebni sporeni',       vPdf('stavebni-sporeni'));
+  rowMulti('Zivotni pojisteni', vPdf('zivotni-pojisteni'));
+  if (vPdf('poznamky') !== '-') { gap(2); rowMulti('Poznamky poradce', vPdf('poznamky')); }
+
+  // ── FOOTER
+  const totalPages = doc.internal.getNumberOfPages();
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFillColor(...CLR_ACCENT);
+    doc.rect(0, 293, W, 4, 'F');
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7);
+    doc.setTextColor(...CLR_MID);
+    doc.text('TRfin management s.r.o.  -  rihatomas.com', ML, 291);
+    doc.text(`Strana ${i} / ${totalPages}`, W - MR - 20, 291);
+  }
+
+  // save
+  const klient = asc(vPdf('k1-jmeno')).replace(/[^a-zA-Z\s]/g,'').trim().replace(/\s+/g,'_') || 'klient';
+  doc.save(`HypotecniDotaznik_${klient}_${now.toISOString().slice(0,10)}.pdf`);
+  showToast('PDF ulozeno');
+}
+
+// ─── INIT ────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  load();
+  // autosave every 30s
+  setInterval(() => { save(); }, 30000);
+});
+</script>
+</body>
+</html>
