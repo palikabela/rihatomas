@@ -76,19 +76,19 @@ nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:b
 @media(max-width:640px){.grid2{grid-template-columns:1fr}}
 
 .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.75rem;transition:background 0.3s, border-color 0.3s}
-.card-label{font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);margin-bottom:1.25rem}
+.card-label{font-size:13px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);margin-bottom:1.25rem}
 
-.field{margin-bottom:1.25rem}
+.field{margin-bottom:.85rem}
 .field:last-child{margin-bottom:0}
-.field label{display:block;font-size:13px;color:var(--text2);margin-bottom:8px;font-weight:500}
-.field input,.field select{width:100%;padding:14px 16px;font-family:'Inter',sans-serif;font-size:16px;border:1px solid var(--border2);border-radius:8px;background:var(--surface2);color:var(--text);transition:border-color 0.15s,background 0.15s;appearance:none;-webkit-appearance:none}
+.field label{display:block;font-size:12px;color:var(--text2);margin-bottom:6px;font-weight:500}
+.field input,.field select{width:100%;padding:10px 12px;font-family:'Inter',sans-serif;font-size:14px;border:1px solid var(--border2);border-radius:8px;background:var(--surface2);color:var(--text);transition:border-color 0.15s,background 0.15s;appearance:none;-webkit-appearance:none}
 .field input:focus,.field select:focus{outline:none;border-color:var(--accent);background:var(--surface3)}
-.field-preview{font-size:13px;color:var(--accent);margin-top:6px;font-weight:500}
+.field-preview{font-size:13px;color:var(--accent);margin-top:5px;font-weight:500}
 
 .metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .metric{background:var(--surface2);border-radius:8px;padding:.85rem 1rem;border:1px solid var(--border);transition:background 0.3s, border-color 0.3s}
 .metric-label{font-size:10px;color:var(--text3);margin-bottom:4px;font-weight:400;letter-spacing:0.03em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.metric-value{font-family:'Inter',sans-serif;font-variant-numeric:tabular-nums;font-size:17px;font-weight:700;color:var(--text);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.metric-value{font-family:'Inter',sans-serif;font-variant-numeric:tabular-nums;font-size:clamp(15px,3vw,20px);font-weight:700;color:var(--text);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .metric-value.green{color:var(--green)}
 .metric-value.red{color:var(--red)}
 
@@ -109,7 +109,7 @@ nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:b
 .offer-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
 .offer-name{font-size:16px;font-weight:500;color:var(--text)}
 .offer-partner{font-size:13px;color:var(--text3);margin-top:4px}
-.offer-rate{font-family:'Syne',sans-serif;font-size:32px;font-weight:700;color:var(--accent);line-height:1}
+.offer-rate{font-family:'Syne',sans-serif;font-size:clamp(20px,4vw,28px);font-weight:700;color:var(--accent);line-height:1}
 .offer-rate small{font-family:'Inter',sans-serif;font-size:14px;color:var(--text3);font-weight:400}
 .offer-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 @media(max-width:480px){.offer-cols{grid-template-columns:repeat(2,1fr)}}
@@ -138,7 +138,7 @@ footer a:hover{color:var(--text2)}
 .product-card.best{border-color:rgba(200,240,74,0.4)}
 .product-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
 .product-name{font-size:15px;font-weight:600;color:var(--text)}
-.product-amount{font-family:"Inter",sans-serif;font-variant-numeric:tabular-nums;font-size:22px;font-weight:700;color:var(--text);text-align:right;letter-spacing:-0.01em}
+.product-amount{font-family:"Inter",sans-serif;font-variant-numeric:tabular-nums;font-size:clamp(16px,3.5vw,24px);font-weight:700;color:var(--text);text-align:right;letter-spacing:-0.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 .product-amount.neg{color:var(--red)}
 .product-desc{font-size:12px;color:var(--text3);line-height:1.5}
@@ -234,8 +234,8 @@ input[type="range"] {
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: var(--accent);
   cursor: pointer;
@@ -243,8 +243,8 @@ input[type="range"]::-webkit-slider-thumb {
   box-shadow: 0 1px 4px rgba(0,0,0,0.3);
 }
 input[type="range"]::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: var(--accent);
   cursor: pointer;
@@ -291,21 +291,21 @@ input[type="range"]::-webkit-slider-runnable-track {
 }
 #k_jistina_slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 28px;
-  height: 28px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: var(--accent);
   cursor: pointer;
-  border: 3px solid var(--bg);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  border: 2px solid var(--bg);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
 }
 #k_jistina_slider::-moz-range-thumb {
-  width: 28px;
-  height: 28px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: var(--accent);
   cursor: pointer;
-  border: 3px solid var(--bg);
+  border: 2px solid var(--bg);
 }
 #k_splatka_slider {
   -webkit-appearance: none;
@@ -318,21 +318,21 @@ input[type="range"]::-webkit-slider-runnable-track {
 }
 #k_splatka_slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 28px;
-  height: 28px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: var(--accent);
   cursor: pointer;
-  border: 3px solid var(--bg);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  border: 2px solid var(--bg);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
 }
 #k_splatka_slider::-moz-range-thumb {
-  width: 28px;
-  height: 28px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: var(--accent);
   cursor: pointer;
-  border: 3px solid var(--bg);
+  border: 2px solid var(--bg);
 }
 
 #i_vklad_slider, #i_roky_slider, #ci_roky_slider, #ci_cil_slider, #i_jednoraz_slider {
@@ -350,25 +350,25 @@ input[type="range"]::-webkit-slider-runnable-track {
 #ci_cil_slider::-webkit-slider-thumb,
 #i_jednoraz_slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 28px;
-  height: 28px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: var(--accent);
   cursor: pointer;
-  border: 3px solid var(--bg);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  border: 2px solid var(--bg);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
 }
 #i_vklad_slider::-moz-range-thumb,
 #i_roky_slider::-moz-range-thumb,
 #ci_roky_slider::-moz-range-thumb,
 #ci_cil_slider::-moz-range-thumb,
 #i_jednoraz_slider::-moz-range-thumb {
-  width: 28px;
-  height: 28px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: var(--accent);
   cursor: pointer;
-  border: 3px solid var(--bg);
+  border: 2px solid var(--bg);
 }
 
 #r_dluh_slider, #r_sazba_sou_slider, #k_sazba_slider, #r_roky_slider {
@@ -385,48 +385,54 @@ input[type="range"]::-webkit-slider-runnable-track {
 #k_sazba_slider::-webkit-slider-thumb,
 #r_roky_slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 28px;
-  height: 28px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: var(--accent);
   cursor: pointer;
-  border: 3px solid var(--bg);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  border: 2px solid var(--bg);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
 }
 #r_dluh_slider::-moz-range-thumb,
 #r_sazba_sou_slider::-moz-range-thumb,
 #k_sazba_slider::-moz-range-thumb,
 #r_roky_slider::-moz-range-thumb {
-  width: 28px;
-  height: 28px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: var(--accent);
   cursor: pointer;
-  border: 3px solid var(--bg);
+  border: 2px solid var(--bg);
 }
 
 /* MOBILE FIXES */
 @media(max-width:600px) {
-  /* Tabulka - zmenšit font a padding */
+  /* Tabulka */
   #i_rocni_table { font-size:11px; }
   #i_rocni_table th, #i_rocni_table td { padding:4px 5px; }
 
-  /* Graf - skrýt legendu na mobilu */
+  /* Graf - skrýt legendu */
   #invest-chart-legend { display:none !important; }
 
-  /* Srovnání produktů - zalomit čísla */
-  .product-amount { font-size:16px !important; }
+  /* Srovnání produktů */
   .product-top { flex-wrap:wrap; gap:4px; }
 
-  /* Grid2 na mobilu - jeden sloupec */
+  /* Grid2 na mobilu */
   .grid2 { grid-template-columns:1fr !important; }
 
-  /* Tabs - zmenšit */
+  /* Tabs */
   .tab { padding:8px 14px !important; font-size:13px !important; }
   .invest-tab { padding:7px 12px !important; font-size:12px !important; }
 
-  /* Metric grid na mobilu */
-  .metrics { grid-template-columns:1fr 1fr !important; }
+  /* Metriky — méně paddingu, víc prostoru pro čísla */
+  .metrics { grid-template-columns:1fr 1fr !important; gap:8px !important; }
+  .metric { padding:.6rem .7rem !important; }
+
+  /* Card padding na mobilu */
+  .card { padding:1rem !important; }
+
+  /* Nowrap pro všechny výsledky */
+  .metric-value, .product-amount { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
   /* Tabulka scroll */
   #i_rocni_table_wrap .card { padding:.75rem; }
@@ -487,9 +493,9 @@ input[type="range"]::-webkit-slider-runnable-track {
           <div class="field">
             <label>Výše úvěru (Kč)</label>
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-              <button onclick="syncJistina(getRaw('k_jistina')-10000,false)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+              <button onclick="syncJistina(getRaw('k_jistina')-10000,false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
               <input type="text" id="k_jistina" value="" placeholder="např. 1 000 000" class="fmt-input" oninput="syncJistina(this.value.replace(/[^\d]/g,''),false)" onblur="formatInputValue(this)" style="flex:1;text-align:center">
-              <button onclick="syncJistina(getRaw('k_jistina')+10000,false)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+              <button onclick="syncJistina(getRaw('k_jistina')+10000,false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
             </div>
             <div id="k_jistina_preview" class="field-preview"></div>
           </div>
@@ -502,9 +508,9 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div class="field" id="field-splatka" style="display:none">
           <label>Požadovaná měsíční splátka (Kč)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <button onclick="syncSplatkaInput(getRaw('k_splatka_input')-500,false)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <button onclick="syncSplatkaInput(getRaw('k_splatka_input')-500,false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
             <input type="text" id="k_splatka_input" value="" placeholder="např. 5 000" class="fmt-input" oninput="syncSplatkaInput(this.value.replace(/[^\d]/g,''),false)" onblur="formatInputValue(this)" style="flex:1;text-align:center">
-            <button onclick="syncSplatkaInput(getRaw('k_splatka_input')+500,false)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+            <button onclick="syncSplatkaInput(getRaw('k_splatka_input')+500,false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
           <div class="field-preview" id="k_splatka_input_preview"></div>
           <input type="range" id="k_splatka_slider" min="0" max="100000" value="0" step="500"
@@ -515,9 +521,9 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div class="field">
           <label>Úroková sazba (% ročně)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <button onclick="syncKSazba(Math.round(((parseFloat(document.getElementById('k_sazba').value)||0)-0.1)*100)/100, false)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <button onclick="syncKSazba(Math.round(((parseFloat(document.getElementById('k_sazba').value)||0)-0.1)*100)/100, false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
             <input type="number" id="k_sazba" value="4.99" step="0.01" min="0" oninput="syncKSazba(this.value)" style="flex:1;text-align:center">
-            <button onclick="syncKSazba(Math.round(((parseFloat(document.getElementById('k_sazba').value)||0)+0.1)*100)/100, false)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+            <button onclick="syncKSazba(Math.round(((parseFloat(document.getElementById('k_sazba').value)||0)+0.1)*100)/100, false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
           <input type="range" id="k_sazba_slider" min="0" max="15" value="4.99" step="0.1"
             oninput="syncKSazba(this.value, true)"
@@ -527,12 +533,12 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div class="field">
           <label>Doba splatnosti</label>
           <div style="display:flex;align-items:center;gap:10px">
-            <button onclick="syncRoky(parseInt(document.getElementById('k_roky').value)-1,true)" style="width:44px;height:44px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:300">−</button>
+            <button onclick="syncRoky(parseInt(document.getElementById('k_roky').value)-1,true)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:300">−</button>
             <div style="flex:1;text-align:center">
-              <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:700;color:var(--accent);line-height:1" id="k_roky_label">10</div>
+              <div style="font-family:'Syne',sans-serif;font-size:clamp(22px,5vw,32px);font-weight:700;color:var(--accent);line-height:1" id="k_roky_label">10</div>
               <div style="font-size:12px;color:var(--text3);margin-top:2px">let</div>
             </div>
-            <button onclick="syncRoky(parseInt(document.getElementById('k_roky').value)+1,true)" style="width:44px;height:44px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:300">+</button>
+            <button onclick="syncRoky(parseInt(document.getElementById('k_roky').value)+1,true)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:300">+</button>
           </div>
           <input type="range" id="k_roky_slider" min="1" max="65" value="10" oninput="syncRoky(this.value,true)" style="width:100%;margin-top:12px;accent-color:var(--accent);cursor:pointer">
           <input type="number" id="k_roky" value="10" min="1" max="65" style="display:none">
@@ -551,7 +557,7 @@ input[type="range"]::-webkit-slider-runnable-track {
             Splátka <strong id="k_splatka_zobrazena" style="color:var(--text)">—</strong> &nbsp;·&nbsp; Doba <strong id="k_roky_zobrazena" style="color:var(--text)">—</strong>
           </div>
           <div style="background:var(--accent);padding:.85rem 1rem;font-size:13px;color:#0E0F11;font-weight:500">
-            Můžete si půjčit: <strong id="k_jistina_result" style="font-size:20px;font-weight:700">—</strong>
+            Můžete si půjčit: <strong id="k_jistina_result" style="font-size:clamp(16px,4vw,24px);font-weight:700;white-space:nowrap">—</strong>
           </div>
         </div>
         <div class="progress-wrap">
@@ -571,9 +577,9 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div class="field">
           <label>Zbývající dluh (Kč)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <button onclick="syncRDluh(getRaw('r_dluh')-5000,false)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <button onclick="syncRDluh(getRaw('r_dluh')-5000,false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
             <input type="text" id="r_dluh" value="" placeholder="např. 2 500 000" class="fmt-input" oninput="syncRDluh(this.value.replace(/[^\d]/g,''),false)" onblur="formatInputValue(this)" style="flex:1;text-align:center">
-            <button onclick="syncRDluh(getRaw('r_dluh')+5000,false)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+            <button onclick="syncRDluh(getRaw('r_dluh')+5000,false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
           <div id="r_dluh_preview" class="field-preview"></div>
           <input type="range" id="r_dluh_slider" min="0" max="100000000" value="0" step="5000"
@@ -583,9 +589,9 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div class="field">
           <label>Stávající sazba (% ročně)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <button onclick="syncRSazba(Math.round(((parseFloat(document.getElementById('r_sazba_sou').value)||0)-0.1)*100)/100, false)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <button onclick="syncRSazba(Math.round(((parseFloat(document.getElementById('r_sazba_sou').value)||0)-0.1)*100)/100, false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
             <input type="number" id="r_sazba_sou" value="6.50" step="0.01" min="0" oninput="syncRSazba(this.value)" style="flex:1;text-align:center">
-            <button onclick="syncRSazba(Math.round(((parseFloat(document.getElementById('r_sazba_sou').value)||0)+0.1)*100)/100, false)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+            <button onclick="syncRSazba(Math.round(((parseFloat(document.getElementById('r_sazba_sou').value)||0)+0.1)*100)/100, false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
           <input type="range" id="r_sazba_sou_slider" min="0" max="15" value="6.5" step="0.1"
             oninput="syncRSazba(this.value, true)"
@@ -594,9 +600,9 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div class="field">
           <label>Zbývající splatnost (roky)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <button onclick="syncRRoky((parseInt(document.getElementById('r_roky').value)||0)-1)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <button onclick="syncRRoky((parseInt(document.getElementById('r_roky').value)||0)-1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
             <input type="number" id="r_roky" value="20" min="1" max="65" oninput="syncRRoky(this.value)" style="flex:1;text-align:center">
-            <button onclick="syncRRoky((parseInt(document.getElementById('r_roky').value)||0)+1)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+            <button onclick="syncRRoky((parseInt(document.getElementById('r_roky').value)||0)+1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
           <input type="range" id="r_roky_slider" min="1" max="65" value="20" step="1"
             oninput="syncRRoky(this.value, true)"
@@ -647,9 +653,9 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div class="field">
           <label>Měsíční vklad (Kč)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <button onclick="syncIVklad(getRaw('i_vklad')-100,false)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <button onclick="syncIVklad(getRaw('i_vklad')-100,false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
             <input type="text" id="i_vklad" value="" placeholder="např. 5 000" class="fmt-input" oninput="syncIVklad(this.value.replace(/[^\d]/g,''),false)" onblur="formatInputValue(this)" style="flex:1;text-align:center">
-            <button onclick="syncIVklad(getRaw('i_vklad')+100,false)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+            <button onclick="syncIVklad(getRaw('i_vklad')+100,false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
           <div class="field-preview" id="i_vklad_preview"></div>
           <input type="range" id="i_vklad_slider" min="0" max="15000" value="0" step="100"
@@ -659,9 +665,9 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div class="field">
           <label>Jednorázový vklad (Kč)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <button onclick="syncIJednoraz((parseInt((document.getElementById('i_jednoraz').value||'').replace(/[^0-9]/g,''))||0)-1000)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <button onclick="syncIJednoraz((parseInt((document.getElementById('i_jednoraz').value||'').replace(/[^0-9]/g,''))||0)-1000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
             <input type="number" id="i_jednoraz" value="" placeholder="např. 100 000" min="0" step="1000" oninput="syncIJednoraz(this.value)" style="flex:1;text-align:center">
-            <button onclick="syncIJednoraz((parseInt((document.getElementById('i_jednoraz').value||'').replace(/[^0-9]/g,''))||0)+1000)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+            <button onclick="syncIJednoraz((parseInt((document.getElementById('i_jednoraz').value||'').replace(/[^0-9]/g,''))||0)+1000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
           <input type="range" id="i_jednoraz_slider" min="0" max="5000000" value="0" step="1000"
             oninput="syncIJednoraz(this.value, true)"
@@ -671,9 +677,9 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div class="field">
           <label>Doba spoření — <span id="i_roky_label">20</span> let</label>
           <div style="display:flex;align-items:center;gap:10px">
-            <button onclick="syncIRoky(parseInt(document.getElementById('i_roky').value)-1)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <button onclick="syncIRoky(parseInt(document.getElementById('i_roky').value)-1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
             <input type="range" id="i_roky_slider" min="1" max="50" value="20" oninput="syncIRoky(this.value)" style="flex:1;accent-color:var(--accent);height:8px">
-            <button onclick="syncIRoky(parseInt(document.getElementById('i_roky').value)+1)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+            <button onclick="syncIRoky(parseInt(document.getElementById('i_roky').value)+1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
           <input type="number" id="i_roky" value="20" min="1" max="50" style="display:none">
         </div>
@@ -766,9 +772,9 @@ input[type="range"]::-webkit-slider-runnable-track {
           <div class="field">
             <label>Cílová částka (Kč)</label>
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-              <button onclick="syncCiCil((parseInt(document.getElementById('ci_cil').value)||0)-100000)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+              <button onclick="syncCiCil((parseInt(document.getElementById('ci_cil').value)||0)-100000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
               <input type="number" id="ci_cil" value="" min="0" step="100000" placeholder="např. 5 000 000" oninput="syncCiCil(this.value)" style="flex:1;text-align:center">
-              <button onclick="syncCiCil((parseInt(document.getElementById('ci_cil').value)||0)+100000)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+              <button onclick="syncCiCil((parseInt(document.getElementById('ci_cil').value)||0)+100000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
             </div>
             <div class="field-preview" id="ci_cil_preview"></div>
             <input type="range" id="ci_cil_slider" min="0" max="20000000" value="0" step="100000"
@@ -783,9 +789,9 @@ input[type="range"]::-webkit-slider-runnable-track {
           <div class="field">
             <label>Doba investice — <span id="ci_roky_label">20</span> let</label>
             <div style="display:flex;align-items:center;gap:10px">
-              <button onclick="syncCiRoky(parseInt(document.getElementById('ci_roky').value)-1)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+              <button onclick="syncCiRoky(parseInt(document.getElementById('ci_roky').value)-1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
               <input type="range" id="ci_roky_slider" min="1" max="50" value="20" oninput="syncCiRoky(this.value)" style="flex:1;accent-color:var(--accent)">
-              <button onclick="syncCiRoky(parseInt(document.getElementById('ci_roky').value)+1)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:20px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+              <button onclick="syncCiRoky(parseInt(document.getElementById('ci_roky').value)+1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
             </div>
             <input type="number" id="ci_roky" value="20" min="1" max="50" style="display:none">
           </div>
@@ -797,7 +803,7 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div>
           <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:1.25rem;border:1px solid var(--border);margin-bottom:12px">
             <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px">Potřebná měsíční investice</div>
-            <div style="font-family:'Inter',sans-serif;font-size:36px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:-0.02em" id="ci_mesicni">—</div>
+            <div style="font-family:'Inter',sans-serif;font-size:clamp(24px,6vw,44px);font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:-0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="ci_mesicni">—</div>
           </div>
           <div class="metrics" style="margin-bottom:12px">
             <div class="metric"><div class="metric-label">Vaše vklady celkem</div><div class="metric-value" id="ci_vlozeno">—</div></div>
@@ -827,9 +833,9 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div class="field">
           <label>Výše investice (Kč)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <button onclick="dlAdj(-50000)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <button onclick="dlAdj(-50000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
             <input type="text" id="dl_castka" placeholder="např. 500 000" class="fmt-input" oninput="dlCastkaIn(this)" onblur="formatInputValue(this);dlCalc()" style="flex:1;text-align:center">
-            <button onclick="dlAdj(50000)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+            <button onclick="dlAdj(50000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
           <input type="range" id="dl_slider" min="50000" max="5000000" value="50000" step="50000" oninput="dlSlider(this.value)" style="width:100%;accent-color:var(--accent);cursor:pointer">
           <div class="field-preview" id="dl_prev"></div>
@@ -904,18 +910,18 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div class="field">
           <label>Rok narození</label>
           <div style="display:flex;align-items:center;gap:8px">
-            <button onclick="pAdjRok(-1)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <button onclick="pAdjRok(-1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
             <input type="number" id="p_vek" value="" min="1940" max="2005" placeholder="např. 1985" oninput="calcPenze()" style="flex:1;text-align:center">
-            <button onclick="pAdjRok(1)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+            <button onclick="pAdjRok(1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
           <div class="field-preview" id="p_vek_info" style="color:var(--text2);margin-top:6px"></div>
         </div>
         <div class="field">
           <label>Měsíční příspěvek klienta (Kč)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <button onclick="pAdjVklad(-100)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <button onclick="pAdjVklad(-100)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
             <input type="number" id="p_vklad" value="" min="0" step="100" placeholder="např. 1 700" oninput="pVkladSync(this.value)" style="flex:1;text-align:center">
-            <button onclick="pAdjVklad(100)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+            <button onclick="pAdjVklad(100)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
           <input type="range" id="p_vklad_slider" min="0" max="5000" value="0" step="100" oninput="pVkladSync(this.value, true)" style="width:100%;accent-color:var(--accent);cursor:pointer">
           <div class="field-preview" id="p_vklad_preview"></div>
@@ -1198,9 +1204,9 @@ input[type="range"]::-webkit-slider-runnable-track {
           <div class="field">
             <label>Rok narození</label>
             <div style="display:flex;align-items:center;gap:8px">
-              <button onclick="dAdjRok(-1)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+              <button onclick="dAdjRok(-1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
               <input type="number" id="d_vek" value="" min="1940" max="2005" placeholder="např. 1985" oninput="calcDip()" style="flex:1;text-align:center">
-              <button onclick="dAdjRok(1)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+              <button onclick="dAdjRok(1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
             </div>
             <div class="field-preview" id="d_vek_info" style="color:var(--text2);margin-top:6px"></div>
           </div>
@@ -1210,9 +1216,9 @@ input[type="range"]::-webkit-slider-runnable-track {
               <span style="font-size:12px;font-weight:600;color:var(--accent)" id="d_dps_live">—</span>
             </div>
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-              <button onclick="dAdjDps(-100)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+              <button onclick="dAdjDps(-100)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
               <input type="number" id="d_dps" value="" min="0" step="100" placeholder="např. 1 700" oninput="dDpsSync(this.value)" style="flex:1;text-align:center">
-              <button onclick="dAdjDps(100)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+              <button onclick="dAdjDps(100)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
             </div>
             <input type="range" id="d_dps_slider" min="0" max="5000" value="0" step="100" oninput="dDpsSync(this.value,true)" style="width:100%;accent-color:var(--accent);cursor:pointer">
           </div>
@@ -1227,9 +1233,9 @@ input[type="range"]::-webkit-slider-runnable-track {
               <span style="font-size:12px;font-weight:600;color:#4ADE80" id="d_dip_live">—</span>
             </div>
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-              <button onclick="dAdjDip(-100)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+              <button onclick="dAdjDip(-100)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
               <input type="number" id="d_dip" value="" min="0" step="100" placeholder="např. 2 000" oninput="dDipSync(this.value)" style="flex:1;text-align:center">
-              <button onclick="dAdjDip(100)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+              <button onclick="dAdjDip(100)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
             </div>
             <input type="range" id="d_dip_slider" min="0" max="5000" value="0" step="100" oninput="dDipSync(this.value,true)" style="width:100%;accent-color:#4ADE80;cursor:pointer">
           </div>
@@ -1295,8 +1301,8 @@ input[type="range"]::-webkit-slider-runnable-track {
               <button id="rbtn-15" onclick="setRentaLet(15)" style="padding:4px 12px;border-radius:20px;border:1px solid var(--border2);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s">15 let</button>
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-              <div><div style="font-size:10px;color:var(--text3)">Rozdíl čisté hodnoty</div><div style="font-size:20px;font-weight:800;color:#4ADE80" id="d_rozdil_celkem">—</div></div>
-              <div><div style="font-size:10px;color:var(--text3)">Rozdíl v rentě / měs.</div><div style="font-size:20px;font-weight:800;color:#4ADE80" id="d_rozdil_renta">—</div></div>
+              <div><div style="font-size:10px;color:var(--text3)">Rozdíl čisté hodnoty</div><div style="font-size:clamp(16px,4vw,26px);font-weight:800;color:#4ADE80;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="d_rozdil_celkem">—</div></div>
+              <div><div style="font-size:10px;color:var(--text3)">Rozdíl v rentě / měs.</div><div style="font-size:clamp(16px,4vw,26px);font-weight:800;color:#4ADE80;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="d_rozdil_renta">—</div></div>
               <div><div style="font-size:10px;color:var(--text3)">Roky do důchodu</div><div style="font-size:13px;font-weight:600;color:var(--text2)" id="d_roky_do">—</div></div>
               <div><div style="font-size:10px;color:var(--text3)">DIP vložíte celkem</div><div style="font-size:13px;font-weight:600;color:var(--text2)" id="d_vlozeno">—</div></div>
             </div>
@@ -1353,9 +1359,9 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div class="field">
           <label>Cena nemovitosti (Kč)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <button onclick="hAdj('cena',-100000)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <button onclick="hAdj('cena',-100000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
             <input type="text" id="h_cena" placeholder="např. 5 000 000" class="fmt-input" oninput="hCenaIn(this)" onblur="formatInputValue(this);hCalc()" style="flex:1;text-align:center">
-            <button onclick="hAdj('cena',100000)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+            <button onclick="hAdj('cena',100000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
           <input type="range" id="h_cena_sl" min="0" max="30000000" value="0" step="100000" oninput="hSliderCena(this.value)" style="width:100%;accent-color:var(--accent);cursor:pointer">
           <div class="field-preview" id="h_cena_prev"></div>
@@ -1365,9 +1371,9 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div class="field">
           <label>Rok narození</label>
           <div style="display:flex;align-items:center;gap:8px">
-            <button onclick="hAdj('rok',-1)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <button onclick="hAdj('rok',-1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
             <input type="number" id="h_rok" placeholder="např. 1985" min="1940" max="2005" oninput="hCalc()" style="flex:1;text-align:center">
-            <button onclick="hAdj('rok',1)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+            <button onclick="hAdj('rok',1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
           <div id="h_vek_box" style="display:none;margin-top:10px;padding:10px 14px;background:var(--accent-dim);border:1px solid rgba(200,240,74,0.3);border-radius:8px;font-size:13px;line-height:1.8"></div>
         </div>
@@ -1385,9 +1391,9 @@ input[type="range"]::-webkit-slider-runnable-track {
             <div class="field">
               <label>Vlastní zdroje (Kč)</label>
               <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-                <button onclick="hAdj('vlastni',-10000)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+                <button onclick="hAdj('vlastni',-10000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
                 <input type="text" id="h_vlastni" placeholder="vlastní zdroje Kč" class="fmt-input" oninput="hVlastniIn(this)" onblur="formatInputValue(this);hCalc()" style="flex:1;text-align:center">
-                <button onclick="hAdj('vlastni',10000)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+                <button onclick="hAdj('vlastni',10000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
               </div>
               <div id="h_vlastni_warn" style="font-size:12px;color:var(--red);min-height:16px"></div>
             </div>
@@ -1398,9 +1404,9 @@ input[type="range"]::-webkit-slider-runnable-track {
             <div class="field">
               <label>Hodnota zastavované nemovitosti (Kč)</label>
               <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-                <button onclick="hAdj('zastava',-100000)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+                <button onclick="hAdj('zastava',-100000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
                 <input type="text" id="h_zastava" placeholder="hodnota zástavy Kč" class="fmt-input" oninput="hZastavaIn(this)" onblur="formatInputValue(this);hCalc()" style="flex:1;text-align:center">
-                <button onclick="hAdj('zastava',100000)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+                <button onclick="hAdj('zastava',100000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
               </div>
               <div id="h_zastava_info" style="font-size:12px;line-height:1.8;min-height:16px"></div>
             </div>
@@ -1411,9 +1417,9 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div class="field">
           <label>Úroková sazba (% ročně)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <button onclick="hAdjSazba(-0.1)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <button onclick="hAdjSazba(-0.1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
             <input type="number" id="h_sazba" value="4.79" step="0.01" min="0" oninput="hCalc()" style="flex:1;text-align:center">
-            <button onclick="hAdjSazba(0.1)" style="width:40px;height:40px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+            <button onclick="hAdjSazba(0.1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
           <input type="range" id="h_sazba_sl" min="0" max="15" value="4.79" step="0.1" oninput="hSazbaSlider(this.value)" style="width:100%;accent-color:var(--accent);cursor:pointer">
         </div>
@@ -1422,12 +1428,12 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div class="field">
           <label>Doba splatnosti</label>
           <div style="display:flex;align-items:center;gap:10px">
-            <button onclick="hAdj('roky',-1)" style="width:44px;height:44px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:300">−</button>
+            <button onclick="hAdj('roky',-1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:300">−</button>
             <div style="flex:1;text-align:center">
-              <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:700;color:var(--accent);line-height:1" id="h_roky_lbl">30</div>
+              <div style="font-family:'Syne',sans-serif;font-size:clamp(22px,5vw,32px);font-weight:700;color:var(--accent);line-height:1" id="h_roky_lbl">30</div>
               <div style="font-size:12px;color:var(--text3);margin-top:2px">let</div>
             </div>
-            <button onclick="hAdj('roky',1)" style="width:44px;height:44px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:22px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:300">+</button>
+            <button onclick="hAdj('roky',1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:300">+</button>
           </div>
           <input type="range" id="h_roky_sl" min="1" max="35" value="30" step="1" oninput="hRokySlider(this.value)" style="width:100%;margin-top:12px;accent-color:var(--accent);cursor:pointer">
           <input type="number" id="h_roky" value="30" style="display:none">
@@ -2093,8 +2099,18 @@ function calcInvest() {
   ];
   produkty.forEach(p => {
     const fvJednoraz = jednoraz * Math.pow(1 + Math.max(p.sazba, 0) / 100 / 12, roky * 12);
-    p.hodnota = calcFV(vklad, Math.max(p.sazba, 0), roky) + fvJednoraz;
-    if (p.isIZP) {
+    if (p.id === "penzijko") {
+      // Penzijko: státní příspěvek přičten k měsíčnímu vkladu, 15% daň ze zisku při výběru
+      const statPrispevek = getStatniPrispevek(vklad);
+      const celkMesicni = vklad + statPrispevek;
+      const hrubaHodnota = calcFV(celkMesicni, Math.max(p.sazba, 0), roky) + fvJednoraz;
+      const vsechnyVklady = vklad * 12 * roky + statPrispevek * 12 * roky + jednoraz;
+      const zisk = Math.max(hrubaHodnota - vsechnyVklady, 0);
+      const dan = zisk * 0.15;
+      p.hodnota = hrubaHodnota - dan;
+      p.zisk = p.hodnota - celkem; // rozdíl oproti samotnému vkladu klienta
+      p.isNeg = p.zisk < 0;
+    } else if (p.isIZP) {
       let z = vklad * 0.97;
       for (let m = 1; m <= roky * 12; m++) {
         z = z * (1 + 0.01/12);
@@ -2102,9 +2118,13 @@ function calcInvest() {
         z -= 150;
       }
       p.hodnota = Math.max(z, 0) + fvJednoraz;
+      p.zisk = p.hodnota - celkem;
+      p.isNeg = p.zisk < 0;
+    } else {
+      p.hodnota = calcFV(vklad, Math.max(p.sazba, 0), roky) + fvJednoraz;
+      p.zisk = p.hodnota - celkem;
+      p.isNeg = p.zisk < 0;
     }
-    p.zisk = p.hodnota - celkem;
-    p.isNeg = p.zisk < 0;
   });
   const sorted = [...produkty].sort((a, b) => b.hodnota - a.hodnota);
   const grid = document.getElementById("products-grid");
@@ -2136,15 +2156,30 @@ function calcInvest() {
   const colors = {etf:"#C8F04A",dip:"#4ADE80",penzijko:"#60A5FA",stavebko:"#F59E0B",sporici:"#A78BFA",izp:"#FB923C",bezny:"#F87171"};
   const labels = [];
   for (let y = 0; y <= roky; y++) labels.push(y === 0 ? "Start" : y + "r");
-  const datasets = produkty.map(p => ({
-    label: p.name,
-    data: labels.map((l, idx) => Math.round(calcFV(vklad, Math.max(p.sazba, 0), idx) + jednoraz * Math.pow(1 + Math.max(p.sazba, 0) / 100 / 12, idx * 12))),
-    borderColor: colors[p.id] || "#888",
-    backgroundColor: "transparent",
-    borderWidth: p.id === "etf" ? 3.5 : 1,
-    pointRadius: 0,
-    tension: 0.4,
-  }));
+  const datasets = produkty.map(p => {
+    let data;
+    if (p.id === "penzijko") {
+      const statPrispevek = getStatniPrispevek(vklad);
+      const celkMesicni = vklad + statPrispevek;
+      data = labels.map((l, idx) => {
+        const hruby = calcFV(celkMesicni, Math.max(p.sazba, 0), idx) + jednoraz * Math.pow(1 + Math.max(p.sazba, 0) / 100 / 12, idx * 12);
+        const vsechnyVklady = celkMesicni * 12 * idx + jednoraz;
+        const zisk = Math.max(hruby - vsechnyVklady, 0);
+        return Math.round(hruby - zisk * 0.15);
+      });
+    } else {
+      data = labels.map((l, idx) => Math.round(calcFV(vklad, Math.max(p.sazba, 0), idx) + jednoraz * Math.pow(1 + Math.max(p.sazba, 0) / 100 / 12, idx * 12)));
+    }
+    return {
+      label: p.name,
+      data,
+      borderColor: colors[p.id] || "#888",
+      backgroundColor: "transparent",
+      borderWidth: p.id === "etf" ? 3.5 : 1,
+      pointRadius: 0,
+      tension: 0.4,
+    };
+  });
   // Custom legend
   const legendEl = document.getElementById("invest-chart-legend");
   if (legendEl) {
