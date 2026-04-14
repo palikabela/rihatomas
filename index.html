@@ -2682,12 +2682,12 @@ function calcDip() {
       }
     }
     // Sync DPS mode info s odhadem poplatků
-    const bezPopl0 = calcFVPenze(dpsVkl+statDPS, 8.0, mesice);
+    const bezPopl0 = calcFVPenze(dpsVkl+statDPS+dpsZam, 8.0, mesice);
     const poplatkyOdh0 = Math.max(bezPopl0-(dpsCelkem+dpsDanZisk), 0);
     const modeInfo = document.getElementById('d_dps_mode_info');
     if(modeInfo) modeInfo.innerHTML = dpsMode==='jednor'
-      ? `8% hrubý − 1% správa − 15% success fee = 5,95% · + stát. příspěvek · <span style="color:var(--red)">15% daň ze zisku</span> · <span style="color:var(--text)">ztráta na popl. ~${fmt(poplatkyOdh0)} Kč</span>`
-      : `8% hrubý − 1% správa − 15% success fee = 5,95% · + stát. příspěvek · <span style="color:#16A34A">0% daň (renta 10+ let)</span> · ⚠ 1% správa i při výplatě · <span style="color:var(--text)">ztráta na popl. ~${fmt(poplatkyOdh0)} Kč</span>`;
+      ? `8% hrubý − 1% správa − 15% success fee = 5,95% · + stát. příspěvek · <span style="color:var(--red)">15% daň ze zisku</span> · <span style="color:var(--text)">ztráta na popl. ~${fmt(poplatkyOdh0)}</span>`
+      : `8% hrubý − 1% správa − 15% success fee = 5,95% · + stát. příspěvek · <span style="color:#16A34A">0% daň (renta 10+ let)</span> · ⚠ 1% správa i při výplatě · <span style="color:var(--text)">ztráta na popl. ~${fmt(poplatkyOdh0)}</span>`;
   } else {
     ["d_dps_celkem","d_dps_vynos","d_dps_renta","d_dps_dan"].forEach(id=>setT(id,"—"));
     const dpsTipReset = document.getElementById("d_dps_dan_tip");
@@ -2754,7 +2754,7 @@ function calcDip() {
     setT("d_rozdil_renta", (rR>=0?"+":"")+fmt(rR)+"/m");
     const dop=document.getElementById("d_doporuceni");
     if(dop) {
-      const bezPopl=calcFVPenze(dpsVkl+statDPS, 8.0, mesice);
+      const bezPopl=calcFVPenze(dpsVkl+statDPS+dpsZam, 8.0, mesice);
       const danText = dpsMode==='jednor'
         ? `Daň 15 % ze zisku při jednorázovém výběru: <strong>${fmt(dpsDanZisk)} Kč</strong> odchází státu`
         : `Renta 10+ let: <strong>0 % daň</strong> ✓ — ale 1% správa běží i při výplatě + hrozí přesun do konzervativního fondu`;
