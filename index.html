@@ -1342,6 +1342,26 @@ input[type="range"]::-webkit-slider-runnable-track {
         </div>
       </div>
 
+      <!-- Tipy pro poradce -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-bottom:14px">
+
+        <div style="background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:10px;padding:1rem 1.15rem">
+          <div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:.6rem">💡 Tip: Flexibilita v 60 letech</div>
+          <p style="font-family:'Inter',sans-serif;font-size:13px;color:var(--text2);line-height:1.6;margin:0">Věk 60 let je jen „daňový klíč". Pokud klient peníze hned nevybere, v DIPu se dál zhodnocují s nízkými náklady. U DPS stát po 65. roce přestává vyplácet příspěvky, což drasticky snižuje efektivitu produktu.</p>
+        </div>
+
+        <div style="background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:10px;padding:1rem 1.15rem">
+          <div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:.6rem">💡 Tip: Zhodnocování během renty</div>
+          <p style="font-family:'Inter',sans-serif;font-size:13px;color:var(--text2);line-height:1.6;margin:0">V DIPu zůstávají nevyčerpané peníze i během renty plně investované (např. v ETF) a dál vydělávají. U DPS se při výplatě často převádějí do „výplatních" konzervativních fondů, kde jejich reálnou hodnotu požírá inflace.</p>
+        </div>
+
+        <div style="background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:10px;padding:1rem 1.15rem">
+          <div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:.6rem">💡 Tip: Daňová past při výběru</div>
+          <p style="font-family:'Inter',sans-serif;font-size:13px;color:var(--text2);line-height:1.6;margin:0">U DPS je 0% daň ze zisku podmíněna výplatou renty na min. 10 let. Při dřívějším výběru nebo kratší rentě klient platí 15 % státu. DIP dává svobodu – v 60 letech může vybrat vše najednou a díky časovému testu neplatí žádnou daň ze zisku.</p>
+        </div>
+
+      </div>
+
     </div> <!-- /penze-dpsvssdip -->
 
     <p class="note">Výpočty jsou orientační. Zhodnocení DPS vychází z historické výnosnosti světových akciových indexů. Minulá výnosnost nezaručuje budoucí výsledky. Státní příspěvek dle legislativy platné od 1. 7. 2024. Daňová úspora při 15% sazbě daně z příjmu.</p>
@@ -2099,18 +2119,8 @@ function calcInvest() {
   ];
   produkty.forEach(p => {
     const fvJednoraz = jednoraz * Math.pow(1 + Math.max(p.sazba, 0) / 100 / 12, roky * 12);
-    if (p.id === "penzijko") {
-      // Penzijko: státní příspěvek přičten k měsíčnímu vkladu, 15% daň ze zisku při výběru
-      const statPrispevek = getStatniPrispevek(vklad);
-      const celkMesicni = vklad + statPrispevek;
-      const hrubaHodnota = calcFV(celkMesicni, Math.max(p.sazba, 0), roky) + fvJednoraz;
-      const vsechnyVklady = vklad * 12 * roky + statPrispevek * 12 * roky + jednoraz;
-      const zisk = Math.max(hrubaHodnota - vsechnyVklady, 0);
-      const dan = zisk * 0.15;
-      p.hodnota = hrubaHodnota - dan;
-      p.zisk = p.hodnota - celkem; // rozdíl oproti samotnému vkladu klienta
-      p.isNeg = p.zisk < 0;
-    } else if (p.isIZP) {
+    p.hodnota = calcFV(vklad, Math.max(p.sazba, 0), roky) + fvJednoraz;
+    if (p.isIZP) {
       let z = vklad * 0.97;
       for (let m = 1; m <= roky * 12; m++) {
         z = z * (1 + 0.01/12);
@@ -2118,13 +2128,9 @@ function calcInvest() {
         z -= 150;
       }
       p.hodnota = Math.max(z, 0) + fvJednoraz;
-      p.zisk = p.hodnota - celkem;
-      p.isNeg = p.zisk < 0;
-    } else {
-      p.hodnota = calcFV(vklad, Math.max(p.sazba, 0), roky) + fvJednoraz;
-      p.zisk = p.hodnota - celkem;
-      p.isNeg = p.zisk < 0;
     }
+    p.zisk = p.hodnota - celkem;
+    p.isNeg = p.zisk < 0;
   });
   const sorted = [...produkty].sort((a, b) => b.hodnota - a.hodnota);
   const grid = document.getElementById("products-grid");
@@ -2156,30 +2162,15 @@ function calcInvest() {
   const colors = {etf:"#C8F04A",dip:"#4ADE80",penzijko:"#60A5FA",stavebko:"#F59E0B",sporici:"#A78BFA",izp:"#FB923C",bezny:"#F87171"};
   const labels = [];
   for (let y = 0; y <= roky; y++) labels.push(y === 0 ? "Start" : y + "r");
-  const datasets = produkty.map(p => {
-    let data;
-    if (p.id === "penzijko") {
-      const statPrispevek = getStatniPrispevek(vklad);
-      const celkMesicni = vklad + statPrispevek;
-      data = labels.map((l, idx) => {
-        const hruby = calcFV(celkMesicni, Math.max(p.sazba, 0), idx) + jednoraz * Math.pow(1 + Math.max(p.sazba, 0) / 100 / 12, idx * 12);
-        const vsechnyVklady = celkMesicni * 12 * idx + jednoraz;
-        const zisk = Math.max(hruby - vsechnyVklady, 0);
-        return Math.round(hruby - zisk * 0.15);
-      });
-    } else {
-      data = labels.map((l, idx) => Math.round(calcFV(vklad, Math.max(p.sazba, 0), idx) + jednoraz * Math.pow(1 + Math.max(p.sazba, 0) / 100 / 12, idx * 12)));
-    }
-    return {
-      label: p.name,
-      data,
-      borderColor: colors[p.id] || "#888",
-      backgroundColor: "transparent",
-      borderWidth: p.id === "etf" ? 3.5 : 1,
-      pointRadius: 0,
-      tension: 0.4,
-    };
-  });
+  const datasets = produkty.map(p => ({
+    label: p.name,
+    data: labels.map((l, idx) => Math.round(calcFV(vklad, Math.max(p.sazba, 0), idx) + jednoraz * Math.pow(1 + Math.max(p.sazba, 0) / 100 / 12, idx * 12))),
+    borderColor: colors[p.id] || "#888",
+    backgroundColor: "transparent",
+    borderWidth: p.id === "etf" ? 3.5 : 1,
+    pointRadius: 0,
+    tension: 0.4,
+  }));
   // Custom legend
   const legendEl = document.getElementById("invest-chart-legend");
   if (legendEl) {
