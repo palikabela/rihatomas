@@ -1290,6 +1290,10 @@ input[type="range"]::-webkit-slider-runnable-track {
                 <div style="font-size:10px;color:var(--text3)">💰 Roční úspora na daních</div>
                 <div style="font-size:14px;font-weight:700;color:#4ADE80" id="d_dip_dan_uspora_card">—</div>
               </div>
+              <div style="grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;padding-top:4px">
+                <div style="font-size:10px;color:var(--text3)">💰 Celková úspora na daních za celé období</div>
+                <div style="font-size:14px;font-weight:700;color:#4ADE80" id="d_dip_dan_uspora_celkem">—</div>
+              </div>
             </div>
           </div>
           <div id="d_doporuceni" style="margin-bottom:.75rem;padding:.85rem 1rem;background:rgba(74,222,128,0.07);border:1px solid rgba(74,222,128,0.2);border-radius:8px;font-size:13px;color:var(--text);line-height:1.8;display:none"></div>
@@ -2592,7 +2596,7 @@ function calcDip() {
   const vekRaw = document.getElementById("d_vek")?.value;
   if(!vekRaw || rokNarozeni < 1940 || vek <= 0 || vek >= 65) {
     ["d_dps_celkem","d_dps_vynos","d_dps_renta","d_dps_dan",
-     "d_dip_celkem","d_dip_vynos","d_dip_renta","d_dip_dan_uspora_card",
+     "d_dip_celkem","d_dip_vynos","d_dip_renta","d_dip_dan_uspora_card","d_dip_dan_uspora_celkem",
      "d_rozdil_celkem","d_rozdil_renta","d_roky_do","d_vlozeno",
      "d_dan_uspora_dip","d_dan_uspora_dps","d_stat_rok",
      "d_dps_vyhoda_rok","d_dip_vyhoda_rok",
@@ -2683,6 +2687,7 @@ function calcDip() {
     setT("d_dip_renta",  fmt(dipRenta)+"/m");
     setT("d_vlozeno",    fmt(dipVloz));
     setT("d_dip_dan_uspora_card", fmt(danUsporaDIP)+"/rok");
+    setT("d_dip_dan_uspora_celkem", fmt(danUsporaDIP * roky));
 
     // Koláč
     const dipVkladC=dipVkl*mesice, dipZamestC=zamest*mesice, dipZhodC=Math.max(dipVynos,0);
