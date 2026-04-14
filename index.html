@@ -2686,8 +2686,8 @@ function calcDip() {
     const poplatkyOdh0 = Math.max(bezPopl0-(dpsCelkem+dpsDanZisk), 0);
     const modeInfo = document.getElementById('d_dps_mode_info');
     if(modeInfo) modeInfo.innerHTML = dpsMode==='jednor'
-      ? `8% hrubý − 1% správa − 15% success fee = 5,95% · + stát. příspěvek · <span style="color:var(--red)">15% daň ze zisku</span> · <span style="color:var(--text3)">ztráta na popl. ~${fmt(poplatkyOdh0)} Kč</span>`
-      : `8% hrubý − 1% správa − 15% success fee = 5,95% · + stát. příspěvek · <span style="color:#16A34A">0% daň (renta 10+ let)</span> · ⚠ 1% správa i při výplatě · <span style="color:var(--text3)">ztráta na popl. ~${fmt(poplatkyOdh0)} Kč</span>`;
+      ? `8% hrubý − 1% správa − 15% success fee = 5,95% · + stát. příspěvek · <span style="color:var(--red)">15% daň ze zisku</span> · <span style="color:var(--text)">ztráta na popl. ~${fmt(poplatkyOdh0)} Kč</span>`
+      : `8% hrubý − 1% správa − 15% success fee = 5,95% · + stát. příspěvek · <span style="color:#16A34A">0% daň (renta 10+ let)</span> · ⚠ 1% správa i při výplatě · <span style="color:var(--text)">ztráta na popl. ~${fmt(poplatkyOdh0)} Kč</span>`;
   } else {
     ["d_dps_celkem","d_dps_vynos","d_dps_renta","d_dps_dan"].forEach(id=>setT(id,"—"));
     const dpsTipReset = document.getElementById("d_dps_dan_tip");
