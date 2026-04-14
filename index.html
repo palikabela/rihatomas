@@ -2119,8 +2119,14 @@ function calcInvest() {
   ];
   produkty.forEach(p => {
     const fvJednoraz = jednoraz * Math.pow(1 + Math.max(p.sazba, 0) / 100 / 12, roky * 12);
-    p.hodnota = calcFV(vklad, Math.max(p.sazba, 0), roky) + fvJednoraz;
-    if (p.isIZP) {
+    if (p.id === "penzijko") {
+      const statPrispevek = getStatniPrispevek(vklad);
+      const celkMesicni = vklad + statPrispevek;
+      const hrubaHodnota = calcFV(celkMesicni, Math.max(p.sazba, 0), roky) + fvJednoraz;
+      const vsechnyVklady = celkMesicni * 12 * roky + jednoraz;
+      const zisk = Math.max(hrubaHodnota - vsechnyVklady, 0);
+      p.hodnota = hrubaHodnota - zisk * 0.15;
+    } else if (p.isIZP) {
       let z = vklad * 0.97;
       for (let m = 1; m <= roky * 12; m++) {
         z = z * (1 + 0.01/12);
@@ -2128,6 +2134,8 @@ function calcInvest() {
         z -= 150;
       }
       p.hodnota = Math.max(z, 0) + fvJednoraz;
+    } else {
+      p.hodnota = calcFV(vklad, Math.max(p.sazba, 0), roky) + fvJednoraz;
     }
     p.zisk = p.hodnota - celkem;
     p.isNeg = p.zisk < 0;
@@ -2162,15 +2170,30 @@ function calcInvest() {
   const colors = {etf:"#C8F04A",dip:"#4ADE80",penzijko:"#60A5FA",stavebko:"#F59E0B",sporici:"#A78BFA",izp:"#FB923C",bezny:"#F87171"};
   const labels = [];
   for (let y = 0; y <= roky; y++) labels.push(y === 0 ? "Start" : y + "r");
-  const datasets = produkty.map(p => ({
-    label: p.name,
-    data: labels.map((l, idx) => Math.round(calcFV(vklad, Math.max(p.sazba, 0), idx) + jednoraz * Math.pow(1 + Math.max(p.sazba, 0) / 100 / 12, idx * 12))),
-    borderColor: colors[p.id] || "#888",
-    backgroundColor: "transparent",
-    borderWidth: p.id === "etf" ? 3.5 : 1,
-    pointRadius: 0,
-    tension: 0.4,
-  }));
+  const datasets = produkty.map(p => {
+    let data;
+    if (p.id === "penzijko") {
+      const statPrispevek = getStatniPrispevek(vklad);
+      const celkMesicni = vklad + statPrispevek;
+      data = labels.map((l, idx) => {
+        const hruby = calcFV(celkMesicni, Math.max(p.sazba, 0), idx) + jednoraz * Math.pow(1 + Math.max(p.sazba, 0) / 100 / 12, idx * 12);
+        const vsechnyVklady = celkMesicni * 12 * idx + jednoraz;
+        const zisk = Math.max(hruby - vsechnyVklady, 0);
+        return Math.round(hruby - zisk * 0.15);
+      });
+    } else {
+      data = labels.map((l, idx) => Math.round(calcFV(vklad, Math.max(p.sazba, 0), idx) + jednoraz * Math.pow(1 + Math.max(p.sazba, 0) / 100 / 12, idx * 12)));
+    }
+    return {
+      label: p.name,
+      data,
+      borderColor: colors[p.id] || "#888",
+      backgroundColor: "transparent",
+      borderWidth: p.id === "etf" ? 3.5 : 1,
+      pointRadius: 0,
+      tension: 0.4,
+    };
+  });
   // Custom legend
   const legendEl = document.getElementById("invest-chart-legend");
   if (legendEl) {
