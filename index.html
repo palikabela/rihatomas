@@ -2634,12 +2634,6 @@ function calcDip() {
   // Banner removed — úspora je přímo v DIP kartě
 
   // ── DPS výpočet
-  // Sync DPS mode UI elements
-  const modeInfo = document.getElementById('d_dps_mode_info');
-  if(modeInfo) modeInfo.innerHTML = dpsMode==='jednor'
-    ? '8% hrubý − 1% správa − 15% success fee = 5,95% · + stát. příspěvek · <span style="color:var(--red)">15% daň ze zisku</span>'
-    : '8% hrubý − 1% správa − 15% success fee = 5,95% · + stát. příspěvek · <span style="color:#4ADE80">0% daň (renta 10+ let)</span> · ⚠ 1% správa i při výplatě';
-
   let dpsCelkem=0, dpsRenta=0, dpsDanZisk=0;
   if(dpsVkl>0 || dpsZam>0) {
     const celkDPS = dpsVkl + statDPS + dpsZam;
@@ -2661,8 +2655,19 @@ function calcDip() {
     const danEl2 = document.getElementById('d_dps_dan');
     if(danEl2) danEl2.style.color = dpsMode==='jednor' ? 'var(--red)' : '#4ADE80';
     setT("d_vlozeno",    fmt(dpsVkl*mesice));
+    // Sync DPS mode info s odhadem poplatků
+    const bezPopl0 = calcFVPenze(dpsVkl+statDPS, 8.0, mesice);
+    const poplatkyOdh0 = Math.max(bezPopl0-(dpsCelkem+dpsDanZisk), 0);
+    const modeInfo = document.getElementById('d_dps_mode_info');
+    if(modeInfo) modeInfo.innerHTML = dpsMode==='jednor'
+      ? `8% hrubý − 1% správa − 15% success fee = 5,95% · + stát. příspěvek · <span style="color:var(--red)">15% daň ze zisku</span> · <span style="color:var(--text3)">ztráta na popl. ~${fmt(poplatkyOdh0)} Kč</span>`
+      : `8% hrubý − 1% správa − 15% success fee = 5,95% · + stát. příspěvek · <span style="color:#4ADE80">0% daň (renta 10+ let)</span> · ⚠ 1% správa i při výplatě · <span style="color:var(--text3)">ztráta na popl. ~${fmt(poplatkyOdh0)} Kč</span>`;
   } else {
     ["d_dps_celkem","d_dps_vynos","d_dps_renta","d_dps_dan"].forEach(id=>setT(id,"—"));
+    const modeInfoReset = document.getElementById('d_dps_mode_info');
+    if(modeInfoReset) modeInfoReset.innerHTML = dpsMode==='jednor'
+      ? '8% hrubý − 1% správa − 15% success fee = 5,95% · + stát. příspěvek · <span style="color:var(--red)">15% daň ze zisku</span>'
+      : '8% hrubý − 1% správa − 15% success fee = 5,95% · + stát. příspěvek · <span style="color:#4ADE80">0% daň (renta 10+ let)</span> · ⚠ 1% správa i při výplatě';
   }
 
   // ── DIP výpočet
@@ -2709,7 +2714,6 @@ function calcDip() {
     const dop=document.getElementById("d_doporuceni");
     if(dop) {
       const bezPopl=calcFVPenze(dpsVkl+statDPS, 8.0, mesice);
-      const poplatkyOdh=Math.max(bezPopl-(dpsCelkem+dpsDanZisk),0);
       const danText = dpsMode==='jednor'
         ? `Daň 15 % ze zisku při jednorázovém výběru: <strong>${fmt(dpsDanZisk)} Kč</strong> odchází státu`
         : `Renta 10+ let: <strong>0 % daň</strong> ✓ — ale 1% správa běží i při výplatě + hrozí přesun do konzervativního fondu`;
@@ -2719,7 +2723,6 @@ function calcDip() {
         <div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:.4rem;letter-spacing:0.04em;text-transform:uppercase">⚠ Tvrdá realita DPS</div>
         <div style="font-size:12px;color:var(--text2);line-height:1.9">
           • Poplatky DPS (1 % správa + 15 % success fee) sníží výnos z 8 % na <strong>5,95 % p.a.</strong><br>
-          • Odhadované ztráty na poplatcích za ${roky} let: <strong>${fmt(poplatkyOdh)} Kč</strong><br>
           • ${danText}<br>
           • DPS vyžaduje pravidelné spoření — DIP je <strong>flexibilní</strong><br>
           • Zisk DIP při splnění podmínek (60 let + 10 let): <strong>0 % daň</strong>
