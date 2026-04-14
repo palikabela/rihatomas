@@ -1277,6 +1277,7 @@ input[type="range"]::-webkit-slider-runnable-track {
               <div><div style="font-size:11px;color:var(--text3)">Čistý výnos</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="d_dps_vynos">—</div></div>
               <div><div style="font-size:11px;color:var(--text3)" id="d_dps_dan_label">Zaplacená daň ze zisku</div><div style="font-size:14px;font-weight:600;color:var(--red)" id="d_dps_dan">—</div></div>
             </div>
+            <div id="d_dps_dan_tip" style="display:none;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:11px;color:var(--text3);line-height:1.6"></div>
           </div>
           <div style="background:rgba(74,222,128,0.06);border-radius:10px;padding:.85rem 1rem;margin-bottom:10px;border:1px solid rgba(74,222,128,0.25)">
             <div style="font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#4ADE80;margin-bottom:.5rem">DIP — Dlouhodobý investiční produkt</div>
@@ -1293,6 +1294,9 @@ input[type="range"]::-webkit-slider-runnable-track {
               <div style="grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;padding-top:4px">
                 <div style="font-size:11px;color:var(--text3)">💰 Celková úspora na daních za celé období</div>
                 <div style="font-size:15px;font-weight:700;color:#4ADE80" id="d_dip_dan_uspora_celkem">—</div>
+              </div>
+              <div style="grid-column:1/-1" id="d_dip_dan_tip_wrap" style="display:none">
+                <div id="d_dip_dan_tip" style="display:none;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(74,222,128,0.3);font-size:11px;color:var(--text3);line-height:1.6"></div>
               </div>
             </div>
           </div>
@@ -2603,6 +2607,7 @@ function calcDip() {
      "dk_klient","dk_zamest","dk_zhodnoceni"
     ].forEach(id => setT(id,"—"));
     ["d_doporuceni","d_dan_info"].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display="none"; });
+    ["d_dps_dan_tip","d_dip_dan_tip"].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display="none"; });
     const vi=document.getElementById("d_vek_info"); if(vi) vi.textContent="";
     if(dipChart){dipChart.destroy();dipChart=null;}
     if(dipKolacChartInstance){dipKolacChartInstance.destroy();dipKolacChartInstance=null;}
@@ -2659,6 +2664,23 @@ function calcDip() {
     const danEl2 = document.getElementById('d_dps_dan');
     if(danEl2) danEl2.style.color = dpsMode==='jednor' ? 'var(--red)' : '#4ADE80';
     setT("d_vlozeno",    fmt(dpsVkl*mesice));
+
+    // DPS daňový tip
+    const dpsTipEl = document.getElementById("d_dps_dan_tip");
+    if(dpsTipEl) {
+      if(dpsVkl > 0 && dpsVkl <= 1700) {
+        dpsTipEl.style.display = "block";
+        dpsTipEl.innerHTML = `💡 <strong>Daňový tip:</strong> Vkládáte příliš málo pro získání slevy na dani. Zvyšte vklad nad <strong>1 700 Kč/měs.</strong> a získejte od státu 15 % zpět.`;
+      } else if(dpsVkl > 1700) {
+        const nadLimitMes = dpsVkl - 1700;
+        const nadLimitRok = Math.min(nadLimitMes * 12, 48000);
+        const uspDPS = Math.round(nadLimitRok * 0.15);
+        dpsTipEl.style.display = "block";
+        dpsTipEl.innerHTML = `💡 <strong>Daňový tip:</strong> Váš roční vklad nad limit je <strong>${fmt(nadLimitRok)} Kč</strong>. Díky tomu Vám stát vrátí <strong>${fmt(uspDPS)} Kč</strong> čistého ročně na účet.`;
+      } else {
+        dpsTipEl.style.display = "none";
+      }
+    }
     // Sync DPS mode info s odhadem poplatků
     const bezPopl0 = calcFVPenze(dpsVkl+statDPS, 8.0, mesice);
     const poplatkyOdh0 = Math.max(bezPopl0-(dpsCelkem+dpsDanZisk), 0);
@@ -2668,6 +2690,8 @@ function calcDip() {
       : `8% hrubý − 1% správa − 15% success fee = 5,95% · + stát. příspěvek · <span style="color:#16A34A">0% daň (renta 10+ let)</span> · ⚠ 1% správa i při výplatě · <span style="color:var(--text3)">ztráta na popl. ~${fmt(poplatkyOdh0)} Kč</span>`;
   } else {
     ["d_dps_celkem","d_dps_vynos","d_dps_renta","d_dps_dan"].forEach(id=>setT(id,"—"));
+    const dpsTipReset = document.getElementById("d_dps_dan_tip");
+    if(dpsTipReset) dpsTipReset.style.display = "none";
     const modeInfoReset = document.getElementById('d_dps_mode_info');
     if(modeInfoReset) modeInfoReset.innerHTML = dpsMode==='jednor'
       ? '8% hrubý − 1% správa − 15% success fee = 5,95% · + stát. příspěvek · <span style="color:var(--red)">15% daň ze zisku</span>'
@@ -2689,6 +2713,16 @@ function calcDip() {
     setT("d_dip_dan_uspora_card", fmt(danUsporaDIP)+"/rok");
     setT("d_dip_dan_uspora_celkem", fmt(danUsporaDIP * roky));
 
+    // DIP daňový tip
+    const dipTipEl = document.getElementById("d_dip_dan_tip");
+    if(dipTipEl) {
+      const rocniVkladDIP = Math.min((dipVkl + zamest) * 12, 50000);
+      const uspDIP = Math.round(rocniVkladDIP * 0.15);
+      dipTipEl.style.display = "block";
+      dipTipEl.innerHTML = `💡 <strong>Daňový tip:</strong> Váš roční vklad <strong>${fmt(rocniVkladDIP)} Kč</strong> si můžete odečíst z daní. Stát Vám za to vrátí <strong>${fmt(uspDIP)} Kč</strong> čistého ročně na účet.`
+        + ((dipVkl + zamest) * 12 > 50000 ? ` <em>(Uplatňuje se max. limit 50 000 Kč/rok.)</em>` : "");
+    }
+
     // Koláč
     const dipVkladC=dipVkl*mesice, dipZamestC=zamest*mesice, dipZhodC=Math.max(dipVynos,0);
     setT("dk_klient",     fmt(dipVkladC));
@@ -2708,6 +2742,8 @@ function calcDip() {
     });
   } else {
     ["d_dip_celkem","d_dip_vynos","d_dip_renta","dk_klient","dk_zamest","dk_zhodnoceni"].forEach(id=>setT(id,"—"));
+    const dipTipReset = document.getElementById("d_dip_dan_tip");
+    if(dipTipReset) dipTipReset.style.display = "none";
     if(dipKolacChartInstance){dipKolacChartInstance.destroy();dipKolacChartInstance=null;}
   }
 
