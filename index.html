@@ -1276,6 +1276,8 @@ input[type="range"]::-webkit-slider-runnable-track {
               <div><div style="font-size:11px;color:var(--text3)">Měsíční renta</div><div style="font-size:17px;font-weight:700;color:var(--accent)" id="d_dps_renta">—</div></div>
               <div><div style="font-size:11px;color:var(--text3)">Čistý výnos</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="d_dps_vynos">—</div></div>
               <div><div style="font-size:11px;color:var(--text3)" id="d_dps_dan_label">Zaplacená daň ze zisku</div><div style="font-size:14px;font-weight:600;color:var(--red)" id="d_dps_dan">—</div></div>
+              <div><div style="font-size:11px;color:var(--text3)">Celkem vloženo (vč. zam.)</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="d_dps_vlozeno_celkem">—</div></div>
+              <div><div style="font-size:11px;color:var(--text3)">Státní příspěvky celkem</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="d_dps_stat_celkem">—</div></div>
             </div>
             <div id="d_dps_dan_tip" style="display:none;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:11px;color:var(--text3);line-height:1.6"></div>
           </div>
@@ -1287,6 +1289,8 @@ input[type="range"]::-webkit-slider-runnable-track {
               <div><div style="font-size:11px;color:var(--text3)">Měsíční renta</div><div style="font-size:17px;font-weight:700;color:#4ADE80" id="d_dip_renta">—</div></div>
               <div><div style="font-size:11px;color:var(--text3)">Čistý výnos</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="d_dip_vynos">—</div></div>
               <div><div style="font-size:11px;color:var(--text3)">Daň ze zisku</div><div style="font-size:13px;font-weight:600;color:#4ADE80">0 Kč ✓</div></div>
+              <div><div style="font-size:11px;color:var(--text3)">Celkem vloženo (vč. zam.)</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="d_dip_vlozeno_celkem">—</div></div>
+              <div><div style="font-size:11px;color:var(--text3)">Státní příspěvky celkem</div><div style="font-size:14px;font-weight:600;color:var(--text2)">0 Kč</div></div>
               <div style="grid-column:1/-1;border-top:1px solid rgba(74,222,128,0.15);padding-top:6px;margin-top:2px;display:flex;justify-content:space-between;align-items:center">
                 <div style="font-size:11px;color:var(--text3)">💰 Roční úspora na daních</div>
                 <div style="font-size:15px;font-weight:700;color:#4ADE80" id="d_dip_dan_uspora_card">—</div>
@@ -2604,7 +2608,8 @@ function calcDip() {
      "d_rozdil_celkem","d_rozdil_renta","d_roky_do","d_vlozeno",
      "d_dan_uspora_dip","d_dan_uspora_dps","d_stat_rok",
      "d_dps_vyhoda_rok","d_dip_vyhoda_rok",
-     "dk_klient","dk_zamest","dk_zhodnoceni"
+     "dk_klient","dk_zamest","dk_zhodnoceni",
+     "d_dps_vlozeno_celkem","d_dps_stat_celkem","d_dip_vlozeno_celkem"
     ].forEach(id => setT(id,"—"));
     ["d_doporuceni","d_dan_info"].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display="none"; });
     ["d_dps_dan_tip","d_dip_dan_tip"].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display="none"; });
@@ -2664,6 +2669,10 @@ function calcDip() {
     const danEl2 = document.getElementById('d_dps_dan');
     if(danEl2) danEl2.style.color = dpsMode==='jednor' ? 'var(--red)' : '#4ADE80';
     setT("d_vlozeno",    fmt(dpsVkl*mesice));
+    const dpsVlozenoCelkem = (dpsVkl + dpsZam) * mesice;
+    const dpsStatCelkem = statDPS * mesice;
+    setT("d_dps_vlozeno_celkem", fmt(dpsVlozenoCelkem));
+    setT("d_dps_stat_celkem",    fmt(dpsStatCelkem));
 
     // DPS daňový tip
     const dpsTipEl = document.getElementById("d_dps_dan_tip");
@@ -2690,6 +2699,7 @@ function calcDip() {
       : `8% hrubý − 1% správa − 15% success fee = 5,95% · + stát. příspěvek · <span style="color:#16A34A">0% daň (renta 10+ let)</span> · ⚠ 1% správa i při výplatě · <span style="color:var(--text)">ztráta na popl. ~${fmt(poplatkyOdh0)}</span>`;
   } else {
     ["d_dps_celkem","d_dps_vynos","d_dps_renta","d_dps_dan"].forEach(id=>setT(id,"—"));
+    setT("d_dps_vlozeno_celkem","—"); setT("d_dps_stat_celkem","—");
     const dpsTipReset = document.getElementById("d_dps_dan_tip");
     if(dpsTipReset) dpsTipReset.style.display = "none";
     const modeInfoReset = document.getElementById('d_dps_mode_info');
@@ -2712,6 +2722,8 @@ function calcDip() {
     setT("d_vlozeno",    fmt(dipVloz));
     setT("d_dip_dan_uspora_card", fmt(danUsporaDIP)+"/rok");
     setT("d_dip_dan_uspora_celkem", fmt(danUsporaDIP * roky));
+    const dipVlozenoCelkem = (dipVkl + zamest) * mesice;
+    setT("d_dip_vlozeno_celkem", fmt(dipVlozenoCelkem));
 
     // DIP daňový tip
     const dipTipEl = document.getElementById("d_dip_dan_tip");
@@ -2742,6 +2754,7 @@ function calcDip() {
     });
   } else {
     ["d_dip_celkem","d_dip_vynos","d_dip_renta","dk_klient","dk_zamest","dk_zhodnoceni"].forEach(id=>setT(id,"—"));
+    setT("d_dip_vlozeno_celkem","—");
     const dipTipReset = document.getElementById("d_dip_dan_tip");
     if(dipTipReset) dipTipReset.style.display = "none";
     if(dipKolacChartInstance){dipKolacChartInstance.destroy();dipKolacChartInstance=null;}
