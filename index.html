@@ -495,10 +495,9 @@ input[type="range"]::-webkit-slider-runnable-track {
             <label>Výše úvěru (Kč)</label>
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
               <button onclick="syncJistina(getRaw('k_jistina')-10000,false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-              <input type="text" id="k_jistina" value="" placeholder="např. 1 000 000" class="fmt-input" oninput="syncJistina(this.value.replace(/[^\d]/g,''),false)" onblur="formatInputValue(this)" style="flex:1;text-align:center">
+              <input type="text" inputmode="numeric" id="k_jistina" value="" placeholder="např. 1 000 000" class="fmt-input" oninput="formatLive(this); syncJistina(this.value.replace(/[^\d]/g,''),false)" onblur="formatInputValue(this)" style="flex:1;text-align:center">
               <button onclick="syncJistina(getRaw('k_jistina')+10000,false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
             </div>
-            <div id="k_jistina_preview" class="field-preview"></div>
           </div>
           <input type="range" id="k_jistina_slider" min="0" max="100000000" value="0" step="10000"
             oninput="syncJistina(this.value,true)"
@@ -510,10 +509,9 @@ input[type="range"]::-webkit-slider-runnable-track {
           <label>Požadovaná měsíční splátka (Kč)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
             <button onclick="syncSplatkaInput(getRaw('k_splatka_input')-500,false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-            <input type="text" id="k_splatka_input" value="" placeholder="např. 5 000" class="fmt-input" oninput="syncSplatkaInput(this.value.replace(/[^\d]/g,''),false)" onblur="formatInputValue(this)" style="flex:1;text-align:center">
+            <input type="text" inputmode="numeric" id="k_splatka_input" value="" placeholder="např. 5 000" class="fmt-input" oninput="formatLive(this); syncSplatkaInput(this.value.replace(/[^\d]/g,''),false)" onblur="formatInputValue(this)" style="flex:1;text-align:center">
             <button onclick="syncSplatkaInput(getRaw('k_splatka_input')+500,false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
-          <div class="field-preview" id="k_splatka_input_preview"></div>
           <input type="range" id="k_splatka_slider" min="0" max="100000" value="0" step="500"
             oninput="syncSplatkaInput(this.value,true)"
             style="width:100%;accent-color:var(--accent);cursor:pointer">
@@ -579,10 +577,9 @@ input[type="range"]::-webkit-slider-runnable-track {
           <label>Zbývající dluh (Kč)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
             <button onclick="syncRDluh(getRaw('r_dluh')-5000,false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-            <input type="text" id="r_dluh" value="" placeholder="např. 2 500 000" class="fmt-input" oninput="syncRDluh(this.value.replace(/[^\d]/g,''),false)" onblur="formatInputValue(this)" style="flex:1;text-align:center">
+            <input type="text" inputmode="numeric" id="r_dluh" value="" placeholder="např. 2 500 000" class="fmt-input" oninput="formatLive(this); syncRDluh(this.value.replace(/[^\d]/g,''),false)" onblur="formatInputValue(this)" style="flex:1;text-align:center">
             <button onclick="syncRDluh(getRaw('r_dluh')+5000,false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
-          <div id="r_dluh_preview" class="field-preview"></div>
           <input type="range" id="r_dluh_slider" min="0" max="100000000" value="0" step="5000"
             oninput="syncRDluh(this.value,true)"
             style="width:100%;accent-color:var(--accent);cursor:pointer;margin-top:8px">
@@ -655,10 +652,9 @@ input[type="range"]::-webkit-slider-runnable-track {
           <label>Měsíční vklad (Kč)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
             <button onclick="syncIVklad(getRaw('i_vklad')-100,false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-            <input type="text" id="i_vklad" value="" placeholder="např. 5 000" class="fmt-input" oninput="syncIVklad(this.value.replace(/[^\d]/g,''),false)" onblur="formatInputValue(this)" style="flex:1;text-align:center">
+            <input type="text" inputmode="numeric" id="i_vklad" value="" placeholder="např. 5 000" class="fmt-input" oninput="formatLive(this); syncIVklad(this.value.replace(/[^\d]/g,''),false)" onblur="formatInputValue(this)" style="flex:1;text-align:center">
             <button onclick="syncIVklad(getRaw('i_vklad')+100,false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
-          <div class="field-preview" id="i_vklad_preview"></div>
           <input type="range" id="i_vklad_slider" min="0" max="15000" value="0" step="100"
             oninput="syncIVklad(this.value,true)"
             style="width:100%;accent-color:var(--accent);cursor:pointer;margin-bottom:4px">
@@ -667,13 +663,12 @@ input[type="range"]::-webkit-slider-runnable-track {
           <label>Jednorázový vklad (Kč)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
             <button onclick="syncIJednoraz((parseInt((document.getElementById('i_jednoraz').value||'').replace(/[^0-9]/g,''))||0)-1000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-            <input type="number" id="i_jednoraz" value="" placeholder="např. 100 000" min="0" step="1000" oninput="syncIJednoraz(this.value)" style="flex:1;text-align:center">
+            <input class="fmt-input" type="text" inputmode="numeric" id="i_jednoraz" value="" placeholder="např. 100 000" oninput="formatLive(this); syncIJednoraz(this.value.replace(/[^0-9]/g,''))" style="flex:1;text-align:center">
             <button onclick="syncIJednoraz((parseInt((document.getElementById('i_jednoraz').value||'').replace(/[^0-9]/g,''))||0)+1000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
           <input type="range" id="i_jednoraz_slider" min="0" max="5000000" value="0" step="1000"
             oninput="syncIJednoraz(this.value, true)"
             style="width:100%;accent-color:var(--accent);cursor:pointer;margin-bottom:4px">
-          <div class="field-preview" id="i_jednoraz_preview"></div>
         </div>
         <div class="field">
           <label>Doba spoření — <span id="i_roky_label">20</span> let</label>
@@ -779,19 +774,17 @@ input[type="range"]::-webkit-slider-runnable-track {
           <div class="field">
             <label>Cílová částka (Kč)</label>
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-              <button onclick="syncCiCil((parseInt(document.getElementById('ci_cil').value)||0)-100000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-              <input type="number" id="ci_cil" value="" min="0" step="100000" placeholder="např. 5 000 000" oninput="syncCiCil(this.value)" style="flex:1;text-align:center">
-              <button onclick="syncCiCil((parseInt(document.getElementById('ci_cil').value)||0)+100000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+              <button onclick="syncCiCil(getSafeNum('ci_cil')-100000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+              <input class="fmt-input" type="text" inputmode="numeric" id="ci_cil" value="" placeholder="např. 5 000 000" oninput="formatLive(this); syncCiCil(this.value.replace(/[^0-9]/g,''))" style="flex:1;text-align:center">
+              <button onclick="syncCiCil(getSafeNum('ci_cil')+100000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
             </div>
-            <div class="field-preview" id="ci_cil_preview"></div>
             <input type="range" id="ci_cil_slider" min="0" max="20000000" value="0" step="100000"
               oninput="syncCiCil(this.value, true)"
               style="width:100%;accent-color:var(--accent);cursor:pointer;margin-top:4px">
           </div>
           <div class="field">
             <label>Počáteční jednorázová investice (Kč)</label>
-            <input type="number" id="ci_jednoraz" value="" min="0" step="10000" placeholder="např. 100 000" oninput="calcCil()">
-            <div class="field-preview" id="ci_jednoraz_preview"></div>
+            <input class="fmt-input" type="text" inputmode="numeric" id="ci_jednoraz" value="" placeholder="např. 100 000" oninput="formatLive(this); calcCil()">
           </div>
           <div class="field">
             <label>Doba investice — <span id="ci_roky_label">20</span> let</label>
@@ -841,11 +834,10 @@ input[type="range"]::-webkit-slider-runnable-track {
           <label>Výše investice (Kč)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
             <button onclick="dlAdj(-50000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-            <input type="text" id="dl_castka" placeholder="např. 500 000" class="fmt-input" oninput="dlCastkaIn(this)" onblur="formatInputValue(this);dlCalc()" style="flex:1;text-align:center">
+            <input type="text" inputmode="numeric" id="dl_castka" placeholder="např. 500 000" class="fmt-input" oninput="formatLive(this); dlCastkaIn(this)" onblur="formatInputValue(this);dlCalc()" style="flex:1;text-align:center">
             <button onclick="dlAdj(50000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
           <input type="range" id="dl_slider" min="50000" max="5000000" value="50000" step="50000" oninput="dlSlider(this.value)" style="width:100%;accent-color:var(--accent);cursor:pointer">
-          <div class="field-preview" id="dl_prev"></div>
         </div>
         <div class="field">
           <label>Výběr emise</label>
@@ -921,28 +913,25 @@ input[type="range"]::-webkit-slider-runnable-track {
             <input type="number" id="p_vek" value="" min="1940" max="2005" placeholder="např. 1985" oninput="calcPenze()" style="flex:1;text-align:center">
             <button onclick="pAdjRok(1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
-          <div class="field-preview" id="p_vek_info" style="color:var(--text2);margin-top:6px"></div>
+          <div id="p_vek_info" style="color:var(--text2);margin-top:6px;font-size:12px;font-weight:normal"></div>
         </div>
         <div class="field">
           <label>Měsíční příspěvek klienta (Kč)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
             <button onclick="pAdjVklad(-100)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-            <input type="number" id="p_vklad" value="" min="0" step="100" placeholder="např. 1 700" oninput="pVkladSync(this.value)" style="flex:1;text-align:center">
+            <input class="fmt-input" type="text" inputmode="numeric" id="p_vklad" value="" placeholder="např. 1 700" oninput="formatLive(this); pVkladSync(this.value.replace(/[^0-9]/g,''))" style="flex:1;text-align:center">
             <button onclick="pAdjVklad(100)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
           <input type="range" id="p_vklad_slider" min="0" max="5000" value="0" step="100" oninput="pVkladSync(this.value, true)" style="width:100%;accent-color:var(--accent);cursor:pointer">
-          <div class="field-preview" id="p_vklad_preview"></div>
         </div>
 
         <div class="field">
           <label>Příspěvek zaměstnavatele (Kč/měs.)</label>
-          <input type="number" id="p_zamest" value="" min="0" step="100" placeholder="např. 500" oninput="calcPenze()">
-          <div class="field-preview" id="p_zamest_preview"></div>
+          <input class="fmt-input" type="text" inputmode="numeric" id="p_zamest" value="" placeholder="např. 500" oninput="formatLive(this); calcPenze()">
         </div>
         <div class="field">
           <label>Aktuálně naspořeno v TF — při převodu (Kč)</label>
-          <input type="number" id="p_prevod" value="" min="0" step="1000" placeholder="např. 50 000" oninput="calcPenze()">
-          <div class="field-preview" id="p_prevod_preview"></div>
+          <input class="fmt-input" type="text" inputmode="numeric" id="p_prevod" value="" placeholder="např. 50 000" oninput="formatLive(this); calcPenze()">
         </div>
       </div>
       <div class="card">
@@ -1215,7 +1204,7 @@ input[type="range"]::-webkit-slider-runnable-track {
               <input type="number" id="d_vek" value="" min="1940" max="2005" placeholder="např. 1985" oninput="calcDip()" style="flex:1;text-align:center">
               <button onclick="dAdjRok(1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
             </div>
-            <div class="field-preview" id="d_vek_info" style="color:var(--text2);margin-top:6px"></div>
+            <div id="d_vek_info" style="color:var(--text2);margin-top:6px;font-size:12px;font-weight:normal"></div>
           </div>
           <div class="field">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
@@ -1224,15 +1213,14 @@ input[type="range"]::-webkit-slider-runnable-track {
             </div>
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
               <button onclick="dAdjDps(-100)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-              <input type="number" id="d_dps" value="" min="0" step="100" placeholder="např. 1 700" oninput="dDpsSync(this.value)" style="flex:1;text-align:center">
+              <input class="fmt-input" type="text" inputmode="numeric" id="d_dps" value="" placeholder="např. 1 700" oninput="formatLive(this); dDpsSync(this.value.replace(/[^0-9]/g,''))" style="flex:1;text-align:center">
               <button onclick="dAdjDps(100)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
             </div>
             <input type="range" id="d_dps_slider" min="0" max="10000" value="0" step="100" oninput="dDpsSync(this.value,true)" style="width:100%;accent-color:var(--accent);cursor:pointer">
           </div>
           <div class="field">
             <label>Příspěvek zaměstnavatele do DPS (Kč/měs.)</label>
-            <input type="number" id="d_zamest_dps" value="" min="0" step="100" placeholder="" oninput="calcDip()">
-            <div class="field-preview" id="d_zamest_dps_preview"></div>
+            <input class="fmt-input" type="text" inputmode="numeric" id="d_zamest_dps" value="" placeholder="" oninput="formatLive(this); calcDip()">
           </div>
           <div class="field">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
@@ -1241,15 +1229,14 @@ input[type="range"]::-webkit-slider-runnable-track {
             </div>
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
               <button onclick="dAdjDip(-100)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-              <input type="number" id="d_dip" value="" min="0" step="100" placeholder="např. 2 000" oninput="dDipSync(this.value)" style="flex:1;text-align:center">
+              <input class="fmt-input" type="text" inputmode="numeric" id="d_dip" value="" placeholder="např. 2 000" oninput="formatLive(this); dDipSync(this.value.replace(/[^0-9]/g,''))" style="flex:1;text-align:center">
               <button onclick="dAdjDip(100)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
             </div>
             <input type="range" id="d_dip_slider" min="0" max="10000" value="0" step="100" oninput="dDipSync(this.value,true)" style="width:100%;accent-color:#4ADE80;cursor:pointer">
           </div>
           <div class="field">
             <label>Příspěvek zaměstnavatele do DIP (Kč/měs.)</label>
-            <input type="number" id="d_zamest" value="" min="0" step="100" placeholder="např. 1 000" oninput="calcDip()">
-            <div class="field-preview" id="d_zamest_preview"></div>
+            <input class="fmt-input" type="text" inputmode="numeric" id="d_zamest" value="" placeholder="např. 1 000" oninput="formatLive(this); calcDip()">
           </div>
           <div style="margin-top:.75rem;border-top:1px solid var(--border);padding-top:.75rem">
             <button onclick="toggleDipSazby()" id="dip-sazby-btn" style="background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;padding:0;display:flex;align-items:center;gap:5px">⚙ Upravit sazby zhodnocení</button>
@@ -1398,14 +1385,13 @@ input[type="range"]::-webkit-slider-runnable-track {
 
         <!-- Cena nemovitosti -->
         <div class="field">
-          <label>Výše úvěru (Kč)</label>
+          <label>Cena kupované nemovitosti (Kč)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
             <button onclick="hAdj('cena',-100000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-            <input type="text" id="h_cena" placeholder="např. 5 000 000" class="fmt-input" oninput="hCenaIn(this)" onblur="formatInputValue(this);hCalc()" style="flex:1;text-align:center">
+            <input type="text" inputmode="numeric" id="h_cena" placeholder="např. 5 000 000" class="fmt-input" oninput="formatLive(this); hCenaIn(this)" onblur="formatInputValue(this);hCalc()" style="flex:1;text-align:center">
             <button onclick="hAdj('cena',100000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
           <input type="range" id="h_cena_sl" min="0" max="30000000" value="0" step="100000" oninput="hSliderCena(this.value)" style="width:100%;accent-color:var(--accent);cursor:pointer">
-          <div class="field-preview" id="h_cena_prev"></div>
         </div>
 
         <!-- Rok narození -->
@@ -1433,10 +1419,11 @@ input[type="range"]::-webkit-slider-runnable-track {
               <label>Vlastní zdroje (Kč)</label>
               <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
                 <button onclick="hAdj('vlastni',-10000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-                <input type="text" id="h_vlastni" placeholder="vlastní zdroje Kč" class="fmt-input" oninput="hVlastniIn(this)" onblur="formatInputValue(this);hCalc()" style="flex:1;text-align:center">
+                <input type="text" inputmode="numeric" id="h_vlastni" placeholder="vlastní zdroje Kč" class="fmt-input" oninput="formatLive(this); hVlastniIn(this)" onblur="formatInputValue(this);hCalc()" style="flex:1;text-align:center">
                 <button onclick="hAdj('vlastni',10000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
               </div>
-              <div id="h_vlastni_warn" style="font-size:12px;color:var(--red);min-height:16px"></div>
+              <div id="h_vlastni_warn" style="font-size:12px;min-height:16px;margin-bottom:4px"></div>
+              <div id="h_rovnice_vypoctu" style="font-size:13px;color:var(--text2);background:var(--surface2);padding:8px 12px;border-radius:6px;border:1px solid var(--border);display:none"></div>
             </div>
           </div>
 
@@ -1446,7 +1433,7 @@ input[type="range"]::-webkit-slider-runnable-track {
               <label>Hodnota zastavované nemovitosti (Kč)</label>
               <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
                 <button onclick="hAdj('zastava',-100000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-                <input type="text" id="h_zastava" placeholder="hodnota zástavy Kč" class="fmt-input" oninput="hZastavaIn(this)" onblur="formatInputValue(this);hCalc()" style="flex:1;text-align:center">
+                <input type="text" inputmode="numeric" id="h_zastava" placeholder="hodnota zástavy Kč" class="fmt-input" oninput="formatLive(this); hZastavaIn(this)" onblur="formatInputValue(this);hCalc()" style="flex:1;text-align:center">
                 <button onclick="hAdj('zastava',100000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
               </div>
               <div id="h_zastava_info" style="font-size:12px;line-height:1.8;min-height:16px"></div>
@@ -1641,6 +1628,51 @@ async function loadSazbyFromSheets() {
 }
 
 // FORMAT
+function formatLive(el) {
+  let cursorPos = el.selectionStart;
+  let oldLength = el.value.length;
+  let raw = el.value.replace(/[^0-9]/g, '');
+  let num = parseInt(raw);
+  if (!isNaN(num) && num > 0) {
+    el.value = num.toLocaleString('cs-CZ');
+  } else {
+    el.value = '';
+  }
+  let newLength = el.value.length;
+  cursorPos = cursorPos + (newLength - oldLength);
+  el.setSelectionRange(cursorPos, cursorPos);
+}
+
+function parseFormattedInt(val) {
+  const digits = String(val || '').replace(/[^0-9]/g, '');
+  return digits ? parseInt(digits, 10) : 0;
+}
+
+// Bezpečné čtení hodnot z polí s formátovanými čísly (mezery tisíců)
+function getSafeNum(id) {
+  const el = document.getElementById(id);
+  if (!el) return 0;
+  return parseFormattedInt(el.value);
+}
+
+// Plošné napojení živého formátování a převod na type=text
+document.addEventListener("DOMContentLoaded", function() {
+  const moneyInputs = [
+    'k_jistina', 'k_splatka_input', 'r_dluh', 'i_vklad', 'i_jednoraz',
+    'ci_cil', 'ci_jednoraz', 'p_vklad', 'p_zamest', 'p_prevod',
+    'd_dps', 'd_zamest_dps', 'd_dip', 'd_zamest', 'dl_castka',
+    'h_cena', 'h_vlastni', 'h_zastava'
+  ];
+  moneyInputs.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.type = 'text';
+      el.inputMode = 'numeric';
+      el.addEventListener('input', function() { formatLive(this); });
+    }
+  });
+});
+
 function fmt(n) {
   return new Intl.NumberFormat("cs-CZ", {style:"currency", currency:"CZK", maximumFractionDigits:0}).format(Math.round(n));
 }
@@ -1655,14 +1687,15 @@ function monthlyPayment(jistina, sazbaRocni, mesice) {
 let kalkMode = "uver";
 
 function syncRDluh(val, fromSlider) {
-  const parsed = parseInt(String(val).replace(/\s/g, '').replace(/,/g, ''));
+  const parsed = parseFormattedInt(val);
   if (!parsed || parsed <= 0) {
     if (!fromSlider) document.getElementById("r_dluh").value = "";
     document.getElementById("r_dluh_slider").value = 0;
     calcRefi(); return;
   }
   const v = Math.min(parsed, 100000000);
-  document.getElementById("r_dluh").value = v;
+  const elRDluh = document.getElementById("r_dluh");
+  elRDluh.value = v > 0 ? v.toLocaleString('cs-CZ') : '';
   document.getElementById("r_dluh_slider").value = v;
   calcRefi();
 }
@@ -1711,20 +1744,21 @@ function syncKSazba(val, fromSlider) {
 }
 
 function syncJistina(val, fromSlider) {
-  const parsed = parseInt(String(val).replace(/\s/g, '').replace(/,/g, ''));
+  const parsed = parseFormattedInt(val);
   if (!parsed || parsed <= 0) {
     if (!fromSlider) document.getElementById("k_jistina").value = "";
     document.getElementById("k_jistina_slider").value = 0;
     calcKalk(); return;
   }
   const v = Math.min(parsed, 100000000);
-  document.getElementById("k_jistina").value = v;
+  const elKJis = document.getElementById("k_jistina");
+  elKJis.value = v > 0 ? v.toLocaleString('cs-CZ') : '';
   document.getElementById("k_jistina_slider").value = v;
   calcKalk();
 }
 
 function syncSplatkaInput(val, fromSlider) {
-  const parsed = parseInt(val);
+  const parsed = parseFormattedInt(val);
   if (!parsed || parsed <= 0) {
     if (!fromSlider) document.getElementById("k_splatka_input").value = "";
     document.getElementById("k_splatka_slider").value = 0;
@@ -1751,7 +1785,6 @@ function setMode(mode) {
   kalkMode = mode;
   const fieldJistina = document.getElementById("k_jistina").closest(".field");
   const fieldSplatka = document.getElementById("field-splatka");
-  const prevJistina = document.getElementById("k_jistina_preview");
   const btnUver = document.getElementById("mode-uver");
   const btnSplatka = document.getElementById("mode-splatka");
   if (mode === "uver") {
@@ -1783,14 +1816,15 @@ function setMode(mode) {
 }
 
 function calcKalk() {
+  const prev = document.getElementById("k_jistina_prev");
+  const prevS = document.getElementById("k_splatka_prev");
   const s = parseFloat(document.getElementById("k_sazba").value) || 0;
   const r = parseInt(document.getElementById("k_roky").value) || 1;
   const m = r * 12;
 
   if (kalkMode === "splatka") {
     // Reverse calculation - from monthly payment to loan amount
-    const splatkaInput = getRaw("k_splatka_input");
-    const prevS = document.getElementById("k_splatka_input_preview");
+    const splatkaInput = getSafeNum("k_splatka_input");
     if (prevS) prevS.textContent = splatkaInput > 0 ? fmt(splatkaInput) : "";
     if (splatkaInput <= 0) return;
     let j;
@@ -1827,8 +1861,7 @@ function calcKalk() {
     return;
   }
 
-  const j = getRaw("k_jistina");
-  const prev = document.getElementById("k_jistina_preview");
+  const j = getSafeNum("k_jistina");
   if (prev) prev.textContent = "";
   if (j <= 0) return;
   const splatka = monthlyPayment(j, s, m);
@@ -1846,11 +1879,11 @@ function calcKalk() {
 
 // REFINANCOVÁNÍ
 function calcRefi() {
-  const dluh = getRaw("r_dluh");
+  const prev = document.getElementById("r_dluh_prev");
+  const dluh = getSafeNum("r_dluh");
   const sazSou = parseFloat(document.getElementById("r_sazba_sou").value) || 0;
   const roky = parseInt(document.getElementById("r_roky").value) || 1;
   const mes = roky * 12;
-  const prev = document.getElementById("r_dluh_preview");
   if (prev) prev.textContent = dluh > 0 ? fmt(dluh) : "";
   if (dluh <= 0) return;
   const splatSou = monthlyPayment(dluh, sazSou, mes);
@@ -2006,7 +2039,7 @@ function calcFV(mesicni, sazbaRocni, roky) {
 }
 
 function syncIJednoraz(val, fromSlider) {
-  const parsed = parseInt(String(val).replace(/[^0-9]/g,''));
+  const parsed = parseFormattedInt(val);
   if (!parsed || parsed <= 0) {
     const el = document.getElementById("i_jednoraz");
     if (el) { el.value = ""; }
@@ -2014,13 +2047,14 @@ function syncIJednoraz(val, fromSlider) {
     calcInvest(); return;
   }
   const v = Math.min(Math.max(parsed, 0), 5000000);
-  document.getElementById("i_jednoraz").value = v;
+  const elIJed = document.getElementById("i_jednoraz");
+  if (elIJed) elIJed.value = v > 0 ? v.toLocaleString('cs-CZ') : '';
   document.getElementById("i_jednoraz_slider").value = v;
   calcInvest();
 }
 
 function syncIVklad(val, fromSlider) {
-  const parsed = parseInt(val);
+  const parsed = parseFormattedInt(val);
   if (!parsed || parsed <= 0) {
     const el = document.getElementById("i_vklad");
     if (!fromSlider && el) { el.value = ""; el.dataset.raw = ""; }
@@ -2042,8 +2076,9 @@ function syncIRoky(val) {
 }
 
 function calcInvest() {
-  const vklad = getRaw("i_vklad");
-  const jednoraz = parseInt((document.getElementById("i_jednoraz").value||"").replace(/[^0-9]/g,""))||0;
+  const prev = document.getElementById("i_vklad_prev");
+  const vklad = getSafeNum("i_vklad");
+  const jednoraz = getSafeNum("i_jednoraz");
   const roky = parseInt(document.getElementById("i_roky").value) || 1;
   const inflace = parseFloat(document.getElementById("i_inflace").value) || 0;
   const sEtf = parseFloat(document.getElementById("s_etf").value) || 0;
@@ -2052,10 +2087,7 @@ function calcInvest() {
   const sPenzijko = parseFloat(document.getElementById("s_penzijko").value) || 0;
   const sSporici = parseFloat(document.getElementById("s_sporici").value) || 0;
   const sBezny = parseFloat(document.getElementById("s_bezny").value) || 0;
-  const prev = document.getElementById("i_vklad_preview");
   if (prev) prev.textContent = vklad > 0 ? fmt(vklad) : "";
-  const jednorazPrev = document.getElementById("i_jednoraz_preview");
-  if (jednorazPrev) jednorazPrev.textContent = jednoraz > 0 ? fmt(jednoraz) : "";
   const celkem = vklad * 12 * roky + jednoraz;
   const el_celkem = document.getElementById("i_celkem");
   const el_realna = document.getElementById("i_realna");
@@ -2315,10 +2347,10 @@ function pAdjVklad(delta) {
 }
 
 function pVkladSync(val, fromSlider) {
-  const v = parseInt(val) || 0;
+  const v = parseInt(String(val).replace(/[^0-9]/g,'')) || 0;
   const el = document.getElementById("p_vklad");
   const sl = document.getElementById("p_vklad_slider");
-  if (fromSlider && el) el.value = v;
+  if (fromSlider && el) el.value = v > 0 ? v.toLocaleString('cs-CZ') : '';
   if (sl && !fromSlider) sl.value = Math.min(v, 5000);
   calcPenze();
 }
@@ -2331,13 +2363,12 @@ function pAdjRok(delta) {
 }
 
 function calcPenze() {
-  const vklad = parseFloat(document.getElementById("p_vklad").value) || 0;
+  const vklad = getSafeNum("p_vklad");
   const rokNarozeni = parseInt(document.getElementById("p_vek").value) || 0;
   const vek = rokNarozeni > 1900 ? new Date().getFullYear() - rokNarozeni : 0;
-  const zamest = parseFloat(document.getElementById("p_zamest").value) || 0;
-  const prevod = parseFloat(document.getElementById("p_prevod").value) || 0;
+  const zamest = getSafeNum("p_zamest");
+  const prevod = getSafeNum("p_prevod");
   const setP = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val > 0 ? fmt(val) : ""; };
-  setP("p_vklad_preview", vklad); setP("p_zamest_preview", zamest); setP("p_prevod_preview", prevod);
   const setT = (id, text) => { const el = document.getElementById(id); if(el) el.textContent = text; };
 
   // Require both vklad and vek to be filled
@@ -2585,25 +2616,25 @@ function dAdjRok(delta) {
 }
 function dAdjDps(delta) {
   const el = document.getElementById("d_dps"), sl = document.getElementById("d_dps_slider");
-  const v = Math.max(0, Math.min((parseInt(el.value)||0)+delta, 10000));
-  el.value = v; if(sl) sl.value = v; calcDip();
+  const v = Math.max(0, Math.min((parseInt(String(el.value).replace(/[^0-9]/g,''))||0)+delta, 10000));
+  el.value = v > 0 ? v.toLocaleString('cs-CZ') : ''; if(sl) sl.value = v; calcDip();
 }
 function dDpsSync(val, fromSlider) {
-  const v = parseInt(val)||0;
+  const v = parseInt(String(val).replace(/[^0-9]/g,''))||0;
   const el = document.getElementById("d_dps"), sl = document.getElementById("d_dps_slider");
-  if(fromSlider && el) el.value = v;
+  if(fromSlider && el) el.value = v > 0 ? v.toLocaleString('cs-CZ') : '';
   if(sl && !fromSlider) sl.value = Math.min(v, 10000);
   calcDip();
 }
 function dAdjDip(delta) {
   const el = document.getElementById("d_dip"), sl = document.getElementById("d_dip_slider");
-  const v = Math.max(0, Math.min((parseInt(el.value)||0)+delta, 10000));
-  el.value = v; if(sl) sl.value = v; calcDip();
+  const v = Math.max(0, Math.min((parseInt(String(el.value).replace(/[^0-9]/g,''))||0)+delta, 10000));
+  el.value = v > 0 ? v.toLocaleString('cs-CZ') : ''; if(sl) sl.value = v; calcDip();
 }
 function dDipSync(val, fromSlider) {
-  const v = parseInt(val)||0;
+  const v = parseInt(String(val).replace(/[^0-9]/g,''))||0;
   const el = document.getElementById("d_dip"), sl = document.getElementById("d_dip_slider");
-  if(fromSlider && el) el.value = v;
+  if(fromSlider && el) el.value = v > 0 ? v.toLocaleString('cs-CZ') : '';
   if(sl && !fromSlider) sl.value = Math.min(v, 10000);
   calcDip();
 }
@@ -2611,10 +2642,10 @@ function dDipSync(val, fromSlider) {
 function calcDip() {
   const rokNarozeni = parseInt(document.getElementById("d_vek")?.value) || 0;
   const vek    = rokNarozeni > 1900 ? new Date().getFullYear() - rokNarozeni : 0;
-  const dpsVkl = parseFloat(document.getElementById("d_dps")?.value)      || 0;
-  const dpsZam = parseFloat(document.getElementById("d_zamest_dps")?.value)|| 0;
-  const dipVkl = parseFloat(document.getElementById("d_dip")?.value)       || 0;
-  const zamest = parseFloat(document.getElementById("d_zamest")?.value)    || 0;
+  const dpsVkl = getSafeNum("d_dps");
+  const dpsZam = getSafeNum("d_zamest_dps");
+  const dipVkl = getSafeNum("d_dip");
+  const zamest = getSafeNum("d_zamest");
 
   // Sazby — DIP 7.8% (8%-0.2% TER), DPS 5.95% (8%-1%-15%perf), DPS daň 15% ze zisku
   const DIP_SAZBA    = parseFloat(document.getElementById("d_sazba_dip")?.value) || 7.8;
@@ -2628,8 +2659,6 @@ function calcDip() {
   const dipLiveEl = document.getElementById("d_dip_live");
   if(dpsLiveEl) dpsLiveEl.textContent = dpsVkl>0 ? fmt(dpsVkl)+" Kč/m" : "—";
   if(dipLiveEl) dipLiveEl.textContent = dipVkl>0 ? fmt(dipVkl)+" Kč/m" : "—";
-  setT("d_zamest_preview", zamest>0 ? fmt(zamest) : "");
-  setT("d_zamest_dps_preview", dpsZam>0 ? fmt(dpsZam) : "");
 
   const vekRaw = document.getElementById("d_vek")?.value;
   if(!vekRaw || rokNarozeni < 1940 || vek <= 0 || vek >= 65) {
@@ -2885,7 +2914,7 @@ function showInvestTab(tab) {
 let cilChart = null;
 
 function syncCiCil(val, fromSlider) {
-  const parsed = parseInt(String(val).replace(/\s/g, ''));
+  const parsed = parseFormattedInt(val);
   const slider = document.getElementById("ci_cil_slider");
   const input = document.getElementById("ci_cil");
   if (!parsed || parsed <= 0) {
@@ -2894,7 +2923,7 @@ function syncCiCil(val, fromSlider) {
     calcCil(); return;
   }
   const v = Math.min(parsed, 20000000);
-  if (input) input.value = v;
+  if (input) input.value = v > 0 ? v.toLocaleString('cs-CZ') : '';
   if (slider) slider.value = v;
   calcCil();
 }
@@ -2908,13 +2937,11 @@ function syncCiRoky(val) {
 }
 
 function calcCil() {
-  const cil = parseFloat(document.getElementById("ci_cil").value) || 0;
-  const jednoraz = parseFloat(document.getElementById("ci_jednoraz").value) || 0;
+  const cil = getSafeNum("ci_cil");
+  const jednoraz = getSafeNum("ci_jednoraz");
   const roky = parseInt(document.getElementById("ci_roky").value) || 1;
   const vynos = parseFloat(document.getElementById("ci_vynos").value) || 0;
   const setP = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val > 0 ? fmt(val) : ""; };
-  setP("ci_cil_preview", cil);
-  setP("ci_jednoraz_preview", jednoraz);
   if (cil <= 0) {
     ["ci_mesicni","ci_vlozeno","ci_zhodnoceni"].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = "—"; });
     return;
@@ -3108,7 +3135,6 @@ function adjustVlastni(delta) {
 function setVlastniManual(val) {
   const cena = getHypoNum("h_cena");
   const vlastni = parseInt(String(val).replace(/[^0-9]/g,""))||0;
-  const prevVl = document.getElementById("h_vlastni_preview");
   if (prevVl) prevVl.textContent = vlastni > 0 ? fmt(vlastni) : "";
   if (vlastni > 0 && cena > 0) {
     hypoLTVManual = true;
@@ -3341,6 +3367,16 @@ function hCalc() {
       }
     } else if (warn) { warn.textContent = ''; }
 
+    // Rovnice výpočtu
+    const rovniceBox = document.getElementById('h_rovnice_vypoctu');
+    if (rovniceBox && cena > 0) {
+      rovniceBox.style.display = 'block';
+      const aktLtv = Math.round((hypo / cena) * 100);
+      rovniceBox.innerHTML = `Nemovitost <strong>${fmt(cena)}</strong> − Vlastní <strong>${fmt(vlastni)}</strong><br>= Hypotéka <strong style="color:var(--accent)">${fmt(hypo)}</strong> <span style="font-size:11px;color:var(--text3)">(LTV ${aktLtv} %)</span>`;
+    } else if (rovniceBox) {
+      rovniceBox.style.display = 'none';
+    }
+
     const vlEl = document.getElementById('h_res_vlastni');
     if (vlEl) {
       vlEl.textContent = vlastni > 0 ? fmt(vlastni) : '—';
@@ -3348,6 +3384,10 @@ function hCalc() {
     }
 
   } else {
+    // Skrýt rovnici v zástavě
+    const rovniceBox = document.getElementById('h_rovnice_vypoctu');
+    if (rovniceBox) rovniceBox.style.display = 'none';
+
     // Zástava
     const zastava = hGetN('h_zastava');
     hypo = cena; // celá cena jako hypotéka
@@ -3532,8 +3572,6 @@ function dlCalc() {
 }
 
 // INIT
-document.getElementById("k_jistina_preview").textContent = "";
-document.getElementById("r_dluh_preview").textContent = "";
 calcKalk();
 calcRefi();
 loadSazbyFromSheets();
