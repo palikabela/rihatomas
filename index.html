@@ -1261,6 +1261,7 @@ input[type="range"]::-webkit-slider-runnable-track {
         <!-- Živé srovnání -->
         <div class="card" style="border-color:rgba(74,222,128,0.3)">
           <div class="card-label" style="color:#4ADE80">Živé srovnání</div>
+          <div id="d_past_10_let_warning" style="display:none;margin-bottom:14px;padding:10px 12px;background:rgba(239,68,68,0.1);border-left:3px solid var(--red);border-radius:0 6px 6px 0;font-size:12px;color:var(--text2);line-height:1.6;"></div>
 
           <div style="background:var(--surface2);border-radius:10px;padding:.85rem 1rem;margin-bottom:10px;border:1px solid var(--border)">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
@@ -2617,6 +2618,7 @@ function calcDip() {
     ["d_doporuceni","d_dan_info"].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display="none"; });
     ["d_dps_dan_tip","d_dip_dan_tip"].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display="none"; });
     const past10Reset = document.getElementById("d_past10_warning"); if(past10Reset) past10Reset.style.display="none";
+    const past10LetReset = document.getElementById("d_past_10_let_warning"); if(past10LetReset) past10LetReset.style.display="none";
     const vi=document.getElementById("d_vek_info"); if(vi) vi.textContent="";
     if(dipChart){dipChart.destroy();dipChart=null;}
     if(dipKolacChartInstance){dipKolacChartInstance.destroy();dipKolacChartInstance=null;}
@@ -2628,6 +2630,17 @@ function calcDip() {
   setT("d_roky_do", roky+" let");
   const vi=document.getElementById("d_vek_info");
   if(vi) vi.textContent = "Věk: "+vek+" let — do důchodu zbývá "+roky+" let";
+
+  // Varování "Past 10 let" — nahoře v kartě Živé srovnání
+  const pastWarningEl = document.getElementById("d_past_10_let_warning");
+  if(pastWarningEl) {
+    if(roky < 10 && (dpsVkl > 0 || dipVkl > 0)) {
+      pastWarningEl.style.display = "block";
+      pastWarningEl.innerHTML = `<strong style="color:var(--red)">⚠️ Pozor na "Past 10 let":</strong> Do 65 let zbývá méně než 10 let. Výběr nové smlouvy DPS i DIP dříve než po 120 měsících znamená nutnost <strong>vrátit slevy na dani</strong> a u DPS i ztrátu státních příspěvků. (Neplatí při převodu ze starého penzijka).`;
+    } else {
+      pastWarningEl.style.display = "none";
+    }
+  }
 
   // Daňové výhody (zobrazení)
   const statDPS      = getStatniPrispevek(dpsVkl);
@@ -2771,28 +2784,19 @@ function calcDip() {
     setT("d_rozdil_renta", (rR>=0?"+":"")+fmt(rR)+"/m");
     const dop=document.getElementById("d_doporuceni");
     if(dop) {
-      const bezPopl=calcFVPenze(dpsVkl+statDPS+dpsZam, 8.0, mesice);
       const danText = dpsMode==='jednor'
         ? `Daň 15 % ze zisku při jednorázovém výběru: <strong>${fmt(dpsDanZisk)}</strong> odchází státu`
         : `Renta 10+ let: <strong>0 % daň</strong> ✓ — ale 1% správa běží i při výplatě + hrozí přesun do konzervativního fondu`;
       dop.style.display="block";
-      if(roky < 10) {
-        dop.innerHTML=`
-          <div style="margin-bottom:.75rem">DIP vám přinese <strong>o ${fmt(Math.abs(rC))} ${rC>=0?"více":"méně"}</strong> čistého než DPS. Měsíční renta ${rR>=0?"vyšší":"nižší"} o <strong>${fmt(Math.abs(rR))}/m</strong>.</div>
-          <div style="padding:10px 12px;background:rgba(239,68,68,0.1);border-left:3px solid var(--red);border-radius:0 6px 6px 0;font-size:12px;color:var(--text2);line-height:1.6">
-            <strong style="color:var(--red)">⚠️ Pozor na "Past 10 let":</strong> Do 65 let zbývá méně než 10 let. Výběr nové smlouvy DPS i DIP dříve než po 120 měsících znamená nutnost <strong>vrátit slevy na dani</strong> a u DPS i ztrátu státních příspěvků. (Neplatí při převodu ze starého penzijka, kde se roky sčítají).
-          </div>`;
-      } else {
-        dop.innerHTML=`
-          <div style="margin-bottom:.75rem">DIP vám přinese <strong>o ${fmt(Math.abs(rC))} ${rC>=0?"více":"méně"}</strong> čistého než DPS. Měsíční renta ${rR>=0?"vyšší":"nižší"} o <strong>${fmt(Math.abs(rR))}/m</strong>.</div>
-          <div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:.4rem;letter-spacing:0.04em;text-transform:uppercase">⚠ Tvrdá realita DPS</div>
-          <div style="font-size:12px;color:var(--text2);line-height:1.9">
-            • Poplatky DPS (1 % správa + 15 % success fee) sníží výnos z 8 % na <strong>5,95 % p.a.</strong><br>
-            • ${danText}<br>
-            • DPS vyžaduje pravidelné spoření — DIP je <strong>flexibilní</strong><br>
-            • Zisk DIP při splnění podmínek (60 let + 10 let): <strong>0 % daň</strong>
-          </div>`;
-      }
+      dop.innerHTML=`
+        <div style="margin-bottom:.75rem">DIP vám přinese <strong>o ${fmt(Math.abs(rC))} ${rC>=0?"více":"méně"}</strong> čistého než DPS. Měsíční renta ${rR>=0?"vyšší":"nižší"} o <strong>${fmt(Math.abs(rR))}/m</strong>.</div>
+        <div style="font-size:12px;font-weight:700;color:var(--red);margin-bottom:.4rem;letter-spacing:0.04em;text-transform:uppercase">⚠ Tvrdá realita DPS</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.9">
+          • Poplatky DPS (1 % správa + 15 % success fee) sníží výnos z 8 % na <strong>5,95 % p.a.</strong><br>
+          • ${danText}<br>
+          • DPS vyžaduje pravidelné spoření — DIP je <strong>flexibilní</strong><br>
+          • Zisk DIP při splnění podmínek (60 let + 10 let): <strong>0 % daň</strong>
+        </div>`;
     }
   } else {
     setT("d_rozdil_celkem","—"); setT("d_rozdil_renta","—");
