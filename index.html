@@ -520,11 +520,11 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div class="field">
           <label>Úroková sazba (% ročně)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <button onclick="syncKSazba(Math.round(((parseFloat(document.getElementById('k_sazba').value)||0)-0.1)*100)/100, false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-            <input type="number" id="k_sazba" value="4.99" step="0.01" min="0" oninput="syncKSazba(this.value)" style="flex:1;text-align:center">
-            <button onclick="syncKSazba(Math.round(((parseFloat(document.getElementById('k_sazba').value)||0)+0.1)*100)/100, false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+            <button onclick="syncKSazba(getCleanNum('k_sazba')-0.01, false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <input type="text" inputmode="decimal" id="k_sazba" value="4,99" step="0.01" min="0" oninput="syncKSazba(this.value)" style="flex:1;text-align:center">
+            <button onclick="syncKSazba(getCleanNum('k_sazba')+0.01, false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
-          <input type="range" id="k_sazba_slider" min="0" max="15" value="4.99" step="0.1"
+          <input type="range" id="k_sazba_slider" min="0" max="15" value="4.99" step="0.01"
             oninput="syncKSazba(this.value, true)"
             style="width:100%;accent-color:var(--accent);cursor:pointer">
         </div>
@@ -587,11 +587,11 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div class="field">
           <label>Stávající sazba (% ročně)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <button onclick="syncRSazba(Math.round(((parseFloat(document.getElementById('r_sazba_sou').value)||0)-0.1)*100)/100, false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-            <input type="number" id="r_sazba_sou" value="6.50" step="0.01" min="0" oninput="syncRSazba(this.value)" style="flex:1;text-align:center">
-            <button onclick="syncRSazba(Math.round(((parseFloat(document.getElementById('r_sazba_sou').value)||0)+0.1)*100)/100, false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+            <button onclick="syncRSazba(getCleanNum('r_sazba_sou')-0.01, false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <input type="text" inputmode="decimal" id="r_sazba_sou" value="6,50" step="0.01" min="0" oninput="syncRSazba(this.value)" style="flex:1;text-align:center">
+            <button onclick="syncRSazba(getCleanNum('r_sazba_sou')+0.01, false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
-          <input type="range" id="r_sazba_sou_slider" min="0" max="15" value="6.5" step="0.1"
+          <input type="range" id="r_sazba_sou_slider" min="0" max="15" value="6.5" step="0.01"
             oninput="syncRSazba(this.value, true)"
             style="width:100%;accent-color:var(--accent);cursor:pointer">
         </div>
@@ -1445,11 +1445,11 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div class="field">
           <label>Úroková sazba (% ročně)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <button onclick="hAdjSazba(-0.1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-            <input type="number" id="h_sazba" value="4.79" step="0.01" min="0" oninput="hCalc()" style="flex:1;text-align:center">
-            <button onclick="hAdjSazba(0.1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+            <button onclick="hAdjSazba(-0.01)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <input type="text" inputmode="decimal" id="h_sazba" value="4,79" step="0.01" min="0" oninput="hCalc()" style="flex:1;text-align:center">
+            <button onclick="hAdjSazba(0.01)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
-          <input type="range" id="h_sazba_sl" min="0" max="15" value="4.79" step="0.1" oninput="hSazbaSlider(this.value)" style="width:100%;accent-color:var(--accent);cursor:pointer">
+          <input type="range" id="h_sazba_sl" min="0" max="15" value="4.79" step="0.01" oninput="hSazbaSlider(this.value)" style="width:100%;accent-color:var(--accent);cursor:pointer">
         </div>
 
         <!-- Splatnost -->
@@ -1629,7 +1629,7 @@ async function loadSazbyFromSheets() {
 
 // FORMAT
 function formatLive(el) {
-  let cursorPos = el.selectionStart;
+  let cursorPos = typeof el.selectionStart === "number" ? el.selectionStart : el.value.length;
   let oldLength = el.value.length;
   let raw = el.value.replace(/[^0-9]/g, '');
   let num = parseInt(raw);
@@ -1640,7 +1640,43 @@ function formatLive(el) {
   }
   let newLength = el.value.length;
   cursorPos = cursorPos + (newLength - oldLength);
-  el.setSelectionRange(cursorPos, cursorPos);
+  if (typeof el.setSelectionRange === "function") {
+    el.setSelectionRange(cursorPos, cursorPos);
+  }
+}
+
+function cleanNumValue(val) {
+  return parseFloat(String(val || '').replace(/\s/g, '').replace(',', '.')) || 0;
+}
+
+function getCleanNum(id) {
+  const el = document.getElementById(id);
+  if (!el) return 0;
+  return cleanNumValue(el.value);
+}
+
+function formatRateValue(num) {
+  return Math.max(0, num).toFixed(2).replace('.', ',');
+}
+
+function setRateInputValue(id, num) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.value = formatRateValue(num);
+}
+
+function setMoneyInputValue(id, num) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (!num || num <= 0) {
+    el.value = '';
+    el.dataset.raw = '';
+    return;
+  }
+  const rounded = Math.round(num);
+  el.value = String(rounded);
+  el.dataset.raw = String(rounded);
+  formatLive(el);
 }
 
 function parseFormattedInt(val) {
@@ -1650,9 +1686,7 @@ function parseFormattedInt(val) {
 
 // Bezpečné čtení hodnot z polí s formátovanými čísly (mezery tisíců)
 function getSafeNum(id) {
-  const el = document.getElementById(id);
-  if (!el) return 0;
-  return parseFormattedInt(el.value);
+  return Math.round(getCleanNum(id));
 }
 
 // Plošné napojení živého formátování a převod na type=text
@@ -1694,8 +1728,7 @@ function syncRDluh(val, fromSlider) {
     calcRefi(); return;
   }
   const v = Math.min(parsed, 100000000);
-  const elRDluh = document.getElementById("r_dluh");
-  elRDluh.value = v > 0 ? v.toLocaleString('cs-CZ') : '';
+  setMoneyInputValue("r_dluh", v);
   document.getElementById("r_dluh_slider").value = v;
   calcRefi();
 }
@@ -1718,28 +1751,28 @@ function syncRRoky(val, fromSlider) {
 function syncRSazba(val, fromSlider) {
   const slider = document.getElementById("r_sazba_sou_slider");
   const input = document.getElementById("r_sazba_sou");
-  const parsed = parseFloat(val);
-  if (val === "" || val === null || isNaN(parsed)) {
+  const parsed = cleanNumValue(val);
+  if (val === "" || val === null || !isFinite(parsed)) {
     if (slider) slider.value = 0;
     calcRefi(); return;
   }
   const v = Math.min(Math.max(parsed, 0), 15);
   if (slider) slider.value = v;
-  if (input) input.value = Math.round(v * 100) / 100;
+  if (input) input.value = formatRateValue(v);
   calcRefi();
 }
 
 function syncKSazba(val, fromSlider) {
   const slider = document.getElementById("k_sazba_slider");
   const input = document.getElementById("k_sazba");
-  const parsed = parseFloat(val);
-  if (val === "" || val === null || isNaN(parsed)) {
+  const parsed = cleanNumValue(val);
+  if (val === "" || val === null || !isFinite(parsed)) {
     if (slider) slider.value = 0;
     calcKalk(); return;
   }
   const v = Math.min(Math.max(parsed, 0), 15);
   if (slider) slider.value = v;
-  if (input) input.value = Math.round(v * 100) / 100;
+  if (input) input.value = formatRateValue(v);
   calcKalk();
 }
 
@@ -1751,8 +1784,7 @@ function syncJistina(val, fromSlider) {
     calcKalk(); return;
   }
   const v = Math.min(parsed, 100000000);
-  const elKJis = document.getElementById("k_jistina");
-  elKJis.value = v > 0 ? v.toLocaleString('cs-CZ') : '';
+  setMoneyInputValue("k_jistina", v);
   document.getElementById("k_jistina_slider").value = v;
   calcKalk();
 }
@@ -1818,8 +1850,8 @@ function setMode(mode) {
 function calcKalk() {
   const prev = document.getElementById("k_jistina_prev");
   const prevS = document.getElementById("k_splatka_prev");
-  const s = parseFloat(document.getElementById("k_sazba").value) || 0;
-  const r = parseInt(document.getElementById("k_roky").value) || 1;
+  const s = getCleanNum("k_sazba");
+  const r = Math.round(getCleanNum("k_roky")) || 1;
   const m = r * 12;
 
   if (kalkMode === "splatka") {
@@ -1880,9 +1912,9 @@ function calcKalk() {
 // REFINANCOVÁNÍ
 function calcRefi() {
   const prev = document.getElementById("r_dluh_prev");
-  const dluh = getSafeNum("r_dluh");
-  const sazSou = parseFloat(document.getElementById("r_sazba_sou").value) || 0;
-  const roky = parseInt(document.getElementById("r_roky").value) || 1;
+  const dluh = getCleanNum("r_dluh");
+  const sazSou = getCleanNum("r_sazba_sou");
+  const roky = Math.round(getCleanNum("r_roky")) || 1;
   const mes = roky * 12;
   if (prev) prev.textContent = dluh > 0 ? fmt(dluh) : "";
   if (dluh <= 0) return;
@@ -2047,8 +2079,7 @@ function syncIJednoraz(val, fromSlider) {
     calcInvest(); return;
   }
   const v = Math.min(Math.max(parsed, 0), 5000000);
-  const elIJed = document.getElementById("i_jednoraz");
-  if (elIJed) elIJed.value = v > 0 ? v.toLocaleString('cs-CZ') : '';
+  setMoneyInputValue("i_jednoraz", v);
   document.getElementById("i_jednoraz_slider").value = v;
   calcInvest();
 }
@@ -2077,16 +2108,16 @@ function syncIRoky(val) {
 
 function calcInvest() {
   const prev = document.getElementById("i_vklad_prev");
-  const vklad = getSafeNum("i_vklad");
-  const jednoraz = getSafeNum("i_jednoraz");
-  const roky = parseInt(document.getElementById("i_roky").value) || 1;
-  const inflace = parseFloat(document.getElementById("i_inflace").value) || 0;
-  const sEtf = parseFloat(document.getElementById("s_etf").value) || 0;
-  const sDip = parseFloat(document.getElementById("s_dip").value) || 0;
-  const sStavebko = parseFloat(document.getElementById("s_stavebko").value) || 0;
-  const sPenzijko = parseFloat(document.getElementById("s_penzijko").value) || 0;
-  const sSporici = parseFloat(document.getElementById("s_sporici").value) || 0;
-  const sBezny = parseFloat(document.getElementById("s_bezny").value) || 0;
+  const vklad = getCleanNum("i_vklad");
+  const jednoraz = getCleanNum("i_jednoraz");
+  const roky = Math.round(getCleanNum("i_roky")) || 1;
+  const inflace = getCleanNum("i_inflace");
+  const sEtf = getCleanNum("s_etf");
+  const sDip = getCleanNum("s_dip");
+  const sStavebko = getCleanNum("s_stavebko");
+  const sPenzijko = getCleanNum("s_penzijko");
+  const sSporici = getCleanNum("s_sporici");
+  const sBezny = getCleanNum("s_bezny");
   if (prev) prev.textContent = vklad > 0 ? fmt(vklad) : "";
   const celkem = vklad * 12 * roky + jednoraz;
   const el_celkem = document.getElementById("i_celkem");
@@ -2648,8 +2679,8 @@ function calcDip() {
   const zamest = getSafeNum("d_zamest");
 
   // Sazby — DIP 7.8% (8%-0.2% TER), DPS 5.95% (8%-1%-15%perf), DPS daň 15% ze zisku
-  const DIP_SAZBA    = parseFloat(document.getElementById("d_sazba_dip")?.value) || 7.8;
-  const DPS_SAZBA    = parseFloat(document.getElementById("d_sazba_dps")?.value) || 5.95;
+  const DIP_SAZBA    = getCleanNum("d_sazba_dip") || 7.8;
+  const DPS_SAZBA    = getCleanNum("d_sazba_dps") || 5.95;
   const DPS_DAN_ZISK = 0.15;
 
   const setT = (id, txt) => { const el=document.getElementById(id); if(el) el.textContent=txt; };
@@ -2923,7 +2954,7 @@ function syncCiCil(val, fromSlider) {
     calcCil(); return;
   }
   const v = Math.min(parsed, 20000000);
-  if (input) input.value = v > 0 ? v.toLocaleString('cs-CZ') : '';
+  if (input) setMoneyInputValue("ci_cil", v);
   if (slider) slider.value = v;
   calcCil();
 }
@@ -2937,10 +2968,10 @@ function syncCiRoky(val) {
 }
 
 function calcCil() {
-  const cil = getSafeNum("ci_cil");
-  const jednoraz = getSafeNum("ci_jednoraz");
-  const roky = parseInt(document.getElementById("ci_roky").value) || 1;
-  const vynos = parseFloat(document.getElementById("ci_vynos").value) || 0;
+  const cil = getCleanNum("ci_cil");
+  const jednoraz = getCleanNum("ci_jednoraz");
+  const roky = Math.round(getCleanNum("ci_roky")) || 1;
+  const vynos = getCleanNum("ci_vynos");
   const setP = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val > 0 ? fmt(val) : ""; };
   if (cil <= 0) {
     ["ci_mesicni","ci_vlozeno","ci_zhodnoceni"].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = "—"; });
@@ -2961,12 +2992,12 @@ function calcCil() {
   const elZ = document.getElementById("ci_zhodnoceni"); if (elZ) elZ.textContent = fmt(zhodnoceni);
 
   // Product breakdown
-  const sEtf = parseFloat(document.getElementById("s_etf").value) || 8;
-  const sDip = parseFloat(document.getElementById("s_dip").value) || 6;
-  const sStavebko = parseFloat(document.getElementById("s_stavebko").value) || 3.5;
-  const sPenzijko = parseFloat(document.getElementById("s_penzijko").value) || 4.5;
-  const sSporici = parseFloat(document.getElementById("s_sporici").value) || 3;
-  const sBezny = parseFloat(document.getElementById("s_bezny").value) || 0.1;
+  const sEtf = getCleanNum("s_etf") || 8;
+  const sDip = getCleanNum("s_dip") || 6;
+  const sStavebko = getCleanNum("s_stavebko") || 3.5;
+  const sPenzijko = getCleanNum("s_penzijko") || 4.5;
+  const sSporici = getCleanNum("s_sporici") || 3;
+  const sBezny = getCleanNum("s_bezny") || 0.1;
 
   const ciProdukty = [
     {name:"ETF / Akciový index", sazba:sEtf, color:"#C8F04A"},
@@ -3041,15 +3072,15 @@ function calcCil() {
 
 // Formátování čísel v polích
 function formatInputValue(input) {
-  const raw = input.value.replace(/\s/g, '');
-  const num = parseInt(raw);
+  const num = Math.round(cleanNumValue(input.value));
   if (!isNaN(num) && num > 0) {
-    input.value = num.toLocaleString('cs-CZ');
+    input.value = String(num);
+    formatLive(input);
   }
 }
 
 function parseInputValue(input) {
-  return parseInt(input.value.replace(/\s/g, '').replace(/ /g, '')) || 0;
+  return Math.round(cleanNumValue(input.value));
 }
 
 // FORMAT HELPERS
@@ -3071,9 +3102,7 @@ function getRaw(id) {
 function setFmtValue(id, num) {
   const el = document.getElementById(id);
   if (!el) return;
-  if (!num || num <= 0) { el.value = ""; el.dataset.raw = ""; return; }
-  el.value = num.toLocaleString("cs-CZ");
-  el.dataset.raw = String(num);
+  setMoneyInputValue(id, num);
 }
 
 
@@ -3238,8 +3267,7 @@ function hCenaIn(el) {
 
 function hSliderCena(val) {
   const v = parseInt(val)||0;
-  const el = document.getElementById('h_cena');
-  if (el) el.value = v > 0 ? v.toLocaleString('cs-CZ') : '';
+  setMoneyInputValue('h_cena', v);
   const prev = document.getElementById('h_cena_prev');
   if (prev) prev.textContent = '';
   hCalc();
@@ -3250,21 +3278,19 @@ function hZastavaIn(el) {
   const v = parseInt(el.value.replace(/[^0-9]/g,''))||0;
   const sl = document.getElementById('h_cena_sl');
   const maxVal = sl ? parseInt(sl.max) : 30000000;
-  if (v > maxVal) el.value = maxVal.toLocaleString('cs-CZ');
+  if (v > maxVal) setMoneyInputValue('h_zastava', maxVal);
   hCalc();
 }
 
 function hSazbaSlider(val) {
-  const v = Math.round(parseFloat(val)*10)/10;
-  const el = document.getElementById('h_sazba');
-  if (el) el.value = v;
+  const v = Math.min(Math.max(cleanNumValue(val), 0), 15);
+  setRateInputValue('h_sazba', v);
   hCalc();
 }
 
 function hAdjSazba(delta) {
-  const el = document.getElementById('h_sazba');
-  const v = Math.round(Math.max(0, Math.min((parseFloat(el.value)||0)+delta, 15))*100)/100;
-  el.value = v;
+  const v = Math.round(Math.max(0, Math.min(getCleanNum('h_sazba') + delta, 15)) * 100) / 100;
+  setRateInputValue('h_sazba', v);
   const sl = document.getElementById('h_sazba_sl');
   if (sl) sl.value = v;
   hCalc();
@@ -3281,7 +3307,7 @@ function hAdj(field, delta) {
   if (field === 'cena') {
     const cur = hGetN('h_cena');
     const v = Math.max(0, Math.min(cur+delta, 30000000));
-    document.getElementById('h_cena').value = v > 0 ? v.toLocaleString('cs-CZ') : '';
+    setMoneyInputValue('h_cena', v);
     document.getElementById('h_cena_sl').value = v;
     const prev = document.getElementById('h_cena_prev');
     if (prev) prev.textContent = v > 0 ? fmt(v) : '';
@@ -3296,20 +3322,20 @@ function hAdj(field, delta) {
   } else if (field === 'vlastni') {
     const cur = hGetN('h_vlastni');
     const v = Math.max(0, cur+delta);
-    document.getElementById('h_vlastni').value = v > 0 ? v.toLocaleString('cs-CZ') : '';
+    setMoneyInputValue('h_vlastni', v);
   } else if (field === 'zastava') {
     const cur = hGetN('h_zastava');
     const v = Math.max(0, cur+delta);
-    document.getElementById('h_zastava').value = v > 0 ? v.toLocaleString('cs-CZ') : '';
+    setMoneyInputValue('h_zastava', v);
   }
   hCalc();
 }
 
 function hCalc() {
   const cena = hGetN('h_cena');
-  const rok = parseInt(document.getElementById('h_rok').value)||0;
-  const sazba = parseFloat(document.getElementById('h_sazba').value)||0;
-  const roky = parseInt(document.getElementById('h_roky').value)||30;
+  const rok = Math.round(getCleanNum('h_rok')) || 0;
+  const sazba = getCleanNum('h_sazba');
+  const roky = Math.round(getCleanNum('h_roky')) || 30;
   const setT = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
 
   // Věk + ČNB limit
