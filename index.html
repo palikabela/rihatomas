@@ -135,7 +135,7 @@ footer a:hover{color:var(--text2)}
 /* INVEST GRID - SLOUPEC */
 .products-grid{display:grid;grid-template-columns:1fr;gap:5px;margin-bottom:.5rem}
 .product-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:.55rem .85rem;transition:background 0.3s,border-color 0.3s;display:flex;justify-content:space-between;align-items:center}
-.product-card.best{border-color:rgba(200,240,74,0.5);background:rgba(200,240,74,0.05)}
+.product-card.best{border-color:var(--accent);border-width:2px;background:rgba(200,240,74,0.08);box-shadow:0 0 0 1px rgba(200,240,74,0.2)}
 .product-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
 .product-name{font-size:13px;font-weight:600;color:var(--text)}
 .product-amount{font-family:"Inter",sans-serif;font-variant-numeric:tabular-nums;font-size:clamp(13px,2.8vw,15px);font-weight:700;color:var(--text);text-align:right;letter-spacing:-0.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -524,7 +524,7 @@ input[type="range"]::-webkit-slider-runnable-track {
             <input type="text" inputmode="decimal" id="k_sazba" value="4,99" step="0.01" min="0" oninput="syncKSazba(this.value)" style="flex:1;text-align:center">
             <button onclick="syncKSazba(getCleanNum('k_sazba')+0.01, false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
-          <input type="range" id="k_sazba_slider" min="0" max="15" value="4.99" step="0.01"
+          <input type="range" id="k_sazba_slider" min="0" max="15" value="4.99" step="0.1"
             oninput="syncKSazba(this.value, true)"
             style="width:100%;accent-color:var(--accent);cursor:pointer">
         </div>
@@ -591,7 +591,7 @@ input[type="range"]::-webkit-slider-runnable-track {
             <input type="text" inputmode="decimal" id="r_sazba_sou" value="6,50" step="0.01" min="0" oninput="syncRSazba(this.value)" style="flex:1;text-align:center">
             <button onclick="syncRSazba(getCleanNum('r_sazba_sou')+0.01, false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
-          <input type="range" id="r_sazba_sou_slider" min="0" max="15" value="6.5" step="0.01"
+          <input type="range" id="r_sazba_sou_slider" min="0" max="15" value="6.5" step="0.1"
             oninput="syncRSazba(this.value, true)"
             style="width:100%;accent-color:var(--accent);cursor:pointer">
         </div>
@@ -1469,7 +1469,7 @@ input[type="range"]::-webkit-slider-runnable-track {
             <input type="text" inputmode="decimal" id="h_sazba" value="4,79" step="0.01" min="0" oninput="hCalc()" style="flex:1;text-align:center">
             <button onclick="hAdjSazba(0.01)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
-          <input type="range" id="h_sazba_sl" min="0" max="15" value="4.79" step="0.01" oninput="hSazbaSlider(this.value)" style="width:100%;accent-color:var(--accent);cursor:pointer">
+          <input type="range" id="h_sazba_sl" min="0" max="15" value="4.79" step="0.1" oninput="hSazbaSlider(this.value)" style="width:100%;accent-color:var(--accent);cursor:pointer">
         </div>
 
         <!-- Splatnost -->
@@ -2313,42 +2313,64 @@ function calcInvest() {
       const isFirst = i === 0;
       const div = document.createElement("div");
       div.className = "product-card" + (isEtf ? " best" : "");
+      div.style.flexWrap = "wrap";
+      div.style.alignItems = "flex-start";
       const rank = isFirst ? "🥇 " : (i===1 ? "🥈 " : (i===2 ? "🥉 " : (i+1)+". "));
 
-      // Ztráta penzijka při krátkém horizontu
+      // Likvidita a poplatky dle produktu
+      const infoMap = {
+        etf:      { liq: "✅ Peníze dostupné kdykoliv · po 3 letech 0 % daň", fee: "Poplatek správci: cca 0,2 % p.a." },
+        dip:      { liq: "⚠️ Zamčeno do 60 let (jinak vracení daní)", fee: "" },
+        penzijko: { liq: "🔒 Pevně zamčeno do 60 let (ztráta státní podpory + zdanění)", fee: "Poplatek: 1 % správa + 15 % ze zisku (sebere až 1/4 výnosu)" },
+        stavebko: { liq: "⚠️ Min. 6 let vázací lhůta", fee: "" },
+        sporici:  { liq: "✅ Plně likvidní", fee: "" },
+        izp:      { liq: "🔒 Vázáno pojistnou smlouvou", fee: "Vysoké poplatky zprostředkovatele" },
+        bezny:    { liq: "✅ Plně likvidní", fee: "" },
+      };
+      const info = infoMap[p.id] || { liq: "", fee: "" };
+
+      // Daňová past penzijka — horizont < 10 let NEBO nedosáhne 60 let
       let penzijkoWarning = "";
-      if (p.id === "penzijko" && roky < 10 && (vklad > 0 || jednoraz > 0)) {
+      if (p.id === "penzijko" && (vklad > 0 || jednoraz > 0)) {
         const statPrispevekMes = getStatniPrispevek(vklad);
         const statCelkem = statPrispevekMes * 12 * roky;
-        const zamestInvest = 0; // investice nemá zaměstnavatele
-        const hrubaHodnota = p.hodnota / 0.85 + (p.hodnota - p.hodnota) * 0; // zpětný výpočet
         const vsechnyVklady = (vklad + statPrispevekMes) * 12 * roky + jednoraz;
         const ziskPenz = Math.max((calcFV(vklad + statPrispevekMes, sPenzijko, roky) + jednoraz * Math.pow(1 + sPenzijko/100/12, roky*12)) - vsechnyVklady, 0);
         const ziskDan = ziskPenz * 0.15;
         const celkZtrata = statCelkem + ziskDan;
-        penzijkoWarning =
-          "<div style='grid-column:1/-1;margin-top:6px;padding:7px 10px;background:rgba(239,68,68,0.1);border-left:3px solid var(--red);border-radius:0 5px 5px 0;font-size:11px;line-height:1.5'>" +
-          "<strong style='color:var(--red)'>⚠️ ZTRÁTA PŘI PŘEDČASNÉM VÝBĚRU: " + fmt(celkZtrata) + "</strong><br>" +
-          "<span style='color:var(--text2)'>Vrácení státní podpory: " + fmt(statCelkem) + " · Dodanění zisku 15 %: " + fmt(ziskDan) + "</span><br>" +
-          "<span style='color:var(--red);font-weight:600'>Při výběru pod 10 let vracíte státní podporu a daníte zisk. DPS je v tomto horizontu extrémně nevýhodné.</span>" +
-          "</div>";
+        if (roky < 10) {
+          penzijkoWarning =
+            "<div style='width:100%;margin-top:6px;padding:7px 10px;background:rgba(239,68,68,0.1);border-left:3px solid var(--red);border-radius:0 5px 5px 0;font-size:11px;line-height:1.5'>" +
+            "<strong style='color:var(--red)'>⚠️ DAŇOVÁ PAST: Při výběru dříve než v 60 letech přijdete o " + fmt(celkZtrata) + "</strong><br>" +
+            "<span style='color:var(--text2)'>Vrácení st. podpory: " + fmt(statCelkem) + " · Dodanění zisku 15 %: " + fmt(ziskDan) + "</span>" +
+            "</div>";
+        }
       }
+
+      // Label ETF
+      const etfLabel = isEtf
+        ? "<div style='font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:2px'>🏆 VÍTĚZ PRO DLOUHODOBÉ BOHATSTVÍ</div>"
+        : "";
+
+      // Extra info řádky (likvidita + poplatky)
+      const liqHtml = info.liq
+        ? "<div style='font-size:10px;color:" + (isEtf ? "var(--accent)" : (p.id==="penzijko"||p.id==="dip"||p.id==="izp" ? "var(--red)" : "var(--text3)")) + ";margin-top:2px'>" + info.liq + "</div>"
+        : "";
+      const feeHtml = info.fee
+        ? "<div style='font-size:10px;color:" + (p.id==="penzijko" ? "var(--red)" : "var(--text3)") + ";margin-top:1px'>" + info.fee + "</div>"
+        : "";
 
       div.innerHTML =
-        "<div style=\"display:flex;flex-direction:column;flex:1\">" +
-          (isEtf ? "<div style=\"font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:2px\">★ Strategické doporučení</div>" : "") +
-          "<div class=\"product-name\">" + rank + p.name + "</div>" +
+        "<div style='display:flex;flex-direction:column;flex:1;min-width:0'>" +
+          etfLabel +
+          "<div class='product-name' style='white-space:nowrap'>" + rank + p.name + "</div>" +
+          liqHtml + feeHtml +
         "</div>" +
-        "<div style=\"text-align:right;flex-shrink:0;margin-left:8px\">" +
-          "<div class=\"product-amount " + (isFirst ? "pos" : p.isNeg ? "neg" : "") + "\">" + fmt(p.hodnota) + "</div>" +
-          "<div class=\"product-gain " + (p.isNeg ? "neg" : "pos") + "\">" + (p.isNeg ? "−" : "+") + fmt(Math.abs(p.zisk)) + "</div>" +
-        "</div>";
-
-      if (penzijkoWarning) {
-        // Wrap in full-width block
-        div.style.flexWrap = "wrap";
-        div.innerHTML += penzijkoWarning;
-      }
+        "<div style='text-align:right;flex-shrink:0;margin-left:8px'>" +
+          "<div class='product-amount " + (isEtf ? "pos" : p.isNeg ? "neg" : "") + "'>" + fmt(p.hodnota) + "</div>" +
+          "<div class='product-gain " + (p.isNeg ? "neg" : "pos") + "'>" + (p.isNeg ? "−" : "+") + fmt(Math.abs(p.zisk)) + "</div>" +
+        "</div>" +
+        penzijkoWarning;
 
       grid.appendChild(div);
     });
