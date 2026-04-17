@@ -44,7 +44,7 @@
 }
 
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:16px;line-height:1.6;min-height:100vh;transition:background 0.3s, color 0.3s}
-nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;transition:background 0.3s, border-color 0.3s}
+nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 2rem;height:54px;display:flex;align-items:center;justify-content:space-between;transition:background 0.3s, border-color 0.3s}
 .nav-logo{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--text);letter-spacing:-0.02em}
 .nav-logo span{color:var(--accent)}
 .nav-right{display:flex;align-items:center;gap:1.5rem}
@@ -55,13 +55,13 @@ nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:b
 .theme-btn{background:none;border:none;font-size:18px;cursor:pointer;padding:0;line-height:1;transition:transform 0.2s}
 .theme-btn:hover{transform:scale(1.1)}
 
-.hero{text-align:center;padding:2rem 2rem 1.5rem;max-width:600px;margin:0 auto}
-.hero-tag{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);background:var(--accent-dim);padding:4px 12px;border-radius:20px;margin-bottom:.75rem;border:1px solid rgba(200,240,74,0.2)}
-.hero h1{font-family:'Syne',sans-serif;font-size:clamp(26px,3.5vw,38px);font-weight:700;line-height:1.08;letter-spacing:-0.04em;margin-bottom:.5rem;color:var(--text);transition:opacity 0.2s}
+.hero{text-align:center;padding:.6rem 1.5rem 0;max-width:600px;margin:0 auto .5rem;min-height:160px;display:flex;flex-direction:column;justify-content:flex-end;align-items:center}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);background:var(--accent-dim);padding:2px 10px;border-radius:20px;margin-bottom:.35rem;border:1px solid rgba(200,240,74,0.2)}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(20px,3vw,26px);font-weight:700;line-height:1.15;letter-spacing:-0.03em;margin-bottom:.25rem;color:var(--text);transition:opacity 0.2s}
 .hero h1 em{color:var(--accent);font-style:normal}
-.hero p{font-size:14px;color:var(--text2);max-width:440px;margin:0 auto;transition:opacity 0.2s}
+.hero p{font-size:13px;color:var(--text2);max-width:440px;margin:0 auto .25rem;transition:opacity 0.2s}
 
-.tabs-wrap{display:flex;justify-content:center;margin-bottom:1.5rem}
+.tabs-wrap{display:flex;justify-content:center;margin-bottom:.75rem}
 .tabs{display:inline-flex;background:var(--surface);border:1px solid var(--border);border-radius:50px;padding:4px;gap:2px;flex-wrap:wrap;justify-content:center;transition:background 0.3s, border-color 0.3s}
 .tab{padding:10px 26px;border:none;background:transparent;border-radius:50px;font-family:'Inter',sans-serif;font-size:15px;color:var(--text2);cursor:pointer;transition:all 0.2s}
 .tab:hover{color:var(--text)}
@@ -104,20 +104,20 @@ nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:b
 .sazby-pill .dot{width:6px;height:6px;border-radius:50%;background:var(--text3)}
 .sazby-pill .dot.live{background:var(--green)}
 
-.offer-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:12px;transition:background 0.3s, border-color 0.2s}
+.offer-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:.85rem 1.25rem;margin-bottom:8px;transition:background 0.3s, border-color 0.2s}
 .offer-card.best{border-color:rgba(200,240,74,0.4);background:var(--surface)}
-.offer-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
-.offer-name{font-size:16px;font-weight:500;color:var(--text)}
+.offer-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.offer-name{font-size:15px;font-weight:500;color:var(--text)}
 .offer-partner{font-size:13px;color:var(--text3);margin-top:4px}
-.offer-rate{font-family:'Syne',sans-serif;font-size:clamp(20px,4vw,28px);font-weight:700;color:var(--accent);line-height:1}
+.offer-rate{font-family:'Syne',sans-serif;font-size:clamp(18px,3vw,22px);font-weight:700;color:var(--accent);line-height:1}
 .offer-rate small{font-family:'Inter',sans-serif;font-size:14px;color:var(--text3);font-weight:400}
-.offer-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.offer-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 @media(max-width:480px){.offer-cols{grid-template-columns:repeat(2,1fr)}}
-.offer-col-label{font-size:12px;color:var(--text3);margin-bottom:4px}
-.offer-col-val{font-size:16px;font-weight:500;color:var(--text)}
-.saving-tag{display:inline-flex;align-items:center;gap:6px;margin-top:16px;font-size:13px;font-weight:500;padding:6px 14px;border-radius:20px;background:var(--green-dim);color:var(--green)}
+.offer-col-label{font-size:11px;color:var(--text3);margin-bottom:3px}
+.offer-col-val{font-size:14px;font-weight:500;color:var(--text)}
+.saving-tag{display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:12px;font-weight:500;padding:4px 10px;border-radius:20px;background:var(--green-dim);color:var(--green)}
 .saving-tag.neg{background:var(--red-dim);color:var(--red)}
-.badge-best{display:inline-block;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:4px 12px;border-radius:20px;background:var(--accent);color:#0E0F11;margin-bottom:10px}
+.badge-best{display:inline-block;font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:2px 8px;border-radius:20px;background:var(--accent);color:#0E0F11;margin-bottom:6px}
 
 .cta-strip{background:var(--surface);border:1px solid rgba(200,240,74,0.2);border-radius:14px;padding:2.5rem;display:flex;justify-content:space-between;align-items:center;margin-top:2rem;flex-wrap:wrap;gap:1.5rem;position:relative;overflow:hidden;transition:background 0.3s, border-color 0.3s}
 .cta-strip::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:var(--accent-dim2);border-radius:50%;pointer-events:none}
@@ -608,10 +608,55 @@ input[type="range"]::-webkit-slider-runnable-track {
         </div>
       </div>
       <div class="card">
-        <div class="card-label">Vaše současná situace</div>
-        <div class="metrics">
-          <div class="metric"><div class="metric-label">Měsíční splátka</div><div class="metric-value" id="r_sou_splatka">—</div></div>
-          <div class="metric"><div class="metric-label">Celkem zbývá</div><div class="metric-value red" id="r_sou_celkem">—</div></div>
+        <div class="card-label">Srovnání a úspora</div>
+
+        <!-- VS grid: levý=stávající, pravý=nejlepší nabídka -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;align-items:stretch">
+
+          <!-- LEVÝ SLOUPEC: stávající stav -->
+          <div style="background:var(--surface2);border-radius:10px;padding:.7rem .85rem;border:1px solid var(--border);display:flex;flex-direction:column">
+            <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);margin-bottom:.5rem;min-height:2.4em;display:flex;align-items:flex-end">Váš stávající úvěr</div>
+            <div style="margin-bottom:.4rem">
+              <div style="font-size:11px;color:var(--text3)">Měsíční splátka</div>
+              <div style="font-size:clamp(13px,2.8vw,16px);font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;white-space:nowrap" id="r_sou_splatka">—</div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--text3)">Celkem zaplatíte</div>
+              <div style="font-size:clamp(13px,2.8vw,16px);font-weight:700;color:var(--red);font-variant-numeric:tabular-nums;white-space:nowrap" id="r_sou_celkem">—</div>
+            </div>
+          </div>
+
+          <!-- PRAVÝ SLOUPEC: nejlepší nabídka -->
+          <div style="background:var(--accent-dim);border-radius:10px;padding:.7rem .85rem;border:1px solid rgba(200,240,74,0.35);display:flex;flex-direction:column">
+            <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:.5rem;min-height:2.4em;display:flex;align-items:flex-end;overflow:hidden;line-height:1.2" id="r_best_label">🏆 Nejlepší nabídka</div>
+            <div style="margin-bottom:.4rem">
+              <div style="font-size:11px;color:var(--text3)">Nová splátka</div>
+              <div style="font-size:clamp(13px,2.8vw,16px);font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums;white-space:nowrap" id="r_best_splatka">—</div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--text3)">Celkem zaplatíte</div>
+              <div style="font-size:clamp(13px,2.8vw,16px);font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums;white-space:nowrap" id="r_best_celkem">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SPODNÍ BLOK: dvojitá úspora -->
+        <div id="r_uspora_box" style="display:none;background:rgba(200,240,74,0.1);border:1px solid rgba(200,240,74,0.35);border-radius:10px;padding:.8rem 1rem">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div style="text-align:center">
+              <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);margin-bottom:.2rem">Měsíční úspora</div>
+              <div style="font-size:clamp(18px,3.5vw,24px);font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:-0.02em" id="r_uspora_mes">—</div>
+              <div style="font-size:11px;color:var(--text2);margin-top:.1rem">každý měsíc navíc</div>
+            </div>
+            <div style="text-align:center;border-left:1px solid rgba(200,240,74,0.3);padding-left:.75rem">
+              <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);margin-bottom:.2rem">Celková úspora</div>
+              <div style="font-size:clamp(18px,3.5vw,24px);font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:-0.02em" id="r_uspora_celkem">—</div>
+              <div style="font-size:11px;color:var(--text2);margin-top:.1rem">za celou splatnost</div>
+            </div>
+          </div>
+        </div>
+        <div id="r_uspora_neg_box" style="display:none;padding:.6rem .75rem;background:var(--surface2);border-radius:8px;font-size:12px;color:var(--text3);text-align:center">
+          Refinancování na aktuálně dostupné sazby by bylo nevýhodné.
         </div>
       </div>
     </div>
@@ -1920,11 +1965,41 @@ function calcRefi() {
   const roky = Math.round(getCleanNum("r_roky")) || 1;
   const mes = roky * 12;
   if (prev) prev.textContent = dluh > 0 ? fmt(dluh) : "";
-  if (dluh <= 0) return;
+
+  // Reset srovnávací karty
+  const setEl = (id, txt) => { const e = document.getElementById(id); if(e) e.textContent = txt; };
+  const showEl = (id, show) => { const e = document.getElementById(id); if(e) e.style.display = show ? "block" : "none"; };
+
+  if (dluh <= 0) {
+    ["r_sou_splatka","r_sou_celkem","r_best_splatka","r_best_celkem","r_uspora_celkem","r_uspora_mes"].forEach(id => setEl(id, "—")); setEl("r_best_label", "🏆 Nejlepší nabídka");
+    showEl("r_uspora_box", false); showEl("r_uspora_neg_box", false);
+    return;
+  }
   const splatSou = monthlyPayment(dluh, sazSou, mes);
   const celkemSou = splatSou * mes;
-  document.getElementById("r_sou_splatka").textContent = fmt(splatSou) + " / měs.";
-  document.getElementById("r_sou_celkem").textContent = fmt(celkemSou);
+  setEl("r_sou_splatka", fmt(splatSou) + " / měs.");
+  setEl("r_sou_celkem", fmt(celkemSou));
+
+  // Nejlepší nabídka ze seznamu sazeb
+  const bestSazba = sazby.reduce((best, s) => s.sazba < best.sazba ? s : best, sazby[0]);
+  if (bestSazba) {
+    const bestSpl = monthlyPayment(dluh, bestSazba.sazba, mes);
+    const bestCelk = bestSpl * mes;
+    const uspTotal = celkemSou - bestCelk;
+    const uspMes = splatSou - bestSpl;
+    // Dynamický label s názvem banky a sazbou
+    const bestLabel = document.getElementById("r_best_label");
+    if (bestLabel) bestLabel.textContent = "🏆 " + bestSazba.partner + " (" + bestSazba.sazba.toFixed(2) + " %)";
+    setEl("r_best_splatka", fmt(bestSpl) + " / měs.");
+    setEl("r_best_celkem", fmt(bestCelk));
+    if (uspTotal > 0) {
+      setEl("r_uspora_celkem", fmt(uspTotal));
+      setEl("r_uspora_mes", fmt(uspMes));
+      showEl("r_uspora_box", true); showEl("r_uspora_neg_box", false);
+    } else {
+      showEl("r_uspora_box", false); showEl("r_uspora_neg_box", true);
+    }
+  }
   const container = document.getElementById("refi-offers");
   container.innerHTML = "";
   sazby.forEach((s, i) => {
