@@ -547,11 +547,11 @@ input[type="range"]::-webkit-slider-runnable-track {
       </div>
       <div class="card">
         <div class="card-label">Výsledek výpočtu</div>
-        <div class="metrics" style="grid-template-columns:1fr 1fr">
-          <div class="metric"><div class="metric-label">Měsíční splátka</div><div class="metric-value green" id="k_splatka">—</div></div>
-          <div class="metric"><div class="metric-label" id="k_celkem_label">Celkem zaplatíte</div><div class="metric-value" id="k_celkem">—</div></div>
-          <div class="metric"><div class="metric-label">Přeplatek úroky</div><div class="metric-value red" id="k_uroky">—</div></div>
-          <div class="metric"><div class="metric-label">Počet splátek</div><div class="metric-value" id="k_pocet">—</div></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:1.5rem">
+          <div><div style="font-size:11px;color:var(--text3)">Měsíční splátka</div><div style="font-size:17px;font-weight:700;color:var(--green)" id="k_splatka">—</div></div>
+          <div><div style="font-size:11px;color:var(--text3)" id="k_celkem_label">Celkem zaplatíte</div><div style="font-size:17px;font-weight:700;color:var(--text)" id="k_celkem">—</div></div>
+          <div><div style="font-size:11px;color:var(--text3)">Přeplatek úroky</div><div style="font-size:17px;font-weight:700;color:var(--red)" id="k_uroky">—</div></div>
+          <div><div style="font-size:11px;color:var(--text3)">Počet splátek</div><div style="font-size:17px;font-weight:700;color:var(--text)" id="k_pocet">—</div></div>
         </div>
         <div id="result-uver-vypocten" style="display:none;margin-top:1rem;border-radius:8px;overflow:hidden">
           <div style="background:var(--surface3);padding:.6rem 1rem;font-size:12px;color:var(--text2)">
@@ -1528,13 +1528,17 @@ input[type="range"]::-webkit-slider-runnable-track {
       <!-- VÝSLEDKY -->
       <div class="card">
         <div class="card-label">Výsledek výpočtu</div>
-        <div class="metrics" style="grid-template-columns:1fr 1fr">
-          <div class="metric"><div class="metric-label">Výše hypotéky</div><div class="metric-value green" id="h_res_hypo">—</div></div>
-          <div class="metric"><div class="metric-label">Vlastní zdroje / Zástava</div><div class="metric-value" id="h_res_vlastni">—</div></div>
-          <div class="metric"><div class="metric-label">Měsíční splátka</div><div class="metric-value green" id="h_res_splatka">—</div></div>
-          <div class="metric"><div class="metric-label">Celkem zaplatíte</div><div class="metric-value" id="h_res_celkem">—</div></div>
-          <div class="metric"><div class="metric-label">Přeplatek (úroky)</div><div class="metric-value red" id="h_res_uroky">—</div></div>
-          <div class="metric"><div class="metric-label">Max. splatnost dle věku</div><div class="metric-value" id="h_res_maxroky">—</div></div>
+        <div style="background:var(--surface2);border-radius:10px;padding:1.25rem;margin-bottom:1.5rem;border:1px solid var(--border)">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div><div style="font-size:11px;color:var(--text3)">Výše hypotéky</div><div style="font-size:17px;font-weight:700;color:var(--green)" id="h_res_hypo">—</div></div>
+            <div><div style="font-size:11px;color:var(--text3)">Vlastní zdroje / Zástava</div><div style="font-size:17px;font-weight:700;color:var(--text)" id="h_res_vlastni">—</div></div>
+            <div style="grid-column:1/-1;height:1px;background:var(--border);margin:4px 0"></div>
+            <div><div style="font-size:11px;color:var(--text3)">Měsíční splátka</div><div style="font-size:17px;font-weight:700;color:var(--green)" id="h_res_splatka">—</div></div>
+            <div><div style="font-size:11px;color:var(--text3)">Celkem zaplatíte</div><div style="font-size:17px;font-weight:700;color:var(--text)" id="h_res_celkem">—</div></div>
+            <div style="grid-column:1/-1;height:1px;background:var(--border);margin:4px 0"></div>
+            <div><div style="font-size:11px;color:var(--text3)">Přeplatek (úroky)</div><div style="font-size:17px;font-weight:700;color:var(--red)" id="h_res_uroky">—</div></div>
+            <div><div style="font-size:11px;color:var(--text3)">Max. splatnost dle věku</div><div style="font-size:17px;font-weight:700;color:var(--text)" id="h_res_maxroky">—</div></div>
+          </div>
         </div>
 
         <div id="h_ltv_tbl" style="margin-top:1.25rem;display:none">
@@ -2114,7 +2118,7 @@ function calcRefi() {
       advisoryBox.style.display = "block";
       const diffRoky = Math.abs(rokyNova - roky);
       const formatUspTotN = fmt(Math.abs(uspTotN));
-      const hl = (txt) => `<strong style="color:var(--text);font-weight:800">${txt}</strong>`;
+      const hl = (txt) => `<span style="color:var(--text);font-family:'Syne',sans-serif;font-weight:700;font-size:13px;">${txt}</span>`;
       if (rokyNova > roky) {
         if (uspTotN < 0) {
           advisoryText.innerHTML = `⚠️ POZNÁMKA PORADCE: Prodloužením splatnosti o ${hl(diffRoky + ' let')} sice ulevíte měsíčnímu rozpočtu, ale bance celkově odevzdáte o ${hl(formatUspTotN + ' více')}. Banka profituje z delšího času, po který vám drží kapitál.`;
