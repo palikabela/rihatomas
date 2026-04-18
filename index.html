@@ -2352,13 +2352,12 @@ function calcInvest() {
   const el_celkem = document.getElementById("i_celkem");
   const el_realna = document.getElementById("i_realna");
   if (el_celkem) el_celkem.textContent = (vklad > 0 || jednoraz > 0) ? fmt(celkem) : "—";
-  const realna = celkem / Math.pow(1 + inflace / 100, roky);
-  if (el_realna) el_realna.textContent = (vklad > 0 || jednoraz > 0) ? fmt(realna) : "—";
-  if (!(vklad > 0 || jednoraz > 0)) { const elDS = document.getElementById("i_danovy_stit"); if(elDS) elDS.textContent = "—"; }
 
   // ETF koláč v přehledu
-  const etfHodnota = calcFV(vklad + jednoraz / (roky * 12), sEtf, roky) + jednoraz * Math.pow(1 + sEtf/100/12, roky*12) - jednoraz / (roky*12) * roky * 12;
   const etfFV = (vklad > 0 || jednoraz > 0) ? (calcFV(vklad, sEtf, roky) + jednoraz * Math.pow(1 + sEtf/100/12, roky*12)) : 0;
+  const realna = etfFV / Math.pow(1 + inflace / 100, roky);
+  if (el_realna) el_realna.textContent = (vklad > 0 || jednoraz > 0) ? fmt(realna) : "—";
+  if (!(vklad > 0 || jednoraz > 0)) { const elDS = document.getElementById("i_danovy_stit"); if(elDS) elDS.textContent = "—"; }
   const etfZisk = Math.max(etfFV - celkem, 0);
   // Daňový štít (ušetřená 15% daň ze zisku ETF)
   const danovyStit = etfZisk * 0.15;
@@ -2748,7 +2747,10 @@ function calcPenze() {
       const statCelkem   = statEfektivni * mesice; // 0 pokud ne10let, ale počítáme reálný
       const statRealny   = getStatniPrispevek(vklad) * mesice;
       const zamestDan    = pZamestCelkem * 0.15;
-      const ziskDPS      = Math.max(dpsNoveHruby - celkMesicni * mesice, 0);
+      // dpsNoveHruby lokálně (konstanty DPS jsou definované níže, ale musíme je mít i zde)
+      const DPS_PA_local = 5.95;
+      const dpsNoveHrubyLocal = calcFVPenze(celkMesicni, DPS_PA_local, mesice);
+      const ziskDPS      = Math.max(dpsNoveHrubyLocal - celkMesicni * mesice, 0);
       const ziskDan      = ziskDPS * 0.15;
       const celkZtrata   = statRealny + zamestDan + ziskDan;
       predcasnaEl.style.display = "block";
@@ -2974,7 +2976,7 @@ function toggleDipSazby() {
 }
 
 function getDanUsporaDIP(mesicni) {
-  return Math.min(mesicni * 12, 50000) * 0.15;
+  return Math.min(mesicni * 12, 48000) * 0.15;
 }
 
 let dipChart = null;
@@ -3066,7 +3068,7 @@ function calcDip() {
   const statDPS      = getStatniPrispevek(dpsVkl);
   const statDPSEfektivni = splnuje10Let ? statDPS : 0;
   const danUsporaDPS = splnuje10Let ? getDanUspora(dpsVkl) : 0;
-  const danUsporaDIP = splnuje10Let && dipVkl>0 ? getDanUsporaDIP(dipVkl+zamest) : 0;
+  const danUsporaDIP = splnuje10Let && dipVkl>0 ? getDanUsporaDIP(dipVkl) : 0;
   setT("d_dan_uspora_dps", danUsporaDPS>0 ? fmt(danUsporaDPS)+"/rok" : "0 Kč");
   setT("d_dan_uspora_dip", dipVkl>0       ? fmt(danUsporaDIP)+"/rok" : "—");
   setT("d_stat_rok",       statDPSEfektivni>0 ? fmt(statDPSEfektivni*12)+"/rok"  : "0 Kč");
@@ -3083,7 +3085,7 @@ function calcDip() {
     }
     if(dpsVkl>0) html+=`<strong>DPS:</strong> Vlastní ${fmt(dpsVkl)} Kč + stát ${fmt(statDPSEfektivni)} Kč = <strong>${fmt(dpsVkl+statDPSEfektivni)} Kč/měs.</strong> k úročení při ${DPS_SAZBA} % p.a. (po poplatcích). Daň ze zisku při výběru: <strong>15 %</strong>.`;
     if(dpsVkl>0 && dipVkl>0) html+=" ";
-    if(dipVkl>0) { const odp=Math.min((dipVkl+zamest)*12,50000); html+=`<strong>DIP:</strong> ${fmt(dipVkl+zamest)} Kč/měs. při ${DIP_SAZBA} % p.a. (po 0,2% TER). Odpočet ${fmt(odp)} Kč/rok → úspora <strong>${fmt(danUsporaDIP)} Kč/rok</strong>. Daň ze zisku: <strong>0 %</strong>.`; }
+    if(dipVkl>0) { const odp=Math.min(dipVkl*12,48000); html+=`<strong>DIP:</strong> ${fmt(dipVkl+zamest)} Kč/měs. při ${DIP_SAZBA} % p.a. (po 0,2% TER). Odpočet ${fmt(odp)} Kč/rok → úspora <strong>${fmt(danUsporaDIP)} Kč/rok</strong>. Daň ze zisku: <strong>0 %</strong>.`; }
     danInfo.style.display="block"; danInfo.innerHTML=html;
   } else if(danInfo) danInfo.style.display="none";
 
@@ -3096,8 +3098,9 @@ function calcDip() {
     const dpsHruby = calcFVPenze(celkDPS, DPS_SAZBA, mesice);
     const dpsVlozVse = celkDPS*mesice;
     const dpsZisk  = Math.max(dpsHruby-dpsVlozVse, 0);
-    // Daň: jednorázový výběr = 15%, renta 10+ let = 0%
-    dpsDanZisk     = dpsMode === 'jednor' ? dpsZisk*DPS_DAN_ZISK : 0;
+    // Základ daně = celková - (vklady klienta + státní příspěvky); zamest příspěvky se také daní
+    const dpsDanovyZaklad = Math.max(dpsHruby - (dpsVkl * mesice) - (statDPSEfektivni * mesice), 0);
+    dpsDanZisk     = dpsMode === 'jednor' ? dpsDanovyZaklad * DPS_DAN_ZISK : 0;
     dpsCelkem      = dpsHruby-dpsDanZisk;
     dpsRenta       = calcAnuita(dpsCelkem, DPS_SAZBA, rentaLet);
     setT("d_dps_celkem", fmt(dpsCelkem));
@@ -3174,12 +3177,12 @@ function calcDip() {
     // DIP daňový tip
     const dipTipEl = document.getElementById("d_dip_dan_tip");
     if(dipTipEl) {
-      const rocniVkladDIP = Math.min((dipVkl + zamest) * 12, 50000);
+      const rocniVkladDIP = Math.min(dipVkl * 12, 48000);
       const uspDIP = Math.round(rocniVkladDIP * 0.15);
       if(splnuje10Let) {
         dipTipEl.style.display = "block";
         dipTipEl.innerHTML = `💡 <strong>Daňový tip:</strong> Váš roční vklad <strong>${fmt(rocniVkladDIP)} Kč</strong> si můžete odečíst z daní. Stát Vám za to vrátí <strong>${fmt(uspDIP)} Kč</strong> čistého ročně na účet.`
-          + ((dipVkl + zamest) * 12 > 50000 ? ` <em>(Uplatňuje se max. limit 50 000 Kč/rok.)</em>` : "");
+          + (dipVkl * 12 > 48000 ? ` <em>(Uplatňuje se max. limit 48 000 Kč/rok.)</em>` : "");
       } else {
         dipTipEl.style.display = "none";
       }
@@ -3328,7 +3331,7 @@ function calcCil() {
   const zbyvaCil = Math.max(cil - fvJednoraz, 0);
   let mesicni;
   if (r <= 0) { mesicni = zbyvaCil / mesice; }
-  else { mesicni = zbyvaCil * r / (Math.pow(1 + r, mesice) - 1); }
+  else { mesicni = (zbyvaCil * r) / ((Math.pow(1 + r, mesice) - 1) * (1 + r)); }
   const vlozeno = mesicni * mesice + jednoraz;
   const zhodnoceni = Math.max(cil - vlozeno, 0);
   const elM = document.getElementById("ci_mesicni");
