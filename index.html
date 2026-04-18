@@ -608,50 +608,73 @@ input[type="range"]::-webkit-slider-runnable-track {
             oninput="syncRRoky(this.value, true)"
             style="width:100%;accent-color:var(--accent);cursor:pointer">
         </div>
+        <div style="border-top:1px solid var(--border);margin:.75rem 0 .6rem;opacity:.5"></div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);margin-bottom:.6rem">Parametry nového úvěru</div>
+        <div class="field">
+          <label>Nová úroková sazba (% ročně)</label>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <button onclick="syncRSazbaNova(getCleanNum('r_sazba_nova')-0.01, false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <input type="text" inputmode="decimal" id="r_sazba_nova" value="4,99" step="0.01" min="0" oninput="syncRSazbaNova(this.value, false)" style="flex:1;text-align:center">
+            <button onclick="syncRSazbaNova(getCleanNum('r_sazba_nova')+0.01, false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+          </div>
+          <input type="range" id="r_sazba_nova_slider" min="0" max="15" value="4.99" step="0.1"
+            oninput="syncRSazbaNova(this.value, true)"
+            style="width:100%;accent-color:var(--accent);cursor:pointer">
+        </div>
       </div>
       <div class="card">
         <div class="card-label">Srovnání a úspora</div>
-
-        <!-- Stávající úvěr -->
-        <div style="background:var(--surface2);border-radius:10px;padding:.65rem .85rem;border:1px solid var(--border);margin-bottom:10px">
-          <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);margin-bottom:.4rem">Váš stávající úvěr</div>
-          <div style="display:flex;gap:16px">
-            <div>
-              <div style="font-size:11px;color:var(--text3)">Měsíční splátka</div>
-              <div style="font-size:16px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;white-space:nowrap" id="r_sou_splatka">—</div>
-            </div>
-            <div>
-              <div style="font-size:11px;color:var(--text3)">Celkem zaplatíte</div>
-              <div style="font-size:16px;font-weight:700;color:var(--red);font-variant-numeric:tabular-nums;white-space:nowrap" id="r_sou_celkem">—</div>
+        <div style="background:var(--surface2);border-radius:10px;padding:.85rem 1rem;margin-bottom:10px;border:1px solid var(--border)">
+          <div style="font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);margin-bottom:.5rem">Váš stávající úvěr</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div><div style="font-size:11px;color:var(--text3)">Měsíční splátka</div><div style="font-size:17px;font-weight:700;color:var(--text)" id="r_sou_splatka">—</div></div>
+            <div><div style="font-size:11px;color:var(--text3)">Celkem zaplatíte</div><div style="font-size:17px;font-weight:700;color:var(--red)" id="r_sou_celkem">—</div></div>
+          </div>
+        </div>
+        <div id="r_nova_box" style="display:none">
+          <div style="background:rgba(74,222,128,0.06);border-radius:10px;padding:.85rem 1rem;border:1px solid rgba(74,222,128,0.25)">
+            <div style="font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--green);margin-bottom:.5rem">Návrh refinancování</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div><div style="font-size:11px;color:var(--text3)">Nová splátka</div><div style="font-size:17px;font-weight:700;color:var(--text)" id="r_nova_splatka">—</div></div>
+              <div><div style="font-size:11px;color:var(--text3)">Celkem zaplatíte</div><div style="font-size:17px;font-weight:700;color:var(--text)" id="r_nova_celkem">—</div></div>
+              <div id="r_uspora_pozitivni" style="grid-column:1/-1;border-top:1px solid rgba(74,222,128,0.15);padding-top:10px;margin-top:2px;display:none;grid-template-columns:1fr 1fr;gap:12px">
+                <div><div style="font-size:11px;color:var(--text3)">Měsíčně ušetříte</div><div style="font-size:17px;font-weight:800;color:var(--green)" id="r_uspora_mes_nova">—</div></div>
+                <div><div style="font-size:11px;color:var(--text3)">Celková úspora</div><div style="font-size:17px;font-weight:800;color:var(--green)" id="r_uspora_celkem_nova">—</div></div>
+              </div>
+              <div id="r_uspora_negativni" style="grid-column:1/-1;border-top:1px solid rgba(239,68,68,0.15);padding-top:10px;margin-top:2px;display:none;grid-template-columns:1fr 1fr;gap:12px">
+                <div><div style="font-size:11px;color:var(--text3)">Měsíčně přeplatíte</div><div style="font-size:17px;font-weight:800;color:var(--red)" id="r_preplatek_mes">—</div></div>
+                <div><div style="font-size:11px;color:var(--text3)">Celkový přeplatek</div><div style="font-size:17px;font-weight:800;color:var(--red)" id="r_preplatek_celkem">—</div></div>
+              </div>
             </div>
           </div>
         </div>
-
-        <!-- Hlavní blok úspory -->
-
         <div id="r_uspora_neg_box" style="display:none;padding:.6rem .75rem;background:var(--surface2);border-radius:8px;font-size:12px;color:var(--text3);text-align:center">
-          Refinancování na aktuálně dostupné sazby by bylo nevýhodné.
+          Zadejte dluh a sazby pro výpočet.
         </div>
       </div>
     </div>
 
-    <div class="offers-header">
-      <div class="offers-title">Nabídky refinancování</div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <div class="sazby-pill">
-          <div class="dot" id="sazby-dot"></div>
-          <span id="sazby-info">Načítám sazby…</span>
+    <button id="btn-toggle-offers" onclick="toggleRefiOffers()" style="width:100%;padding:12px;margin-top:1rem;border-radius:8px;border:1px solid var(--border2);background:transparent;color:var(--text2);font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s">Zobrazit konkrétní nabídky bank ▼</button>
+
+    <div id="refi-offers-wrap" style="display:none;margin-top:1rem">
+      <div class="offers-header">
+        <div class="offers-title">Nabídky refinancování</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="sazby-pill">
+            <div class="dot" id="sazby-dot"></div>
+            <span id="sazby-info">Načítám sazby…</span>
+          </div>
+          <button onclick="toggleRefiEdit()" id="refi-edit-btn" style="font-size:11px;padding:4px 10px;border:1px solid var(--border2);border-radius:20px;background:transparent;color:var(--text2);cursor:pointer">✏️ upravit sazby</button>
         </div>
-        <button onclick="toggleRefiEdit()" id="refi-edit-btn" style="font-size:11px;padding:4px 10px;border:1px solid var(--border2);border-radius:20px;background:transparent;color:var(--text2);cursor:pointer">✏️ upravit sazby</button>
       </div>
-    </div>
 
-    <div id="refi-edit-panel" style="display:none;margin-bottom:12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1rem">
-      <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:.75rem">Ruční úprava sazeb — pouze pro výpočet</div>
-      <div id="refi-edit-rows" style="display:flex;flex-direction:column;gap:8px"></div>
-    </div>
+      <div id="refi-edit-panel" style="display:none;margin-bottom:12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1rem">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:.75rem">Ruční úprava sazeb — pouze pro výpočet</div>
+        <div id="refi-edit-rows" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
 
-    <div id="refi-offers"></div>
+      <div id="refi-offers"></div>
+    </div>
 
 
   </div>
@@ -1784,6 +1807,18 @@ function syncRSazba(val, fromSlider) {
   calcRefi();
 }
 
+function syncRSazbaNova(val, fromSlider) {
+  const parsed = parseFloat(String(val).replace(',', '.'));
+  if (isNaN(parsed)) return;
+  const v = Math.round(Math.max(0, Math.min(parsed, 15)) * 100) / 100;
+  const el = document.getElementById('r_sazba_nova');
+  const sl = document.getElementById('r_sazba_nova_slider');
+  if (el) el.value = v.toFixed(2).replace('.', ',');
+  if (sl) sl.value = v;
+  calcRefi();
+}
+
+
 function syncKSazba(val, fromSlider) {
   const slider = document.getElementById("k_sazba_slider");
   const input = document.getElementById("k_sazba");
@@ -1942,11 +1977,14 @@ function calcRefi() {
 
   // Reset srovnávací karty
   const setEl = (id, txt) => { const e = document.getElementById(id); if(e) e.textContent = txt; };
-  const showEl = (id, show) => { const e = document.getElementById(id); if(e) e.style.display = show ? "block" : "none"; };
+  const showEl = (id, show) => { const e = document.getElementById(id); if(e) e.style.display = show ? (id.includes("uspora_pozitivni") || id.includes("uspora_negativni") ? "grid" : "block") : "none"; };
 
   if (dluh <= 0) {
-    ["r_sou_splatka","r_sou_celkem","r_best_splatka","r_best_celkem","r_uspora_celkem","r_uspora_mes"].forEach(id => setEl(id, "—")); setEl("r_best_label", "🏆 Nejlepší nabídka");
+    ["r_sou_splatka","r_sou_celkem","r_best_splatka","r_best_celkem","r_uspora_celkem","r_uspora_mes",
+     "r_nova_splatka","r_nova_celkem","r_uspora_mes_nova","r_uspora_celkem_nova","r_preplatek_mes","r_preplatek_celkem"].forEach(id => setEl(id, "—"));
+    setEl("r_best_label", "🏆 Nejlepší nabídka");
     showEl("r_uspora_box", false); showEl("r_uspora_neg_box", false);
+    showEl("r_nova_box", false);
     return;
   }
   const splatSou = monthlyPayment(dluh, sazSou, mes);
@@ -1961,7 +1999,6 @@ function calcRefi() {
     const bestCelk = bestSpl * mes;
     const uspTotal = celkemSou - bestCelk;
     const uspMes = splatSou - bestSpl;
-    // Dynamický label s názvem banky a sazbou
     const bestLabel = document.getElementById("r_best_label");
     if (bestLabel) bestLabel.textContent = "🏆 " + bestSazba.partner + " (" + bestSazba.sazba.toFixed(2) + " %)";
     setEl("r_best_splatka", fmt(bestSpl) + " / měs.");
@@ -1973,6 +2010,31 @@ function calcRefi() {
     } else {
       showEl("r_uspora_box", false); showEl("r_uspora_neg_box", true);
     }
+  }
+
+  // Výpočet s manuálně zadanou novou sazbou
+  const sazNova = getCleanNum("r_sazba_nova") || 4.99;
+  if (dluh > 0) {
+    const novaSpl  = monthlyPayment(dluh, sazNova, mes);
+    const novaCelk = novaSpl * mes;
+    const uspMesN  = splatSou - novaSpl;
+    const uspTotN  = celkemSou - novaCelk;
+    setEl("r_nova_splatka", fmt(novaSpl) + " / měs.");
+    setEl("r_nova_celkem",  fmt(novaCelk));
+    showEl("r_nova_box", true);
+    if (uspTotN >= 0) {
+      setEl("r_uspora_mes_nova",    fmt(uspMesN));
+      setEl("r_uspora_celkem_nova", fmt(uspTotN));
+      showEl("r_uspora_pozitivni", true);
+      showEl("r_uspora_negativni", false);
+    } else {
+      setEl("r_preplatek_mes",    fmt(Math.abs(uspMesN)));
+      setEl("r_preplatek_celkem", fmt(Math.abs(uspTotN)));
+      showEl("r_uspora_pozitivni", false);
+      showEl("r_uspora_negativni", true);
+    }
+  } else {
+    showEl("r_nova_box", false);
   }
   const container = document.getElementById("refi-offers");
   // Záhlaví tabulky
@@ -3284,6 +3346,23 @@ function setFmtValue(id, num) {
   setMoneyInputValue(id, num);
 }
 
+
+function toggleRefiOffers() {
+  const wrap = document.getElementById("refi-offers-wrap");
+  const btn  = document.getElementById("btn-toggle-offers");
+  if (!wrap || !btn) return;
+  if (wrap.style.display === "none") {
+    wrap.style.display = "block";
+    btn.innerHTML = "Skrýt nabídky bank ▲";
+    btn.style.background = "var(--surface2)";
+    btn.style.color = "var(--text)";
+  } else {
+    wrap.style.display = "none";
+    btn.innerHTML = "Zobrazit konkrétní nabídky bank ▼";
+    btn.style.background = "transparent";
+    btn.style.color = "var(--text2)";
+  }
+}
 
 function toggleRefiEdit() {
   const panel = document.getElementById("refi-edit-panel");
