@@ -621,6 +621,18 @@ input[type="range"]::-webkit-slider-runnable-track {
             oninput="syncRSazbaNova(this.value, true)"
             style="width:100%;accent-color:var(--accent);cursor:pointer">
         </div>
+        <div class="field">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <label style="margin-bottom:0">Nová splatnost (roky)</label>
+            <button id="r_roky_reset_btn" onclick="resetRRokyNova()" style="display:none;background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:0">↺ Vrátit na původní</button>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <button onclick="syncRRokyNova((parseInt(document.getElementById('r_roky_nova').value)||0)-1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <input type="number" id="r_roky_nova" value="20" min="1" max="65" oninput="syncRRokyNova(this.value)" style="flex:1;text-align:center">
+            <button onclick="syncRRokyNova((parseInt(document.getElementById('r_roky_nova').value)||0)+1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+          </div>
+          <input type="range" id="r_roky_nova_slider" min="1" max="65" value="20" step="1" oninput="syncRRokyNova(this.value, true)" style="width:100%;accent-color:var(--accent);cursor:pointer">
+        </div>
       </div>
       <div class="card">
         <div class="card-label">Srovnání a úspora</div>
@@ -637,16 +649,15 @@ input[type="range"]::-webkit-slider-runnable-track {
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
               <div><div style="font-size:11px;color:var(--text3)">Nová splátka</div><div style="font-size:17px;font-weight:700;color:var(--text)" id="r_nova_splatka">—</div></div>
               <div><div style="font-size:11px;color:var(--text3)">Celkem zaplatíte</div><div style="font-size:17px;font-weight:700;color:var(--text)" id="r_nova_celkem">—</div></div>
-              <div id="r_uspora_pozitivni" style="grid-column:1/-1;border-top:1px solid rgba(74,222,128,0.15);padding-top:10px;margin-top:2px;display:none;grid-template-columns:1fr 1fr;gap:12px">
-                <div><div style="font-size:11px;color:var(--text3)">Měsíčně ušetříte</div><div style="font-size:17px;font-weight:800;color:var(--green)" id="r_uspora_mes_nova">—</div></div>
-                <div><div style="font-size:11px;color:var(--text3)">Celková úspora</div><div style="font-size:17px;font-weight:800;color:var(--green)" id="r_uspora_celkem_nova">—</div></div>
-              </div>
-              <div id="r_uspora_negativni" style="grid-column:1/-1;border-top:1px solid rgba(239,68,68,0.15);padding-top:10px;margin-top:2px;display:none;grid-template-columns:1fr 1fr;gap:12px">
-                <div><div style="font-size:11px;color:var(--text3)">Měsíčně přeplatíte</div><div style="font-size:17px;font-weight:800;color:var(--red)" id="r_preplatek_mes">—</div></div>
-                <div><div style="font-size:11px;color:var(--text3)">Celkový přeplatek</div><div style="font-size:17px;font-weight:800;color:var(--red)" id="r_preplatek_celkem">—</div></div>
+              <div id="r_uspora_vysledek" style="grid-column:1/-1;border-top:1px solid rgba(255,255,255,0.1);padding-top:10px;margin-top:6px;display:none;grid-template-columns:1fr 1fr;gap:12px">
+                <div><div style="font-size:11px;color:var(--text3)" id="r_uspora_mes_label">Měsíčně ušetříte</div><div style="font-size:17px;font-weight:800" id="r_uspora_mes_hodnota">—</div></div>
+                <div><div style="font-size:11px;color:var(--text3)" id="r_uspora_celkem_label">Celková úspora</div><div style="font-size:17px;font-weight:800" id="r_uspora_celkem_hodnota">—</div></div>
               </div>
             </div>
           </div>
+        </div>
+        <div id="r_advisory_box" style="margin-top:16px;padding:12px;border-radius:8px;border-left:3px solid var(--border2);background:var(--surface2);display:none">
+          <div id="r_advisory_text" style="font-size:12px;font-weight:300;line-height:1.6;color:var(--text2);font-family:'Inter',sans-serif"></div>
         </div>
         <div id="r_uspora_neg_box" style="display:none;padding:.6rem .75rem;background:var(--surface2);border-radius:8px;font-size:12px;color:var(--text3);text-align:center">
           Zadejte dluh a sazby pro výpočet.
@@ -1004,24 +1015,24 @@ input[type="range"]::-webkit-slider-runnable-track {
     </div>
 
     <div class="grid2" style="margin-bottom:14px">
-      <div class="card">
+      <div class="card" style="border-color:rgba(239,68,68,0.2)">
         <div class="card-label" style="color:var(--red)">Transformovaný fond (TF)</div>
-        <div style="font-size:11px;color:var(--text3);margin-bottom:.75rem">~1,5 % p.a. — garantované</div>
-        <div class="metrics">
-          <div class="metric"><div class="metric-label">Naspořeno celkem</div><div class="metric-value" id="tf_celkem">—</div></div>
-          <div class="metric"><div class="metric-label">Z toho výnos</div><div class="metric-value" id="tf_vynos">—</div></div>
-          <div class="metric"><div class="metric-label">Měsíční renta</div><div class="metric-value" id="tf_renta">—</div></div>
-          <div class="metric"><div class="metric-label">Zhodnocení p.a.</div><div class="metric-value" style="color:var(--red)">1,5 %</div></div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:1.2rem">~1,5 % p.a. — garantované</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div><div style="font-size:11px;color:var(--text3)">Naspořeno celkem</div><div style="font-size:17px;font-weight:700;color:var(--text)" id="tf_celkem">—</div></div>
+          <div><div style="font-size:11px;color:var(--text3)">Z toho výnos</div><div style="font-size:17px;font-weight:700;color:var(--text)" id="tf_vynos">—</div></div>
+          <div><div style="font-size:11px;color:var(--text3)">Měsíční renta</div><div style="font-size:17px;font-weight:700;color:var(--text)" id="tf_renta">—</div></div>
+          <div><div style="font-size:11px;color:var(--text3)">Zhodnocení p.a.</div><div style="font-size:17px;font-weight:700;color:var(--red)">1,5 %</div></div>
         </div>
       </div>
-      <div class="card" style="border-color:rgba(200,240,74,0.35)">
-        <div class="card-label" style="color:var(--accent)">DPS — Účastnický fond</div>
-        <div style="font-size:11px;color:var(--text3);margin-bottom:.75rem">~5,95 % p.a. po popl. (8% − 1% správa − 15% perf.) + státní příspěvek</div>
-        <div class="metrics">
-          <div class="metric"><div class="metric-label">Naspořeno celkem</div><div class="metric-value green" id="dps_celkem">—</div></div>
-          <div class="metric"><div class="metric-label">Z toho výnos</div><div class="metric-value green" id="dps_vynos">—</div></div>
-          <div class="metric"><div class="metric-label">Měsíční renta</div><div class="metric-value green" id="dps_renta">—</div></div>
-          <div class="metric"><div class="metric-label">Zhodnocení p.a.</div><div class="metric-value green">7 %</div></div>
+      <div class="card" style="border-color:rgba(74,222,128,0.3)">
+        <div class="card-label" style="color:var(--green)">DPS — Účastnický fond</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:1.2rem">~5,95 % p.a. po popl. (8% − 1% správa − 15% perf.) + státní příspěvek</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div><div style="font-size:11px;color:var(--text3)">Naspořeno celkem</div><div style="font-size:17px;font-weight:700;color:var(--green)" id="dps_celkem">—</div></div>
+          <div><div style="font-size:11px;color:var(--text3)">Z toho výnos</div><div style="font-size:17px;font-weight:700;color:var(--green)" id="dps_vynos">—</div></div>
+          <div><div style="font-size:11px;color:var(--text3)">Měsíční renta</div><div style="font-size:17px;font-weight:700;color:var(--green)" id="dps_renta">—</div></div>
+          <div><div style="font-size:11px;color:var(--text3)">Zhodnocení p.a.</div><div style="font-size:17px;font-weight:700;color:var(--green)">5,95 %</div></div>
         </div>
       </div>
     </div>
@@ -1778,6 +1789,36 @@ function syncRDluh(val, fromSlider) {
   calcRefi();
 }
 
+let isRokyNovaDecoupled = false;
+
+function syncRRokyNova(val, fromSlider) {
+  isRokyNovaDecoupled = true;
+  document.getElementById('r_roky_reset_btn').style.display = 'block';
+  const slider = document.getElementById("r_roky_nova_slider");
+  const input = document.getElementById("r_roky_nova");
+  const parsed = parseInt(val);
+  if (!parsed || parsed < 1) {
+    if (input) input.value = 1;
+    if (slider) slider.value = 1;
+    calcRefi(); return;
+  }
+  const v = Math.min(Math.max(parsed, 1), 65);
+  if (input) input.value = v;
+  if (slider) slider.value = v;
+  calcRefi();
+}
+
+function resetRRokyNova() {
+  isRokyNovaDecoupled = false;
+  document.getElementById('r_roky_reset_btn').style.display = 'none';
+  const origVal = document.getElementById("r_roky").value;
+  const input = document.getElementById("r_roky_nova");
+  const slider = document.getElementById("r_roky_nova_slider");
+  if (input) input.value = origVal;
+  if (slider) slider.value = origVal;
+  calcRefi();
+}
+
 function syncRRoky(val, fromSlider) {
   const slider = document.getElementById("r_roky_slider");
   const input = document.getElementById("r_roky");
@@ -1790,6 +1831,13 @@ function syncRRoky(val, fromSlider) {
   const v = Math.min(Math.max(parsed, 1), 65);
   if (input) input.value = v;
   if (slider) slider.value = v;
+  // ZRCADLENÍ (pokud není rozpojeno)
+  if (!isRokyNovaDecoupled) {
+    const inputNova = document.getElementById("r_roky_nova");
+    const sliderNova = document.getElementById("r_roky_nova_slider");
+    if (inputNova) inputNova.value = v;
+    if (sliderNova) sliderNova.value = v;
+  }
   calcRefi();
 }
 
@@ -1981,10 +2029,12 @@ function calcRefi() {
 
   if (dluh <= 0) {
     ["r_sou_splatka","r_sou_celkem","r_best_splatka","r_best_celkem","r_uspora_celkem","r_uspora_mes",
-     "r_nova_splatka","r_nova_celkem","r_uspora_mes_nova","r_uspora_celkem_nova","r_preplatek_mes","r_preplatek_celkem"].forEach(id => setEl(id, "—"));
+     "r_nova_splatka","r_nova_celkem","r_uspora_mes_hodnota","r_uspora_celkem_hodnota"].forEach(id => setEl(id, "—"));
     setEl("r_best_label", "🏆 Nejlepší nabídka");
     showEl("r_uspora_box", false); showEl("r_uspora_neg_box", false);
     showEl("r_nova_box", false);
+    const uvReset = document.getElementById("r_uspora_vysledek"); if(uvReset) uvReset.style.display = "none";
+    const advReset = document.getElementById("r_advisory_box"); if(advReset) advReset.style.display = "none";
     return;
   }
   const splatSou = monthlyPayment(dluh, sazSou, mes);
@@ -2014,27 +2064,77 @@ function calcRefi() {
 
   // Výpočet s manuálně zadanou novou sazbou
   const sazNova = getCleanNum("r_sazba_nova") || 4.99;
+  const rokyNova = Math.round(parseInt(document.getElementById("r_roky_nova")?.value) || roky);
+  const mesNova = Math.max(rokyNova, 1) * 12;
   if (dluh > 0) {
-    const novaSpl  = monthlyPayment(dluh, sazNova, mes);
-    const novaCelk = novaSpl * mes;
+    const novaSpl  = monthlyPayment(dluh, sazNova, mesNova);
+    const novaCelk = novaSpl * mesNova;
     const uspMesN  = splatSou - novaSpl;
     const uspTotN  = celkemSou - novaCelk;
     setEl("r_nova_splatka", fmt(novaSpl) + " / měs.");
     setEl("r_nova_celkem",  fmt(novaCelk));
     showEl("r_nova_box", true);
-    if (uspTotN >= 0) {
-      setEl("r_uspora_mes_nova",    fmt(uspMesN));
-      setEl("r_uspora_celkem_nova", fmt(uspTotN));
-      showEl("r_uspora_pozitivni", true);
-      showEl("r_uspora_negativni", false);
-    } else {
-      setEl("r_preplatek_mes",    fmt(Math.abs(uspMesN)));
-      setEl("r_preplatek_celkem", fmt(Math.abs(uspTotN)));
-      showEl("r_uspora_pozitivni", false);
-      showEl("r_uspora_negativni", true);
+
+    // Dynamický box úspory
+    const usporaBox = document.getElementById("r_uspora_vysledek");
+    if (usporaBox) {
+      usporaBox.style.display = "grid";
+      usporaBox.style.borderTop = uspTotN >= 0 ? "1px solid rgba(74,222,128,0.15)" : "1px solid rgba(239,68,68,0.15)";
+    }
+    // Měsíční úspora / přeplatek
+    const mesLabel = document.getElementById("r_uspora_mes_label");
+    const mesHodnota = document.getElementById("r_uspora_mes_hodnota");
+    if (mesLabel && mesHodnota) {
+      mesHodnota.textContent = fmt(Math.abs(uspMesN));
+      if (uspMesN >= 0) {
+        mesLabel.textContent = "Měsíčně ušetříte";
+        mesHodnota.style.color = "var(--green)";
+      } else {
+        mesLabel.textContent = "Měsíčně připlatíte";
+        mesHodnota.style.color = "var(--red)";
+      }
+    }
+    // Celková úspora / přeplatek
+    const celkemLabel = document.getElementById("r_uspora_celkem_label");
+    const celkemHodnota = document.getElementById("r_uspora_celkem_hodnota");
+    if (celkemLabel && celkemHodnota) {
+      celkemHodnota.textContent = fmt(Math.abs(uspTotN));
+      if (uspTotN >= 0) {
+        celkemLabel.textContent = "Celková úspora";
+        celkemHodnota.style.color = "var(--green)";
+      } else {
+        celkemLabel.textContent = "Celkový přeplatek";
+        celkemHodnota.style.color = "var(--red)";
+      }
+    }
+    // POZNÁMKA PORADCE
+    const advisoryBox = document.getElementById("r_advisory_box");
+    const advisoryText = document.getElementById("r_advisory_text");
+    if (advisoryBox && advisoryText) {
+      advisoryBox.style.display = "block";
+      const diffRoky = Math.abs(rokyNova - roky);
+      const formatUspTotN = fmt(Math.abs(uspTotN));
+      const hl = (txt) => `<strong style="color:var(--text);font-weight:800">${txt}</strong>`;
+      if (rokyNova > roky) {
+        if (uspTotN < 0) {
+          advisoryText.innerHTML = `⚠️ POZNÁMKA PORADCE: Prodloužením splatnosti o ${hl(diffRoky + ' let')} sice ulevíte měsíčnímu rozpočtu, ale bance celkově odevzdáte o ${hl(formatUspTotN + ' více')}. Banka profituje z delšího času, po který vám drží kapitál.`;
+          advisoryBox.style.borderLeftColor = "var(--red)";
+        } else {
+          advisoryText.innerHTML = `💡 POZNÁMKA PORADCE: I přes prodloužení splatnosti o ${hl(diffRoky + ' let')} celkově ušetříte ${hl(formatUspTotN)}, a to díky mnohem lepší sazbě. Pokud byste ale splatnost neprodlužovali, byla by vaše úspora ještě výrazně vyšší!`;
+          advisoryBox.style.borderLeftColor = "#F59E0B";
+        }
+      } else if (rokyNova < roky) {
+        advisoryText.innerHTML = `✅ POZNÁMKA PORADCE: Zkrácením doby splácení o ${hl(diffRoky + ' let')} drasticky snižujete celkové náklady úvěru. Bance na úrocích odevzdáte o ${hl(formatUspTotN + ' méně')}.`;
+        advisoryBox.style.borderLeftColor = "var(--green)";
+      } else {
+        advisoryText.innerHTML = `📊 POZNÁMKA PORADCE: Splatnost zůstává stejná. Úspora ${hl(formatUspTotN)} je tvořena čistě rozdílem úrokových sazeb — nižší sazba znamená méně peněz pro banku za stejnou dobu.`;
+        advisoryBox.style.borderLeftColor = "var(--border2)";
+      }
     }
   } else {
     showEl("r_nova_box", false);
+    const advBoxReset = document.getElementById("r_advisory_box");
+    if (advBoxReset) advBoxReset.style.display = "none";
   }
   const container = document.getElementById("refi-offers");
   // Záhlaví tabulky
