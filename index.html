@@ -2628,8 +2628,11 @@ let penzeKolacChartInstance = null;
 
 function getStatniPrispevek(mesicni) {
   if (mesicni < 500) return 0;
-  if (mesicni >= 1700) return 340;
-  return Math.floor(mesicni * 0.20);
+  // Podle legislativy se příspěvek počítá jen z ucelených stokorun vkladu
+  const zakladProVypocet = Math.floor(mesicni / 100) * 100;
+  const vypocet = zakladProVypocet * 0.20;
+  // Horní limit je 340 Kč (odpovídá vkladu 1700 Kč)
+  return Math.min(Math.round(vypocet), 340);
 }
 
 function getDanUspora(mesicni) {
