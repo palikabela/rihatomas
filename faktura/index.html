@@ -57,6 +57,12 @@
         table { width: 100%; border-collapse: collapse; margin-bottom: 4px; }
         th { text-align: left; padding: 10px 10px; border-bottom: 2px solid var(--border-strong); font-size: 0.72em; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); background: transparent; }
         td { text-align: left; padding: 12px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        #items-table th:nth-child(4),
+        #items-table td:nth-child(4),
+        #items-table th:nth-child(5),
+        #items-table td:nth-child(5) {
+            text-align: right !important;
+        }
 
         /* Celkem */
         .totals {
@@ -79,6 +85,7 @@
         #qrcode { min-width: 120px; min-height: 120px; display: flex; align-items: center; justify-content: center; background: white; padding: 8px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
 
         /* Tisk button */
+        .vat-col { display: none; }
         .btn-print-wrap { text-align: center; margin-top: 32px; }
         .btn-print-wrap .btn {
             font-size: 1em; padding: 14px 36px;
@@ -91,30 +98,38 @@
         
         @media print {
             @page { margin: 0 !important; }
-            html, body { background: white !important; padding: 15mm !important; margin: 0 !important; color: black !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; display: block !important; }
+            html, body { background: white !important; padding: 10mm 15mm !important; margin: 0 !important; color: black !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; display: block !important; }
             .container { box-shadow: none !important; padding: 0 !important; margin: 0 !important; max-width: 100% !important; width: 100% !important; border: none !important; }
-            input { border: none !important; padding: 0 !important; background: transparent !important; color: black !important; -webkit-text-fill-color: black !important; opacity: 1 !important; font-size: 10pt !important; height: auto !important; outline: none !important; box-shadow: none !important; -webkit-appearance: none !important; -moz-appearance: none !important; appearance: none !important; margin: 0 !important; }
+            input { border: none !important; padding: 0 !important; background: transparent !important; color: black !important; -webkit-text-fill-color: black !important; opacity: 1 !important; font-size: 9pt !important; height: auto !important; outline: none !important; box-shadow: none !important; -webkit-appearance: none !important; -moz-appearance: none !important; appearance: none !important; margin: 0 !important; }
             input[type="number"] { -moz-appearance: textfield; }
             input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
             .btn, .ares-btn, .remove-btn, .no-print, #qr-warning, .btn-print-wrap { display: none !important; }
             .print-hidden { display: none !important; }
-            .print-val { display: inline !important; font-size: 10pt !important; color: black; }
-            h1 { font-size: 18pt !important; margin-bottom: 2px !important; }
-            h2 { font-size: 12pt !important; margin-bottom: 4px !important; padding-bottom: 2px !important; }
-            label { font-size: 8pt !important; margin-bottom: 1px !important; }
-            .grid-2 { display: flex !important; flex-direction: row !important; justify-content: space-between !important; gap: 4% !important; margin-bottom: 10px !important; }
+            .print-val { display: inline !important; font-size: 9pt !important; color: black; }
+            h1 { font-size: 16pt !important; margin-bottom: 2px !important; }
+            h2 { font-size: 10pt !important; margin-bottom: 2px !important; padding-bottom: 2px !important; }
+            label { font-size: 7pt !important; margin-bottom: 0 !important; }
+            p { font-size: 9pt !important; }
+            .grid-2 { display: flex !important; flex-direction: row !important; justify-content: space-between !important; gap: 4% !important; margin-bottom: 5px !important; }
             .box { width: 48% !important; display: block !important; margin-bottom: 0 !important; }
             .form-group { margin-bottom: 2px !important; }
-            table { font-size: 10pt !important; width: 100%; border-collapse: collapse !important; margin-bottom: 10px !important; }
-            th, td { padding: 4px 2px !important; font-size: 10pt !important; border-bottom: 1px solid #e5e7eb !important; }
-            .totals { margin-top: 5px !important; padding: 5px 10px !important; font-size: 12pt !important; }
+            table { font-size: 9pt !important; width: 100%; border-collapse: collapse !important; margin-bottom: 5px !important; }
+            th { font-size: 7pt !important; padding: 4px !important; border-bottom: 1px solid #e5e7eb !important; }
+            td { font-size: 9pt !important; padding: 4px !important; border-bottom: 1px solid #e5e7eb !important; }
+            th.vat-col, td.vat-col { text-align: center !important; }
+            .totals { margin-top: 5px !important; padding: 5px !important; font-size: 11pt !important; }
             .totals .totals-label { font-size: 8pt !important; }
-            .totals .totals-amount { font-size: 16pt !important; }
-            .qr-section { padding: 5px 10px !important; margin-top: 10px !important; align-items: center !important; display: flex !important; flex-direction: row !important; justify-content: space-between !important; border: 1px solid #e5e7eb !important; border-radius: 6px !important; background: white !important; }
+            .totals .totals-amount { font-size: 14pt !important; }
+            .qr-section { padding: 5px 10px !important; margin-top: 5px !important; align-items: center !important; display: flex !important; flex-direction: row !important; justify-content: space-between !important; border: 1px solid #e5e7eb !important; border-radius: 6px !important; background: white !important; }
             .qr-section h3 { font-size: 11pt !important; margin-bottom: 2px !important; }
             .qr-section p { font-size: 9pt !important; margin: 0 !important; line-height: 1.2 !important; }
             #qrcode { padding: 0; box-shadow: none !important; }
-            #qrcode img { width: 80px !important; height: 80px !important; }
+            #qrcode img { width: 70px !important; height: 70px !important; }
+            .header-right { display: flex !important; flex-direction: column !important; align-items: flex-end !important; }
+            .header-right .form-group { justify-content: flex-end !important; margin-bottom: 4px !important; }
+            .header-right label { font-size: 8pt !important; white-space: nowrap !important; margin-right: 10px !important; }
+            .header-right .print-val { font-size: 10pt !important; font-weight: bold !important; width: auto !important; min-width: 90px; }
+            #vat-toggle-wrap { display: none !important; opacity: 0 !important; visibility: hidden !important; height: 0 !important; overflow: hidden !important; }
         }
     </style>
 </head>
@@ -126,17 +141,17 @@
             <h1>Faktura</h1>
             <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #4b5563;">Doklad slouží zároveň jako dodací list.</p>
         </div>
-        <div style="text-align: right; min-width: 200px;">
+        <div class="header-right" style="text-align: right; min-width: 260px;">
             <div class="form-group" style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
-                <label style="margin: 0;">Číslo faktury / VS:</label>
+                <label style="margin: 0; white-space: nowrap;">Číslo faktury / VS:</label>
                 <input type="text" id="vs" value="20260001" oninput="generateQR()" onchange="generateQR()" style="width: 100px; text-align: right; font-weight: bold;">
             </div>
             <div class="form-group" style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
-                <label style="margin: 0;">Datum vystavení:</label>
+                <label style="margin: 0; white-space: nowrap;">Datum vystavení:</label>
                 <input type="date" id="date-issue" style="width: 130px; text-align: right;">
             </div>
             <div class="form-group" style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
-                <label style="margin: 0;">Datum splatnosti:</label>
+                <label style="margin: 0; white-space: nowrap;">Datum splatnosti:</label>
                 <input type="date" id="date-due" style="width: 130px; text-align: right;">
             </div>
         </div>
@@ -173,13 +188,16 @@
                 <label>Telefon:</label>
                 <input type="text" id="sup-phone" onchange="saveSup()">
             </div>
-            <p class="no-print" style="font-size: 0.85em; margin-top: 10px;">
-                <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:normal;">
-                    <input type="checkbox" id="platce-dph" onchange="toggleDph()" style="width:auto; margin:0;">
-                    Jsem plátce DPH
-                </label>
-            </p>
-            <p id="dph-text" style="font-size: 0.85em; font-weight: bold; margin-top: 6px;">Dodavatel není plátcem DPH.</p>
+            <div class="form-group">
+                <label>Zápis v rejstříku (Povinný údaj):</label>
+                <input type="text" id="sup-registry" onchange="saveSup(); document.getElementById('sup-registry-print').innerText = this.value;" placeholder="Např. Zapsán v živnostenském rejstříku">
+            </div>
+            <div id="vat-toggle-wrap" class="form-group no-print" style="display: flex; align-items: center; gap: 8px; margin-bottom: 15px; background: #f3f4f6; padding: 10px; border-radius: 6px;">
+                <input type="checkbox" id="is-vat-payer" onchange="toggleVat()" style="width: auto; margin: 0; transform: scale(1.2);">
+                <label for="is-vat-payer" style="margin: 0; font-weight: bold; cursor: pointer; text-transform: none; letter-spacing: 0; font-size: 0.9em; color: var(--text);">Jsem plátce DPH</label>
+            </div>
+            <p id="vat-text" style="font-size: 0.85em; font-weight: bold; margin-top: 6px;">Dodavatel není plátcem DPH.</p>
+            <p id="sup-registry-print" style="font-size: 0.78em; color: #6b7280; margin-top: 4px;"></p>
         </div>
 
         <div class="box">
@@ -210,10 +228,11 @@
     <table id="items-table">
         <thead>
             <tr>
-                <th>Popis položky</th>
-                <th style="width: 80px; text-align: center;">Množství</th>
-                <th style="width: 120px; text-align: right;">Cena / mj. (Kč)</th>
-                <th style="width: 120px; text-align: right;">Celkem</th>
+                <th style="width: 35%; text-align: left;">Popis položky</th>
+                <th style="width: 12%; text-align: center;">Množství</th>
+                <th class="vat-col" style="width: 13%; text-align: center;">DPH %</th>
+                <th style="width: 20%; text-align: right;"><span class="price-label">Cena / mj. (Kč)</span></th>
+                <th style="width: 20%; text-align: right;">Celkem</th>
                 <th class="no-print" style="width: 40px;"></th>
             </tr>
         </thead>
@@ -223,9 +242,17 @@
     
     <button class="btn no-print" onclick="addRow()" style="background: #4b5563; margin-bottom: 10px; font-size: 0.9em;">+ Přidat položku</button>
 
-    <div class="totals">
-        <div class="totals-label">Celkem k úhradě</div>
-        <div class="totals-amount"><span id="total-sum">0,00</span> Kč</div>
+    <div class="totals-wrapper" style="margin-top: 20px; border-top: 2px solid var(--border); padding-top: 15px;">
+        <div class="vat-col" style="display: none; justify-content: flex-end; font-size: 1.1em; margin-bottom: 5px;">
+            Základ pro DPH: <span id="total-base" style="width: 120px; text-align: right; display: inline-block;">0,00</span> Kč
+        </div>
+        <div class="vat-col" style="display: none; justify-content: flex-end; font-size: 1.1em; margin-bottom: 10px;">
+            DPH celkem: <span id="total-vat" style="width: 120px; text-align: right; display: inline-block;">0,00</span> Kč
+        </div>
+        <div class="totals" style="text-align: right;">
+            <div class="totals-label">Celkem k úhradě</div>
+            <div class="totals-amount"><span id="total-sum">0,00</span> Kč</div>
+        </div>
     </div>
 
     <div class="qr-section">
@@ -318,6 +345,18 @@
 
             // Pokud jsme načítali dodavatele, rovnou to uložíme do paměti prohlížeče
             if (type === 'sup') {
+                // Automatické vyplnění zápisu v rejstříku
+                let regStr = '';
+                if (data.seznamRegistraci && data.seznamRegistraci.stavZivnostenskehoUrdu === 'AKTIVNI') {
+                    regStr = 'Zapsán v živnostenském rejstříku';
+                } else if (data.vr && data.vr.spisovaZnacka) {
+                    const sz = data.vr.spisovaZnacka;
+                    regStr = `Zapsán v OR u ${data.vr.soud || 'příslušného soudu'}, oddíl ${sz.oddil}, vložka ${sz.vlozka}`;
+                }
+                if (regStr) {
+                    document.getElementById('sup-registry').value = regStr;
+                    document.getElementById('sup-registry-print').innerText = regStr;
+                }
                 saveSup();
             }
             
@@ -330,12 +369,20 @@
     }
 
     function addRow() {
+        const isVat = document.getElementById('is-vat-payer').checked;
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td><input type="text" placeholder="Např. Konzultace" oninput="calculate()"></td>
             <td><input type="number" min="1" value="1" oninput="calculate()" style="text-align: center;"></td>
+            <td class="vat-col" style="display:${isVat ? 'table-cell' : 'none'}">
+                <select class="vat-rate" onchange="calculate()" style="width:100%; padding:4px; border:1px solid var(--border); border-radius:4px;">
+                    <option value="21">21 %</option>
+                    <option value="12">12 %</option>
+                    <option value="0">0 %</option>
+                </select>
+            </td>
             <td><input type="number" min="0" value="0" step="0.01" oninput="calculate()" style="text-align: right;"></td>
-            <td class="row-sum" style="text-align: right; font-weight: 500;">0.00</td>
+            <td class="row-sum" style="text-align: right; font-weight: 500;">0,00</td>
             <td class="no-print"><button class="btn btn-danger remove-btn" onclick="this.closest('tr').remove(); calculate()">X</button></td>
         `;
         document.getElementById('items-body').appendChild(tr);
@@ -348,18 +395,32 @@
     }
 
     function calculate() {
-        let total = 0;
+        const isVat = document.getElementById('is-vat-payer').checked;
+        let base = 0, vatTotal = 0;
         const rows = document.querySelectorAll('#items-body tr');
         rows.forEach(row => {
-            const inputs = row.querySelectorAll('input');
-            const qty = parseFloat(inputs[1].value) || 0;
-            const price = parseFloat(inputs[2].value) || 0;
-            const sum = qty * price;
-            row.querySelector('.row-sum').innerText = formatCZK(Math.round(sum * 100) / 100);
-            total += sum;
+            const inputs = row.querySelectorAll('input[type="number"]');
+            const qty   = parseFloat(inputs[0].value) || 0;
+            const price = parseFloat(inputs[1].value) || 0;
+            const rowBase = qty * price;
+            let vatRate = 0;
+            if (isVat) {
+                const sel = row.querySelector('.vat-rate');
+                vatRate = sel ? (parseFloat(sel.value) || 0) : 0;
+            }
+            const rowVat = Math.round(rowBase * vatRate) / 100;
+            const rowTotal = rowBase + rowVat;
+            row.querySelector('.row-sum').innerText = formatCZK(Math.round(rowTotal * 100) / 100);
+            base     += rowBase;
+            vatTotal += rowVat;
         });
-        currentTotal = Math.round(total * 100) / 100;
+        base     = Math.round(base * 100) / 100;
+        vatTotal = Math.round(vatTotal * 100) / 100;
+        currentTotal = Math.round((base + vatTotal) * 100) / 100;
+
         document.getElementById('total-sum').innerText = formatCZK(currentTotal);
+        if (document.getElementById('total-base')) document.getElementById('total-base').innerText = formatCZK(base);
+        if (document.getElementById('total-vat'))  document.getElementById('total-vat').innerText  = formatCZK(vatTotal);
         generateQR();
     }
 
@@ -458,7 +519,7 @@
         });
     }
 
-    const supFields = ['sup-name', 'sup-ico', 'sup-address', 'sup-account', 'sup-phone'];
+    const supFields = ['sup-name', 'sup-ico', 'sup-address', 'sup-account', 'sup-phone', 'sup-registry'];
     
     function saveSup() {
         supFields.forEach(id => {
@@ -467,9 +528,20 @@
         });
     }
 
-    function toggleDph() {
-        var checked = document.getElementById('platce-dph').checked;
-        document.getElementById('dph-text').textContent = checked ? 'Dodavatel je plátcem DPH.' : 'Dodavatel není plátcem DPH.';
+    function toggleVat() {
+        const isVat = document.getElementById('is-vat-payer').checked;
+
+        // Zobrazení/skrytí sloupců tabulky
+        document.querySelectorAll('th.vat-col, td.vat-col').forEach(el => el.style.display = isVat ? 'table-cell' : 'none');
+        // Zobrazení/skrytí DPH součtových řádků
+        document.querySelectorAll('div.vat-col').forEach(el => el.style.display = isVat ? 'flex' : 'none');
+        // Změna popisku ceny
+        document.querySelectorAll('.price-label').forEach(el => el.innerText = isVat ? 'Cena/mj. bez DPH' : 'Cena / mj. (Kč)');
+        // Text plátce
+        const vatText = document.getElementById('vat-text');
+        if (vatText) vatText.innerText = isVat ? 'Dodavatel je plátcem DPH.' : 'Dodavatel není plátcem DPH.';
+
+        calculate();
     }
 
     function resetSup() {
@@ -493,24 +565,37 @@
             const el = document.getElementById(id);
             if(val && el) el.value = val;
         });
+        const reg = document.getElementById('sup-registry');
+        const regPrint = document.getElementById('sup-registry-print');
+        if (reg && regPrint) regPrint.innerText = reg.value;
     }
 
     function tiskFaktury() {
-        document.querySelectorAll('input').forEach(function(input) {
+        // Skryj prázdné form-group před tiskem
+        document.querySelectorAll('.form-group').forEach(function(group) {
+            const input = group.querySelector('input, textarea');
+            if (input && (!input.value || input.value.trim() === '')) {
+                group.classList.add('no-print');
+            }
+        });
+
+        document.querySelectorAll('input, select').forEach(function(input) {
+            if (input.type === 'checkbox') return;
             if (!input.classList.contains('print-hidden')) {
                 var span = document.createElement('span');
                 span.className = 'print-val';
-
-                if (input.type === 'date' && input.value) {
+                if (input.tagName === 'SELECT') {
+                    span.textContent = input.options[input.selectedIndex].text;
+                } else if (input.type === 'date' && input.value) {
                     var d = input.value.split('-');
                     span.textContent = d[2] + '. ' + d[1] + '. ' + d[0];
                 } else {
                     span.textContent = input.value;
                 }
-
-                if (input.style.textAlign === 'right') { span.style.display = 'block'; span.style.textAlign = 'right'; }
-                if (input.style.textAlign === 'center') { span.style.display = 'block'; span.style.textAlign = 'center'; }
-
+                span.style.display = 'block';
+                if (input.style.textAlign) {
+                    span.style.textAlign = input.style.textAlign;
+                }
                 input.parentNode.insertBefore(span, input);
                 input.classList.add('print-hidden');
             }
@@ -523,6 +608,7 @@
     window.addEventListener('afterprint', function() {
         document.querySelectorAll('.print-val').forEach(function(s) { s.remove(); });
         document.querySelectorAll('.print-hidden').forEach(function(i) { i.classList.remove('print-hidden'); });
+        document.querySelectorAll('.form-group.no-print').forEach(function(g) { g.classList.remove('no-print'); });
     });
 
     window.onload = () => {
