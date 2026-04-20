@@ -53,6 +53,8 @@
             input[type="number"] { -moz-appearance: textfield; }
             input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
             .btn, .ares-btn, .remove-btn, .no-print, #qr-warning { display: none !important; }
+            .print-hidden { display: none !important; }
+            .print-val { display: inline !important; font-size: 12pt; color: black; }
             .grid-2 { display: flex !important; justify-content: space-between !important; gap: 0 !important; margin-bottom: 15px !important; }
             .box { width: 48% !important; display: block !important; }
             .form-group { margin-bottom: 5px; }
@@ -433,13 +435,21 @@
     }
 
     function tiskFaktury() {
+        // Nahradí každý input spanem s jeho hodnotou
         document.querySelectorAll('input').forEach(function(input) {
-            input.setAttribute('value', input.value);
+            var span = document.createElement('span');
+            span.className = 'print-val';
+            span.textContent = input.value;
+            input.parentNode.insertBefore(span, input);
+            input.classList.add('print-hidden');
         });
+
         window.focus();
-        setTimeout(function() {
-            window.print();
-        }, 300);
+        window.print();
+
+        // Po tisku vrátí vše zpět
+        document.querySelectorAll('.print-val').forEach(function(s) { s.remove(); });
+        document.querySelectorAll('.print-hidden').forEach(function(i) { i.classList.remove('print-hidden'); });
     }
 
     window.onload = () => {
