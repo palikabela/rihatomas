@@ -5,67 +5,116 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title></title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #2563eb;
-            --border: #d1d5db;
+            --primary: #111827;
+            --primary-hover: #374151;
+            --border: #e5e7eb;
+            --border-strong: #d1d5db;
             --bg: #f9fafb;
+            --bg-subtle: #f3f4f6;
             --text: #111827;
+            --text-muted: #6b7280;
+            --accent: #111827;
+            --radius: 8px;
         }
-        * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
-        body { background-color: #f3f4f6; color: var(--text); padding: 20px; line-height: 1.4; font-size: 15px; margin: 0; }
-        .container { max-width: 850px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-        h1 { margin: 0; font-size: 2em; }
-        h2 { font-size: 1.2em; border-bottom: 2px solid var(--border); padding-bottom: 5px; margin-bottom: 15px; }
-        
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 20px; }
-        .form-group { margin-bottom: 12px; }
-        label { display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.85em; color: #4b5563; }
-        input[type="text"], input[type="number"], input[type="date"] { 
-            width: 100%; padding: 6px 8px; border: 1px solid var(--border); border-radius: 4px; font-size: 1em;
+
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', system-ui, sans-serif; background-color: #f3f4f6; color: var(--text); padding: 24px 16px; line-height: 1.5; font-size: 15px; margin: 0; }
+
+        .container { max-width: 880px; margin: 0 auto; background: white; padding: 36px 40px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.06); }
+
+        h1 { font-family: 'Syne', sans-serif; margin: 0; font-size: 2.2em; letter-spacing: -0.02em; color: var(--text); }
+        h2 { font-family: 'Syne', sans-serif; font-size: 1em; border-bottom: 1.5px solid var(--border); padding-bottom: 8px; margin-bottom: 16px; letter-spacing: 0.01em; color: var(--text); }
+        h3 { font-family: 'Inter', sans-serif; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 28px; }
+        .form-group { margin-bottom: 14px; }
+
+        label { display: block; font-weight: 500; margin-bottom: 5px; font-size: 0.8em; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+
+        input[type="text"], input[type="number"], input[type="date"] {
+            width: 100%; padding: 8px 10px; border: 1.5px solid var(--border); border-radius: 6px;
+            font-size: 0.95em; font-family: 'Inter', sans-serif; color: var(--text);
+            transition: border-color 0.15s, box-shadow 0.15s; background: white;
         }
-        input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px rgba(37,99,235,0.2); }
-        
-        .ares-btn { background: #374151; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85em; white-space: nowrap; transition: background 0.2s; }
-        .ares-btn:hover { background: #1f2937; }
-        .ares-btn:disabled { background: #9ca3af; cursor: not-allowed; }
-        
-        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-        th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--border); }
-        th { background-color: var(--bg); font-weight: 600; font-size: 0.9em; }
-        
-        .btn { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .btn:hover { background: #1d4ed8; }
-        .btn-danger { background: #dc2626; padding: 4px 8px; font-size: 0.8em; }
-        .btn-danger:hover { background: #b91c1c; }
-        
-        .totals { text-align: right; font-size: 1.3em; font-weight: bold; margin: 15px 0; border-top: 2px solid var(--border); padding-top: 10px;}
-        
-        .qr-section { display: flex; align-items: center; justify-content: space-between; background: var(--bg); padding: 15px; border-radius: 8px; border: 1px solid var(--border); }
-        .qr-placeholder { color: #dc2626; font-size: 0.85em; max-width: 150px; text-align: center; font-weight: bold; }
-        #qrcode { min-width: 120px; min-height: 120px; display: flex; align-items: center; justify-content: center; background: white; padding: 5px; }
+        input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(17,24,39,0.08); }
+
+        /* Tlačítka */
+        .ares-btn { background: var(--bg-subtle); color: var(--text); border: 1.5px solid var(--border-strong); padding: 7px 14px; border-radius: 6px; cursor: pointer; font-size: 0.82em; font-family: 'Inter', sans-serif; font-weight: 500; white-space: nowrap; transition: all 0.15s; }
+        .ares-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+        .ares-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+        .btn { background: var(--primary); color: white; border: none; padding: 9px 18px; border-radius: 6px; cursor: pointer; font-weight: 600; font-family: 'Inter', sans-serif; font-size: 0.9em; transition: background 0.15s; }
+        .btn:hover { background: var(--primary-hover); }
+        .btn-danger { background: #fff0f0; color: #dc2626; border: 1.5px solid #fecaca; padding: 5px 10px; font-size: 0.8em; }
+        .btn-danger:hover { background: #dc2626; color: white; border-color: #dc2626; }
+
+        /* Tabulka */
+        table { width: 100%; border-collapse: collapse; margin-bottom: 4px; }
+        th { text-align: left; padding: 10px 10px; border-bottom: 2px solid var(--border-strong); font-size: 0.72em; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); background: transparent; }
+        td { text-align: left; padding: 12px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+
+        /* Celkem */
+        .totals {
+            text-align: right;
+            margin: 20px 0 24px;
+            padding: 20px 24px;
+            background: var(--bg);
+            border-radius: var(--radius);
+            border-top: none;
+        }
+        .totals .totals-label { font-size: 0.8em; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 4px; }
+        .totals .totals-amount { font-size: 2.2em; font-weight: 700; color: var(--text); font-family: 'Syne', sans-serif; letter-spacing: -0.02em; }
+
+        /* QR sekce */
+        .qr-section { display: flex; align-items: center; justify-content: space-between; background: var(--bg); padding: 20px 24px; border-radius: 12px; border: none; gap: 20px; }
+        .qr-section h3 { margin-top: 0; margin-bottom: 8px; font-size: 1em; font-weight: 600; }
+        .qr-section p { margin: 0 0 4px; font-size: 0.9em; color: var(--text-muted); }
+        .qr-section p span { color: var(--text); font-weight: 600; }
+        .qr-placeholder { color: #dc2626; font-size: 0.82em; max-width: 150px; text-align: center; font-weight: 600; }
+        #qrcode { min-width: 120px; min-height: 120px; display: flex; align-items: center; justify-content: center; background: white; padding: 8px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+
+        /* Tisk button */
+        .btn-print-wrap { text-align: center; margin-top: 32px; }
+        .btn-print-wrap .btn {
+            font-size: 1em; padding: 14px 36px;
+            background: #111827; color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 14px rgba(17,24,39,0.25);
+            letter-spacing: 0.01em;
+        }
+        .btn-print-wrap .btn:hover { background: #1f2937; box-shadow: 0 6px 20px rgba(17,24,39,0.3); }
         
         @media print {
-            @page { size: A4; margin: 15mm 12mm; }
+            @page { size: A4; margin: 10mm; }
             html, body { background: white !important; padding: 0 !important; margin: 0 !important; color: black !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; display: block !important; visibility: visible !important; overflow: visible !important; height: auto !important; }
             .container { box-shadow: none !important; padding: 0 !important; margin: 0 !important; max-width: 100% !important; border: none !important; display: block !important; visibility: visible !important; overflow: visible !important; }
-            input { border: none !important; padding: 0 !important; background: transparent !important; color: black !important; -webkit-text-fill-color: black !important; opacity: 1 !important; font-size: 12pt !important; height: auto !important; outline: none !important; box-shadow: none !important; -webkit-appearance: none !important; -moz-appearance: none !important; appearance: none !important; margin: 0 !important; }
+            input { border: none !important; padding: 0 !important; background: transparent !important; color: black !important; -webkit-text-fill-color: black !important; opacity: 1 !important; font-size: 10pt !important; height: auto !important; outline: none !important; box-shadow: none !important; -webkit-appearance: none !important; -moz-appearance: none !important; appearance: none !important; margin: 0 !important; }
             input[type="number"] { -moz-appearance: textfield; }
             input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-            .btn, .ares-btn, .remove-btn, .no-print, #qr-warning { display: none !important; }
+            .btn, .ares-btn, .remove-btn, .no-print, #qr-warning, .btn-print-wrap { display: none !important; }
             .print-hidden { display: none !important; }
-            .print-val { display: inline !important; font-size: 12pt; color: black; }
-            .grid-2 { display: flex !important; justify-content: space-between !important; gap: 0 !important; margin-bottom: 15px !important; }
-            .box { width: 48% !important; display: block !important; }
-            .form-group { margin-bottom: 5px; }
-            h1 { font-size: 22pt; margin-bottom: 5px; }
-            h2 { font-size: 13pt; margin-bottom: 8px; padding-bottom: 3px; }
-            table { font-size: 11pt; width: 100%; border-collapse: collapse !important; }
-            th, td { padding: 4px 6px; border-bottom: 1px solid #e5e7eb !important; }
-            .totals { font-size: 14pt; margin-top: 10px; padding-top: 5px; }
-            .qr-section { padding: 10px; border: 1px solid #e5e7eb; break-inside: avoid; margin-top: 10px; display: flex !important; }
-            #qrcode { padding: 0; }
-            #qrcode img { width: 100px; height: 100px; }
+            .print-val { display: inline !important; font-size: 10pt !important; color: black; }
+            h1 { font-size: 18pt !important; margin-bottom: 2px !important; }
+            h2 { font-size: 12pt !important; margin-bottom: 4px !important; padding-bottom: 2px !important; }
+            label { font-size: 8pt !important; margin-bottom: 1px !important; }
+            .grid-2 { display: flex !important; flex-direction: row !important; justify-content: space-between !important; gap: 4% !important; margin-bottom: 10px !important; }
+            .box { width: 48% !important; display: block !important; margin-bottom: 0 !important; }
+            .form-group { margin-bottom: 2px !important; }
+            table { font-size: 10pt !important; width: 100%; border-collapse: collapse !important; margin-bottom: 10px !important; }
+            th, td { padding: 4px 2px !important; font-size: 10pt !important; border-bottom: 1px solid #e5e7eb !important; }
+            .totals { margin-top: 5px !important; padding: 5px 10px !important; font-size: 12pt !important; }
+            .totals .totals-label { font-size: 8pt !important; }
+            .totals .totals-amount { font-size: 16pt !important; }
+            .qr-section { padding: 5px 10px !important; margin-top: 10px !important; align-items: center !important; display: flex !important; flex-direction: row !important; justify-content: space-between !important; border: 1px solid #e5e7eb !important; border-radius: 6px !important; background: white !important; }
+            .qr-section h3 { font-size: 11pt !important; margin-bottom: 2px !important; }
+            .qr-section p { font-size: 9pt !important; margin: 0 !important; line-height: 1.2 !important; }
+            #qrcode { padding: 0; box-shadow: none !important; }
+            #qrcode img { width: 80px !important; height: 80px !important; }
         }
     </style>
 </head>
@@ -124,7 +173,13 @@
                 <label>Telefon:</label>
                 <input type="text" id="sup-phone" onchange="saveSup()">
             </div>
-            <p style="font-size: 0.85em; font-weight: bold; margin-top: 10px;">Nejsem plátce DPH.</p>
+            <p class="no-print" style="font-size: 0.85em; margin-top: 10px;">
+                <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:normal;">
+                    <input type="checkbox" id="platce-dph" onchange="toggleDph()" style="width:auto; margin:0;">
+                    Jsem plátce DPH
+                </label>
+            </p>
+            <p id="dph-text" style="font-size: 0.85em; font-weight: bold; margin-top: 6px;">Dodavatel není plátcem DPH.</p>
         </div>
 
         <div class="box">
@@ -169,7 +224,8 @@
     <button class="btn no-print" onclick="addRow()" style="background: #4b5563; margin-bottom: 10px; font-size: 0.9em;">+ Přidat položku</button>
 
     <div class="totals">
-        Celkem k úhradě: <span id="total-sum">0.00</span> Kč
+        <div class="totals-label">Celkem k úhradě</div>
+        <div class="totals-amount"><span id="total-sum">0,00</span> Kč</div>
     </div>
 
     <div class="qr-section">
@@ -185,9 +241,9 @@
         </div>
     </div>
 
-    <div style="text-align: center; margin-top: 30px;" class="no-print">
-        <button class="btn" onclick="tiskFaktury()" style="font-size: 1.2em; padding: 15px 30px; box-shadow: 0 4px 15px rgba(37,99,235,0.4);">🖨️ Vytisknout / Uložit PDF</button>
-        <p style="font-size: 0.85em; color: #6b7280; margin-top: 10px;">(V dialogu tisku zvolte "Uložit jako PDF" a vypněte "Záhlaví a zápatí", pokud se stále objevují).</p>
+    <div class="btn-print-wrap no-print">
+        <button class="btn" onclick="tiskFaktury()">🖨️ Vytisknout / Uložit PDF</button>
+        <p style="font-size: 0.82em; color: #9ca3af; margin-top: 10px;">V dialogu tisku zvolte "Uložit jako PDF" a vypněte záhlaví a zápatí.</p>
     </div>
 </div>
 
@@ -411,6 +467,11 @@
         });
     }
 
+    function toggleDph() {
+        var checked = document.getElementById('platce-dph').checked;
+        document.getElementById('dph-text').textContent = checked ? 'Dodavatel je plátcem DPH.' : 'Dodavatel není plátcem DPH.';
+    }
+
     function resetSup() {
         supFields.forEach(id => {
             const el = document.getElementById(id);
@@ -435,22 +496,34 @@
     }
 
     function tiskFaktury() {
-        // Nahradí každý input spanem s jeho hodnotou
         document.querySelectorAll('input').forEach(function(input) {
-            var span = document.createElement('span');
-            span.className = 'print-val';
-            span.textContent = input.value;
-            input.parentNode.insertBefore(span, input);
-            input.classList.add('print-hidden');
+            if (!input.classList.contains('print-hidden')) {
+                var span = document.createElement('span');
+                span.className = 'print-val';
+
+                if (input.type === 'date' && input.value) {
+                    var d = input.value.split('-');
+                    span.textContent = d[2] + '. ' + d[1] + '. ' + d[0];
+                } else {
+                    span.textContent = input.value;
+                }
+
+                if (input.style.textAlign === 'right') { span.style.display = 'block'; span.style.textAlign = 'right'; }
+                if (input.style.textAlign === 'center') { span.style.display = 'block'; span.style.textAlign = 'center'; }
+
+                input.parentNode.insertBefore(span, input);
+                input.classList.add('print-hidden');
+            }
         });
-
         window.focus();
-        window.print();
+        setTimeout(function() { window.print(); }, 300);
+    }
 
-        // Po tisku vrátí vše zpět
+    // Vrácení do původního stavu se spustí bezpečně AŽ po dokončení nebo zrušení tisku
+    window.addEventListener('afterprint', function() {
         document.querySelectorAll('.print-val').forEach(function(s) { s.remove(); });
         document.querySelectorAll('.print-hidden').forEach(function(i) { i.classList.remove('print-hidden'); });
-    }
+    });
 
     window.onload = () => {
         loadSup();
