@@ -183,7 +183,7 @@
     </div>
 
     <div style="text-align: center; margin-top: 30px;" class="no-print">
-        <button class="btn" onclick="window.print()" style="font-size: 1.2em; padding: 15px 30px; box-shadow: 0 4px 15px rgba(37,99,235,0.4);">🖨️ Vytisknout / Uložit PDF</button>
+        <button class="btn" onclick="tiskFaktury()" style="font-size: 1.2em; padding: 15px 30px; box-shadow: 0 4px 15px rgba(37,99,235,0.4);">🖨️ Vytisknout / Uložit PDF</button>
         <p style="font-size: 0.85em; color: #6b7280; margin-top: 10px;">(V dialogu tisku zvolte "Uložit jako PDF" a vypněte "Záhlaví a zápatí", pokud se stále objevují).</p>
     </div>
 </div>
@@ -431,29 +431,20 @@
         });
     }
 
+    function tiskFaktury() {
+        document.querySelectorAll('input').forEach(function(input) {
+            input.setAttribute('value', input.value);
+        });
+        window.focus();
+        window.print();
+    }
+
     window.onload = () => {
         loadSup();
         addRow(); 
         calculate(); 
         setTimeout(generateQR, 150); 
     };
-
-    // Před tiskem nahradí inputy spany s hodnotami (jinak Safari tiskne prázdnou stránku)
-    window.addEventListener('beforeprint', () => {
-        document.querySelectorAll('input').forEach(input => {
-            const span = document.createElement('span');
-            span.className = 'print-value';
-            span.textContent = input.value;
-            span.style.cssText = 'display:inline; font-size:inherit; color:black;';
-            input.parentNode.insertBefore(span, input.nextSibling);
-            input.style.display = 'none';
-        });
-    });
-
-    window.addEventListener('afterprint', () => {
-        document.querySelectorAll('.print-value').forEach(span => span.remove());
-        document.querySelectorAll('input').forEach(input => input.style.display = '');
-    });
 </script>
 
 </body>
