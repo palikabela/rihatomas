@@ -437,6 +437,23 @@
         calculate(); 
         setTimeout(generateQR, 150); 
     };
+
+    // Před tiskem nahradí inputy spany s hodnotami (jinak Safari tiskne prázdnou stránku)
+    window.addEventListener('beforeprint', () => {
+        document.querySelectorAll('input').forEach(input => {
+            const span = document.createElement('span');
+            span.className = 'print-value';
+            span.textContent = input.value;
+            span.style.cssText = 'display:inline; font-size:inherit; color:black;';
+            input.parentNode.insertBefore(span, input.nextSibling);
+            input.style.display = 'none';
+        });
+    });
+
+    window.addEventListener('afterprint', () => {
+        document.querySelectorAll('.print-value').forEach(span => span.remove());
+        document.querySelectorAll('input').forEach(input => input.style.display = '');
+    });
 </script>
 
 </body>
