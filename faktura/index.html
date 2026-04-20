@@ -68,7 +68,7 @@
             border-top: none;
         }
         .totals .totals-label { font-size: 0.8em; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 4px; }
-        .totals .totals-amount { font-size: 2.2em; font-weight: 700; color: var(--text); font-family: 'Syne', sans-serif; letter-spacing: -0.02em; }
+        .totals .totals-amount { font-size: 2.2em; font-weight: 700; color: var(--text); font-family: 'Inter', sans-serif; letter-spacing: -0.02em; }
 
         /* QR sekce */
         .qr-section { display: flex; align-items: center; justify-content: space-between; background: var(--bg); padding: 20px 24px; border-radius: 12px; border: none; gap: 20px; }
@@ -90,9 +90,9 @@
         .btn-print-wrap .btn:hover { background: #1f2937; box-shadow: 0 6px 20px rgba(17,24,39,0.3); }
         
         @media print {
-            @page { size: A4; margin: 10mm; }
-            html, body { background: white !important; padding: 0 !important; margin: 0 !important; color: black !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; display: block !important; visibility: visible !important; overflow: visible !important; height: auto !important; }
-            .container { box-shadow: none !important; padding: 0 !important; margin: 0 !important; max-width: 100% !important; border: none !important; display: block !important; visibility: visible !important; overflow: visible !important; }
+            @page { margin: 0 !important; }
+            html, body { background: white !important; padding: 15mm !important; margin: 0 !important; color: black !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; display: block !important; }
+            .container { box-shadow: none !important; padding: 0 !important; margin: 0 !important; max-width: 100% !important; width: 100% !important; border: none !important; }
             input { border: none !important; padding: 0 !important; background: transparent !important; color: black !important; -webkit-text-fill-color: black !important; opacity: 1 !important; font-size: 10pt !important; height: auto !important; outline: none !important; box-shadow: none !important; -webkit-appearance: none !important; -moz-appearance: none !important; appearance: none !important; margin: 0 !important; }
             input[type="number"] { -moz-appearance: textfield; }
             input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
@@ -146,7 +146,7 @@
         <div class="box">
             <h2 style="display:flex; justify-content:space-between; align-items:center;">Dodavatel <button class="ares-btn no-print" type="button" onclick="resetSup()">Vymazat</button></h2>
             <div class="form-group">
-                <label>IČO (Načíst z registru):</label>
+                <label>IČO:</label>
                 <div style="display: flex; gap: 8px;">
                     <input type="text" id="sup-ico" placeholder="Zadejte IČO" onchange="saveSup()">
                     <button class="ares-btn" type="button" onclick="fetchAres('sup', this)">Načíst z ARES</button>
@@ -185,7 +185,7 @@
         <div class="box">
             <h2 style="display:flex; justify-content:space-between; align-items:center;">Odběratel <button class="ares-btn no-print" type="button" onclick="resetSub()">Vymazat</button></h2>
             <div class="form-group">
-                <label>IČO (Načíst z registru):</label>
+                <label>IČO:</label>
                 <div style="display: flex; gap: 8px;">
                     <input type="text" id="sub-ico" placeholder="Zadejte IČO">
                     <button class="ares-btn" type="button" onclick="fetchAres('sub', this)">Načíst z ARES</button>
