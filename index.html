@@ -1264,10 +1264,7 @@ input[type="range"]::-webkit-slider-runnable-track {
             <div id="d_vek_info" style="color:var(--text2);margin-top:6px;font-size:12px;font-weight:normal"></div>
           </div>
           <div class="field">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
-              <label style="margin:0">Měsíční příspěvek do DPS (Kč)</label>
-              <span style="font-size:12px;font-weight:600;color:var(--accent)" id="d_dps_live">—</span>
-            </div>
+            <label style="margin-bottom:5px;display:block">Měsíční příspěvek do DPS (Kč)</label>
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
               <button onclick="dAdjDps(-100)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
               <input class="fmt-input" type="text" inputmode="numeric" id="d_dps" value="" placeholder="např. 1 700" oninput="formatLive(this); dDpsSync(this.value.replace(/[^0-9]/g,''))" style="flex:1;text-align:center">
@@ -1282,7 +1279,7 @@ input[type="range"]::-webkit-slider-runnable-track {
           <div class="field">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
               <label style="margin:0">Měsíční příspěvek do DIP (Kč)</label>
-              <span style="font-size:12px;font-weight:600;color:#4ADE80" id="d_dip_live">—</span>
+              <button id="d_dip_reset_btn" onclick="resetDipSync()" style="display:none;background:none;border:none;color:#4ADE80;font-size:11px;cursor:pointer;padding:0">↺ Zrcadlit s DPS</button>
             </div>
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
               <button onclick="dAdjDip(-100)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
@@ -2985,33 +2982,59 @@ function getDanUsporaDIP(mesicni) {
 let dipChart = null;
 let dipKolacChartInstance = null;
 
+let isDipDecoupled = false;
 function dAdjRok(delta) {
   const el = document.getElementById("d_vek");
   el.value = Math.max(1940, Math.min((parseInt(el.value)||1985)+delta, 2005));
   calcDip();
 }
 function dAdjDps(delta) {
-  const el = document.getElementById("d_dps"), sl = document.getElementById("d_dps_slider");
   const v = Math.max(0, Math.min(getSafeNum("d_dps")+delta, 10000));
-  setMoneyInputValue("d_dps", v); if(sl) sl.value = v; calcDip();
+  setMoneyInputValue("d_dps", v);
+  const sl = document.getElementById("d_dps_slider");
+  if(sl) sl.value = v;
+  dDpsSync(v, false);
 }
 function dDpsSync(val, fromSlider) {
   const v = parseInt(String(val).replace(/[^0-9]/g,''))||0;
   const el = document.getElementById("d_dps"), sl = document.getElementById("d_dps_slider");
   if(fromSlider && el) setMoneyInputValue("d_dps", v);
   if(sl && !fromSlider) sl.value = Math.min(v, 10000);
+  // Zrcadlení do DIP, pokud není rozpojeno
+  if (!isDipDecoupled) {
+    const elDip = document.getElementById("d_dip");
+    const slDip = document.getElementById("d_dip_slider");
+    if (elDip) setMoneyInputValue("d_dip", v);
+    if (slDip) slDip.value = Math.min(v, 10000);
+  }
   calcDip();
 }
 function dAdjDip(delta) {
-  const el = document.getElementById("d_dip"), sl = document.getElementById("d_dip_slider");
   const v = Math.max(0, Math.min(getSafeNum("d_dip")+delta, 10000));
-  setMoneyInputValue("d_dip", v); if(sl) sl.value = v; calcDip();
+  setMoneyInputValue("d_dip", v);
+  const sl = document.getElementById("d_dip_slider");
+  if(sl) sl.value = v;
+  dDipSync(v, false);
 }
 function dDipSync(val, fromSlider) {
+  // Jakýkoli zásah do DIP rozpojí vazbu
+  isDipDecoupled = true;
+  document.getElementById('d_dip_reset_btn').style.display = 'inline-block';
   const v = parseInt(String(val).replace(/[^0-9]/g,''))||0;
   const el = document.getElementById("d_dip"), sl = document.getElementById("d_dip_slider");
   if(fromSlider && el) setMoneyInputValue("d_dip", v);
   if(sl && !fromSlider) sl.value = Math.min(v, 10000);
+  calcDip();
+}
+function resetDipSync() {
+  // Obnova vazby na DPS
+  isDipDecoupled = false;
+  document.getElementById('d_dip_reset_btn').style.display = 'none';
+  const origVal = document.getElementById("d_dps").value;
+  const v = parseInt(origVal.replace(/[^0-9]/g,''))||0;
+  setMoneyInputValue("d_dip", v);
+  const slDip = document.getElementById("d_dip_slider");
+  if (slDip) slDip.value = Math.min(v, 10000);
   calcDip();
 }
 
@@ -3030,11 +3053,7 @@ function calcDip() {
 
   const setT = (id, txt) => { const el=document.getElementById(id); if(el) el.textContent=txt; };
 
-  // Live labely
-  const dpsLiveEl = document.getElementById("d_dps_live");
-  const dipLiveEl = document.getElementById("d_dip_live");
-  if(dpsLiveEl) dpsLiveEl.textContent = dpsVkl>0 ? fmt(dpsVkl)+" Kč/m" : "—";
-  if(dipLiveEl) dipLiveEl.textContent = dipVkl>0 ? fmt(dipVkl)+" Kč/m" : "—";
+
 
   const vekRaw = document.getElementById("d_vek")?.value;
   if(!vekRaw || rokNarozeni < 1940 || vek <= 0 || vek >= 65) {
