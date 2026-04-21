@@ -448,6 +448,8 @@ input[type="range"]::-webkit-slider-runnable-track {
 }
 
 .fmt-input { ime-mode: disabled; }
+.retirement-toggle{transition:background 0.2s,color 0.2s,border-color 0.2s}
+.retirement-toggle.active{background:var(--accent)!important;color:var(--bg)!important;border-color:var(--accent)!important}
 </style>
 </head>
 <body>
@@ -967,6 +969,16 @@ input[type="range"]::-webkit-slider-runnable-track {
             <button onclick="pAdjRok(1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
           <div id="p_vek_info" style="color:var(--text2);margin-top:6px;font-size:12px;font-weight:normal"></div>
+        <div style="display:flex;gap:10px;margin-top:10px;margin-bottom:15px">
+          <button type="button" class="retirement-toggle" data-age="60" onclick="setRetirementAge(60, this)" style="flex:1;padding:8px;border-radius:6px;border:1px solid var(--border);background:none;color:var(--text);font-weight:600;cursor:pointer">Důchod v 60</button>
+          <button type="button" class="retirement-toggle active" data-age="65" onclick="setRetirementAge(65, this)" style="flex:1;padding:8px;border-radius:6px;border:1px solid var(--accent);background:var(--accent);color:var(--bg);font-weight:600;cursor:pointer">Důchod v 65</button>
+        </div>
+          <div id="p_120_wrap" style="display:none;margin-top:10px;padding:10px;background:var(--surface2);border:1px solid var(--accent);border-radius:8px">
+            <label style="display:flex;align-items:flex-start;gap:10px;margin:0;cursor:pointer;font-size:13px;color:var(--text);font-weight:500">
+              <input type="checkbox" id="p_splnuje_120" onchange="setTimeout(calcPenze, 0)" style="margin-top:2px;width:16px;height:16px;accent-color:var(--accent);cursor:pointer;-webkit-appearance:auto;appearance:auto">
+              <span>Doba spoření v původním TF + novém DPS přesáhne 120 měsíců (10 let)</span>
+            </label>
+          </div>
           <div id="p_warning" style="display:none; color:var(--red); background:var(--red-dim); padding:10px; border-radius:8px; font-size:13px; margin-top:10px; border: 1px solid rgba(239, 68, 68, 0.3);"></div>
         </div>
         <div class="field">
@@ -1262,6 +1274,10 @@ input[type="range"]::-webkit-slider-runnable-track {
               <button onclick="dAdjRok(1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
             </div>
             <div id="d_vek_info" style="color:var(--text2);margin-top:6px;font-size:12px;font-weight:normal"></div>
+        <div style="display:flex;gap:10px;margin-top:10px;margin-bottom:15px">
+          <button type="button" class="retirement-toggle" data-age="60" onclick="setRetirementAge(60, this)" style="flex:1;padding:8px;border-radius:6px;border:1px solid var(--border);background:none;color:var(--text);font-weight:600;cursor:pointer">Důchod v 60</button>
+          <button type="button" class="retirement-toggle active" data-age="65" onclick="setRetirementAge(65, this)" style="flex:1;padding:8px;border-radius:6px;border:1px solid var(--accent);background:var(--accent);color:var(--bg);font-weight:600;cursor:pointer">Důchod v 65</button>
+        </div>
           </div>
           <div class="field">
             <label style="margin-bottom:5px;display:block">Měsíční příspěvek do DPS (Kč)</label>
@@ -1632,6 +1648,7 @@ const pageContent = {
   rc: { tag: "Nástroje", title: "Užitečné<br><em>kalkulačky</em>", desc: "Pomocné nástroje pro finanční poradce a jejich klienty." }
 };
 
+let targetRetirementAge = 65;
 let sazby = [
   {nazev:"Hypotéka 3Y fix", partner:"Česká spořitelna", sazba:4.59},
   {nazev:"Hypotéka 5Y fix", partner:"Komerční banka", sazba:4.89},
@@ -2683,6 +2700,25 @@ function pAdjRok(delta) {
   calcPenze();
 }
 
+function setRetirementAge(age, btn) {
+  targetRetirementAge = age;
+  document.querySelectorAll('.retirement-toggle').forEach(b => {
+    if (parseInt(b.dataset.age) === age) {
+      b.classList.add('active');
+      b.style.background = 'var(--accent)';
+      b.style.color = 'var(--bg)';
+      b.style.borderColor = 'var(--accent)';
+    } else {
+      b.classList.remove('active');
+      b.style.background = 'none';
+      b.style.color = 'var(--text)';
+      b.style.borderColor = 'var(--border)';
+    }
+  });
+  calcPenze();
+  calcDip();
+}
+
 function calcPenze() {
   const vklad = getSafeNum("p_vklad");
   const rokNarozeni = parseInt(document.getElementById("p_vek").value) || 0;
@@ -2706,9 +2742,17 @@ function calcPenze() {
     return;
   }
 
-  const roky = Math.max(65 - vek, 1);
+  const roky = Math.max(targetRetirementAge - vek, 1);
   const mesice = roky * 12;
-  const splnuje10Let = hasTenYearPensionRule(roky);
+  const cbWrap = document.getElementById("p_120_wrap");
+  const cb = document.getElementById("p_splnuje_120");
+  if (roky < 10) {
+    if (cbWrap) cbWrap.style.display = "block";
+  } else {
+    if (cbWrap) cbWrap.style.display = "none";
+    if (cb) cb.checked = false;
+  }
+  const splnuje10Let = roky >= 10 || (cb && cb.checked);
   const stat = getStatniPrispevek(vklad);
   const statEfektivni = splnuje10Let ? stat : 0;
   const statRok = statEfektivni * 12;
@@ -2724,7 +2768,7 @@ function calcPenze() {
   setMetricPenalty("p_stat_rok", !splnuje10Let && vklad > 0);
   setMetricPenalty("p_rocni_vyhoda", !splnuje10Let && vklad > 0);
   const vekInfo = document.getElementById("p_vek_info");
-  if (vekInfo) vekInfo.textContent = "Věk: " + vek + " let — do důchodu zbývá " + roky + " let";
+  if (vekInfo) vekInfo.textContent = "Věk: " + vek + " let — do důchodu v " + targetRetirementAge + " zbývá " + roky + " let";
   if (warningEl) {
     if (!splnuje10Let && vklad > 0) {
       warningEl.style.display = "block";
@@ -3075,12 +3119,20 @@ function calcDip() {
     return;
   }
 
-  const roky   = Math.max(65-vek, 1);
+  const roky   = Math.max(targetRetirementAge-vek, 1);
   const mesice = roky * 12;
-  const splnuje10Let = hasTenYearPensionRule(roky);
+  const cbWrap = document.getElementById("p_120_wrap");
+  const cb = document.getElementById("p_splnuje_120");
+  if (roky < 10) {
+    if (cbWrap) cbWrap.style.display = "block";
+  } else {
+    if (cbWrap) cbWrap.style.display = "none";
+    if (cb) cb.checked = false;
+  }
+  const splnuje10Let = roky >= 10 || (cb && cb.checked);
   setT("d_roky_do", roky+" let");
   const vi=document.getElementById("d_vek_info");
-  if(vi) vi.textContent = "Věk: "+vek+" let — do důchodu zbývá "+roky+" let";
+  if(vi) vi.textContent = "Věk: "+vek+" let — do důchodu v "+targetRetirementAge+" zbývá "+roky+" let";
 
   // Inline varování "Krátký horizont" v obou kartách
   const kh = roky < 10 && (dpsVkl > 0 || dipVkl > 0);
