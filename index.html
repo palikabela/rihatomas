@@ -538,7 +538,7 @@ input[type="range"]::-webkit-slider-runnable-track {
           <div style="display:flex;align-items:center;gap:10px">
             <button onclick="syncRoky(parseInt(document.getElementById('k_roky').value)-1,true)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:300">−</button>
             <div style="flex:1;text-align:center">
-              <div style="font-family:'Syne',sans-serif;font-size:clamp(22px,5vw,32px);font-weight:700;color:var(--accent);line-height:1" id="k_roky_label">10</div>
+              <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:700;color:var(--accent);line-height:1" id="k_roky_label">10</div>
               <div style="font-size:12px;color:var(--text3);margin-top:2px">let</div>
             </div>
             <button onclick="syncRoky(parseInt(document.getElementById('k_roky').value)+1,true)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:300">+</button>
@@ -549,11 +549,14 @@ input[type="range"]::-webkit-slider-runnable-track {
       </div>
       <div class="card">
         <div class="card-label">Výsledek výpočtu</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:1.5rem">
-          <div><div style="font-size:11px;color:var(--text3)">Měsíční splátka</div><div style="font-size:17px;font-weight:700;color:var(--green)" id="k_splatka">—</div></div>
-          <div><div style="font-size:11px;color:var(--text3)" id="k_celkem_label">Celkem zaplatíte</div><div style="font-size:17px;font-weight:700;color:var(--text)" id="k_celkem">—</div></div>
-          <div><div style="font-size:11px;color:var(--text3)">Přeplatek úroky</div><div style="font-size:17px;font-weight:700;color:var(--red)" id="k_uroky">—</div></div>
-          <div><div style="font-size:11px;color:var(--text3)">Počet splátek</div><div style="font-size:17px;font-weight:700;color:var(--text)" id="k_pocet">—</div></div>
+        <div style="background:var(--surface2);border-radius:10px;padding:1.25rem;margin-bottom:1.5rem;border:1px solid var(--border)">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div><div style="font-size:11px;color:var(--text3)">Měsíční splátka</div><div style="font-size:17px;font-weight:700;color:var(--green)" id="k_splatka">—</div></div>
+            <div><div style="font-size:11px;color:var(--text3)" id="k_celkem_label">Celkem zaplatíte</div><div style="font-size:17px;font-weight:700;color:var(--text)" id="k_celkem">—</div></div>
+            <div style="grid-column:1/-1;height:1px;background:var(--border);margin:4px 0"></div>
+            <div><div style="font-size:11px;color:var(--text3)">Přeplatek úroky</div><div style="font-size:17px;font-weight:700;color:var(--red)" id="k_uroky">—</div></div>
+            <div><div style="font-size:11px;color:var(--text3)">Počet splátek</div><div style="font-size:17px;font-weight:700;color:var(--text)" id="k_pocet">—</div></div>
+          </div>
         </div>
         <div id="result-uver-vypocten" style="display:none;margin-top:1rem;border-radius:8px;overflow:hidden">
           <div style="background:var(--surface3);padding:.6rem 1rem;font-size:12px;color:var(--text2)">
@@ -1491,9 +1494,9 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div class="field">
           <label>Cena kupované nemovitosti (Kč)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <button onclick="hAdj('cena',-100000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <button onclick="hAdj('cena',-50000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
             <input type="text" inputmode="numeric" id="h_cena" placeholder="např. 5 000 000" class="fmt-input" oninput="formatLive(this); hCenaIn(this)" onblur="formatInputValue(this);hCalc()" style="flex:1;text-align:center">
-            <button onclick="hAdj('cena',100000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+            <button onclick="hAdj('cena',50000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
           <input type="range" id="h_cena_sl" min="0" max="30000000" value="0" step="100000" oninput="hSliderCena(this.value)" style="width:100%;accent-color:var(--accent);cursor:pointer">
         </div>
@@ -1562,7 +1565,7 @@ input[type="range"]::-webkit-slider-runnable-track {
           <div style="display:flex;align-items:center;gap:10px">
             <button onclick="hAdj('roky',-1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:300">−</button>
             <div style="flex:1;text-align:center">
-              <div style="font-family:'Syne',sans-serif;font-size:clamp(22px,5vw,32px);font-weight:700;color:var(--accent);line-height:1" id="h_roky_lbl">30</div>
+              <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:700;color:var(--accent);line-height:1" id="h_roky_lbl">30</div>
               <div style="font-size:12px;color:var(--text3);margin-top:2px">let</div>
             </div>
             <button onclick="hAdj('roky',1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:300">+</button>
@@ -1663,13 +1666,11 @@ input[type="range"]::-webkit-slider-runnable-track {
 
 </div>
 
-<footer>
-  TRfin management s.r.o. &nbsp;·&nbsp; IČ: 24096563 &nbsp;·&nbsp; Nábřeží 599, Zlín 76001
-  &nbsp;·&nbsp; <a href="tel:+420601323963" style="color:inherit;">+420 601 323 963</a>
-  &nbsp;·&nbsp; <a href="/cdn-cgi/l/email-protection#f2869d9f9381dc809b9a93b29580939c968697939fdc9188" style="color:inherit;"><span class="__cf_email__" data-cfemail="186c7775796b366a717079587f6a79767c6c7d7975367b62">[email&#160;protected]</span></a>
+<footer style="text-align:center;padding:2rem;font-size:13px;color:var(--text3);border-top:1px solid var(--border)">
+  <a href="mailto:tomas.riha@grandteam.cz" style="color:inherit;text-decoration:none;">tomas.riha@grandteam.cz</a>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 const SHEET_ID = "121nElMghOfktcRutG3rNkznTvzkyhLQlVyNbU3WpSGE";
 const SHEET_URL_TSV = "https://docs.google.com/spreadsheets/d/" + SHEET_ID + "/export?format=tsv&sheet=Sheet1";
 
@@ -1957,7 +1958,8 @@ function syncKSazba(val, fromSlider) {
 function syncJistina(val, fromSlider) {
   const parsed = parseFormattedInt(val);
   if (!parsed || parsed <= 0) {
-    if (!fromSlider) document.getElementById("k_jistina").value = "";
+    const el = document.getElementById("k_jistina");
+    if (el) { el.value = ""; el.dataset.raw = ""; }
     document.getElementById("k_jistina_slider").value = 0;
     calcKalk(); return;
   }
@@ -1970,7 +1972,8 @@ function syncJistina(val, fromSlider) {
 function syncSplatkaInput(val, fromSlider) {
   const parsed = parseFormattedInt(val);
   if (!parsed || parsed <= 0) {
-    if (!fromSlider) document.getElementById("k_splatka_input").value = "";
+    const el = document.getElementById("k_splatka_input");
+    if (el) { el.value = ""; el.dataset.raw = ""; }
     document.getElementById("k_splatka_slider").value = 0;
     calcKalk();
     return;
@@ -2036,7 +2039,19 @@ function calcKalk() {
     // Reverse calculation - from monthly payment to loan amount
     const splatkaInput = getSafeNum("k_splatka_input");
     if (prevS) prevS.textContent = splatkaInput > 0 ? fmt(splatkaInput) : "";
-    if (splatkaInput <= 0) return;
+    if (splatkaInput <= 0) {
+      ["k_splatka","k_celkem","k_uroky","k_pocet"].forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.textContent = "—";
+      });
+      const bar = document.getElementById("k_bar");
+      if(bar) bar.style.width = "0%";
+      const pj = document.getElementById("k_pct_j"); if(pj) pj.textContent = "—";
+      const pu = document.getElementById("k_pct_u"); if(pu) pu.textContent = "—";
+      const resultBox = document.getElementById("result-uver-vypocten");
+      if(resultBox) resultBox.style.display = "none";
+      return;
+    }
     let j;
     if (s <= 0) {
       j = splatkaInput * m;
@@ -2073,7 +2088,14 @@ function calcKalk() {
 
   const j = getSafeNum("k_jistina");
   if (prev) prev.textContent = "";
-  if (j <= 0) return;
+  if (j <= 0) {
+    ["k_splatka","k_celkem","k_uroky","k_pocet"].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = "—"; });
+    const bar = document.getElementById("k_bar"); if(bar) bar.style.width = "0%";
+    const pj = document.getElementById("k_pct_j"); if(pj) pj.textContent = "—";
+    const pu = document.getElementById("k_pct_u"); if(pu) pu.textContent = "—";
+    const jr = document.getElementById("k_jistina_result"); if(jr) jr.textContent = "—";
+    return;
+  }
   const splatka = monthlyPayment(j, s, m);
   const celkem = splatka * m;
   const uroky = celkem - j;
@@ -3977,10 +3999,10 @@ function hCalc() {
       const tr = document.createElement('tr');
       tr.style.cssText = 'border-bottom:1px solid var(--border)' + (isActive?';background:var(--accent-dim)':'');
       tr.innerHTML =
-        "<td style='padding:6px 8px;font-weight:"+(isActive?'600':'400')+";color:"+(isActive?'var(--accent)':'var(--text2)')+"'>"+p+" % <span style='font-size:11px;color:var(--text3)'>(LTV "+(100-p)+" %)</span></td>"+
-        "<td style='text-align:right;padding:6px 8px;font-variant-numeric:tabular-nums'>"+fmt(vl)+"</td>"+
-        "<td style='text-align:right;padding:6px 8px;font-variant-numeric:tabular-nums;color:var(--green)'>"+fmt(hp)+"</td>"+
-        "<td style='text-align:right;padding:6px 8px;font-variant-numeric:tabular-nums'>"+fmt(sp)+"/m</td>";
+        "<td style='padding:6px 8px;font-weight:"+(isActive?'600':'400')+";color:"+(isActive?'var(--accent)':'var(--text2)')+";white-space:nowrap'>"+p+" % <span style='font-size:11px;color:var(--text3)'>(LTV "+(100-p)+" %)</span></td>"+
+        "<td style='text-align:right;padding:6px 8px;font-variant-numeric:tabular-nums;white-space:nowrap'>"+fmt(vl)+"</td>"+
+        "<td style='text-align:right;padding:6px 8px;font-variant-numeric:tabular-nums;color:var(--green);white-space:nowrap'>"+fmt(hp)+"</td>"+
+        "<td style='text-align:right;padding:6px 8px;font-variant-numeric:tabular-nums;white-space:nowrap'>"+fmt(sp)+"/m</td>";
       tbody.appendChild(tr);
     });
   }
