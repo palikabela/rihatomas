@@ -450,10 +450,10 @@ input[type="range"]::-webkit-slider-runnable-track {
 .fmt-input { ime-mode: disabled; }
 .retirement-toggle{transition:background 0.2s,color 0.2s,border-color 0.2s}
 .retirement-toggle.active{background:var(--accent)!important;color:var(--bg)!important;border-color:var(--accent)!important}
-.whatsapp-sticky{position:fixed;bottom:25px;right:25px;background:#25D366;color:white;padding:12px 20px;border-radius:50px;display:flex;align-items:center;gap:10px;text-decoration:none;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;box-shadow:0 4px 15px rgba(0,0,0,0.2);z-index:9999;transition:all 0.3s ease}
-.whatsapp-sticky:hover{transform:scale(1.05);background:#20ba5a;box-shadow:0 6px 20px rgba(0,0,0,0.3)}
-@media(max-width:400px){.whatsapp-sticky span{display:none}.whatsapp-sticky{padding:12px;border-radius:50%}}
-@media print{.whatsapp-sticky{display:none!important}}
+.whatsapp-sticky{background:#25D366;color:white;padding:10px 18px;border-radius:50px;display:flex;align-items:center;gap:8px;text-decoration:none;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;box-shadow:0 4px 15px rgba(0,0,0,0.2);transition:all 0.3s ease}
+.whatsapp-sticky:hover{transform:scale(1.05);background:#20ba5a;box-shadow:0 6px 20px rgba(0,0,0,0.3);color:white}
+@media(max-width:640px){#wa-widget{bottom:15px!important;right:15px!important}.whatsapp-sticky{padding:12px;border-radius:50%}.wa-text{display:none}.wa-icon{width:26px;height:26px}}
+@media print{#wa-widget{display:none!important}}
 </style>
 </head>
 <body>
@@ -4045,9 +4045,12 @@ calcKalk();
 calcRefi();
 loadSazbyFromSheets();
 </script>
-<a href="https://wa.me/420601323963" class="whatsapp-sticky" target="_blank" title="Napište mi na WhatsApp">
-  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-  <span>Napište mi</span>
-</a>
+<div id="wa-widget" class="no-print" style="position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+  <button onclick="document.getElementById('wa-widget').style.display='none'" style="background:var(--surface);border:1px solid var(--border);border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:12px;cursor:pointer;box-shadow:0 2px 5px rgba(0,0,0,0.1)" title="Skrýt chat">✕</button>
+  <a href="https://wa.me/420601323963" class="whatsapp-sticky" target="_blank" title="Napište mi na WhatsApp">
+    <svg class="wa-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+    <span class="wa-text">Napište mi</span>
+  </a>
+</div>
 </body>
 </html>
