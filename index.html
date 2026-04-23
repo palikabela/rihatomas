@@ -1639,14 +1639,23 @@ input[type="range"]::-webkit-slider-runnable-track {
       </div>
       <div class="card">
         <div class="card-label">Výsledek z rodného čísla</div>
-        <div class="metrics">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:.5rem">Základní údaje</div>
+        <div class="metrics" style="margin-bottom:1.25rem">
           <div class="metric"><div class="metric-label">Datum narození</div><div class="metric-value green" id="rc_datum">—</div></div>
-          <div class="metric"><div class="metric-label">Věk</div><div class="metric-value" id="rc_vek">—</div></div>
           <div class="metric"><div class="metric-label">Pohlaví</div><div class="metric-value" id="rc_pohlavi">—</div></div>
+          <div class="metric"><div class="metric-label">Věk</div><div class="metric-value" id="rc_vek">—</div></div>
+        </div>
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:.5rem">Odchod do důchodu (orientačně v 65 letech)</div>
+        <div class="metrics" style="margin-bottom:1.25rem">
+          <div class="metric"><div class="metric-label">Do důchodu zbývá</div><div class="metric-value" style="color:#60A5FA" id="rc_duchod">—</div></div>
+          <div class="metric"><div class="metric-label">Rok odchodu</div><div class="metric-value" style="color:#60A5FA" id="rc_duchod_rok">—</div></div>
+          <div class="metric"><div class="metric-label">Datum důchodu</div><div class="metric-value" style="color:#60A5FA" id="rc_duchod_datum">—</div></div>
+        </div>
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:.5rem">Zajímavosti</div>
+        <div class="metrics">
           <div class="metric"><div class="metric-label">Narozeniny za</div><div class="metric-value" id="rc_narozeniny">—</div></div>
           <div class="metric"><div class="metric-label">Žije hodin</div><div class="metric-value" id="rc_hodiny">—</div></div>
           <div class="metric"><div class="metric-label">Žije minut</div><div class="metric-value" id="rc_minuty">—</div></div>
-          <div class="metric"><div class="metric-label">Do důchodu zbývá</div><div class="metric-value" style="color:#60A5FA" id="rc_duchod">—</div></div>
         </div>
       </div>
     </div>
@@ -2288,7 +2297,7 @@ function showTab(id) {
 function calcRC() {
   const raw = document.getElementById("rc_input").value.replace("/", "").replace(/\s/g, "");
   const err = document.getElementById("rc_error");
-  const allFields = ["rc_datum","rc_vek","rc_pohlavi","rc_narozeniny","rc_hodiny","rc_minuty","rc_duchod"];
+  const allFields = ["rc_datum","rc_vek","rc_pohlavi","rc_narozeniny","rc_hodiny","rc_minuty","rc_duchod","rc_duchod_rok","rc_duchod_datum"];
   if (raw.length < 9) {
     if (err) err.style.display = "none";
     allFields.forEach(f => { const el = document.getElementById(f); if(el) el.textContent = "—"; });
@@ -2336,7 +2345,12 @@ function calcRC() {
   // Do důchodu
   const duchodDate = new Date(narozen);
   duchodDate.setFullYear(duchodDate.getFullYear() + 65);
+
   const elDuchod = document.getElementById("rc_duchod");
+  const elDuchodRok = document.getElementById("rc_duchod_rok");
+  const elDuchodDatum = document.getElementById("rc_duchod_datum");
+  if (elDuchodRok) elDuchodRok.textContent = duchodDate.getFullYear();
+  if (elDuchodDatum) elDuchodDatum.textContent = duchodDate.getDate() + ". " + (duchodDate.getMonth() + 1) + ". " + duchodDate.getFullYear();
   if (elDuchod) {
     if (dnes >= duchodDate) {
       elDuchod.textContent = "V důchodovém věku";
