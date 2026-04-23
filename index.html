@@ -1305,37 +1305,43 @@ input[type="range"]::-webkit-slider-runnable-track {
           <button type="button" class="retirement-toggle active" data-age="65" onclick="setRetirementAge(65, this)" style="flex:1;padding:8px;border-radius:6px;border:1px solid var(--accent);background:var(--accent);color:var(--bg);font-weight:600;cursor:pointer">Důchod v 65</button>
         </div>
           </div>
-          <div class="field">
-            <label style="margin-bottom:5px;display:block">Měsíční příspěvek do DPS (Kč)</label>
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-              <button onclick="dAdjDps(-100)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-              <input class="fmt-input" type="text" inputmode="numeric" id="d_dps" value="" placeholder="např. 1 700" oninput="formatLive(this); dDpsSync(this.value.replace(/[^0-9]/g,''))" style="flex:1;text-align:center">
-              <button onclick="dAdjDps(100)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+          <div style="background:var(--surface2);padding:1rem;border-radius:8px;border:1px solid var(--border);margin-bottom:1.25rem">
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);margin-bottom:.75rem">Spoření do DPS</div>
+            <div class="field">
+              <label style="font-weight:600;color:var(--text);margin-bottom:5px;display:block">Měsíční příspěvek do DPS (Kč)</label>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                <button onclick="dAdjDps(-100)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+                <input class="fmt-input" type="text" inputmode="numeric" id="d_dps" value="" placeholder="např. 1 700" oninput="formatLive(this); dDpsSync(this.value.replace(/[^0-9]/g,''))" style="flex:1;text-align:center">
+                <button onclick="dAdjDps(100)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+              </div>
+              <input type="range" id="d_dps_slider" min="0" max="10000" value="0" step="100" oninput="dDpsSync(this.value,true)" style="width:100%;accent-color:var(--accent);cursor:pointer">
             </div>
-            <input type="range" id="d_dps_slider" min="0" max="10000" value="0" step="100" oninput="dDpsSync(this.value,true)" style="width:100%;accent-color:var(--accent);cursor:pointer">
+            <div class="field" style="margin-bottom:0">
+              <label style="font-weight:600;color:var(--text);margin-bottom:5px;display:block">Příspěvek zaměstnavatele do DPS (Kč/měs.)</label>
+              <input class="fmt-input" type="text" inputmode="numeric" id="d_zamest_dps" value="" placeholder="" oninput="formatLive(this); dZamestDpsSync(this.value.replace(/[^0-9]/g,''))">
+            </div>
           </div>
-          <div class="field">
-            <label>Příspěvek zaměstnavatele do DPS (Kč/měs.)</label>
-            <input class="fmt-input" type="text" inputmode="numeric" id="d_zamest_dps" value="" placeholder="" oninput="formatLive(this); dZamestDpsSync(this.value.replace(/[^0-9]/g,''))">
-          </div>
-          <div class="field">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
-              <label style="margin:0">Měsíční příspěvek do DIP (Kč)</label>
-              <button id="d_dip_reset_btn" onclick="resetDipSync()" style="display:none;background:none;border:none;color:#4ADE80;font-size:11px;cursor:pointer;padding:0">↺ Zrcadlit s DPS</button>
+          <div style="background:var(--surface2);padding:1rem;border-radius:8px;border:1px solid var(--border);margin-bottom:1.25rem">
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#4ADE80;margin-bottom:.75rem">Spoření do DIP</div>
+            <div class="field">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+                <label style="font-weight:600;color:var(--text);margin:0">Měsíční příspěvek do DIP (Kč)</label>
+                <button id="d_dip_reset_btn" onclick="resetDipSync()" style="display:none;background:none;border:none;color:#4ADE80;font-size:11px;cursor:pointer;padding:0">↺ Zrcadlit s DPS</button>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                <button onclick="dAdjDip(-100)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+                <input class="fmt-input" type="text" inputmode="numeric" id="d_dip" value="" placeholder="např. 2 000" oninput="formatLive(this); dDipSync(this.value.replace(/[^0-9]/g,''))" style="flex:1;text-align:center">
+                <button onclick="dAdjDip(100)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+              </div>
+              <input type="range" id="d_dip_slider" min="0" max="10000" value="0" step="100" oninput="dDipSync(this.value,true)" style="width:100%;accent-color:#4ADE80;cursor:pointer">
             </div>
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-              <button onclick="dAdjDip(-100)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-              <input class="fmt-input" type="text" inputmode="numeric" id="d_dip" value="" placeholder="např. 2 000" oninput="formatLive(this); dDipSync(this.value.replace(/[^0-9]/g,''))" style="flex:1;text-align:center">
-              <button onclick="dAdjDip(100)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+            <div class="field" style="margin-bottom:0">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+                <label style="font-weight:600;color:var(--text);margin:0">Příspěvek zaměstnavatele do DIP (Kč/měs.)</label>
+                <button id="d_zamest_dip_reset_btn" onclick="resetZamestDipSync()" style="display:none;background:none;border:none;color:#4ADE80;font-size:11px;cursor:pointer;padding:0">↺ Zrcadlit s DPS</button>
+              </div>
+              <input class="fmt-input" type="text" inputmode="numeric" id="d_zamest" value="" placeholder="např. 1 000" oninput="formatLive(this); dZamestDipSync(this.value.replace(/[^0-9]/g,''))">
             </div>
-            <input type="range" id="d_dip_slider" min="0" max="10000" value="0" step="100" oninput="dDipSync(this.value,true)" style="width:100%;accent-color:#4ADE80;cursor:pointer">
-          </div>
-          <div class="field">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
-              <label style="margin:0">Příspěvek zaměstnavatele do DIP (Kč/měs.)</label>
-              <button id="d_zamest_dip_reset_btn" onclick="resetZamestDipSync()" style="display:none;background:none;border:none;color:#4ADE80;font-size:11px;cursor:pointer;padding:0">↺ Zrcadlit s DPS</button>
-            </div>
-            <input class="fmt-input" type="text" inputmode="numeric" id="d_zamest" value="" placeholder="např. 1 000" oninput="formatLive(this); dZamestDipSync(this.value.replace(/[^0-9]/g,''))">
           </div>
           <div style="margin-top:.75rem;border-top:1px solid var(--border);padding-top:.75rem">
             <button onclick="toggleDipSazby()" id="dip-sazby-btn" style="background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;padding:0;display:flex;align-items:center;gap:5px">⚙ Upravit sazby zhodnocení</button>
