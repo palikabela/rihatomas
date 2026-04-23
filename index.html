@@ -1316,7 +1316,7 @@ input[type="range"]::-webkit-slider-runnable-track {
           </div>
           <div class="field">
             <label>Příspěvek zaměstnavatele do DPS (Kč/měs.)</label>
-            <input class="fmt-input" type="text" inputmode="numeric" id="d_zamest_dps" value="" placeholder="" oninput="formatLive(this); calcDip()">
+            <input class="fmt-input" type="text" inputmode="numeric" id="d_zamest_dps" value="" placeholder="" oninput="formatLive(this); dZamestDpsSync(this.value.replace(/[^0-9]/g,''))">
           </div>
           <div class="field">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
@@ -1331,8 +1331,11 @@ input[type="range"]::-webkit-slider-runnable-track {
             <input type="range" id="d_dip_slider" min="0" max="10000" value="0" step="100" oninput="dDipSync(this.value,true)" style="width:100%;accent-color:#4ADE80;cursor:pointer">
           </div>
           <div class="field">
-            <label>Příspěvek zaměstnavatele do DIP (Kč/měs.)</label>
-            <input class="fmt-input" type="text" inputmode="numeric" id="d_zamest" value="" placeholder="např. 1 000" oninput="formatLive(this); calcDip()">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+              <label style="margin:0">Příspěvek zaměstnavatele do DIP (Kč/měs.)</label>
+              <button id="d_zamest_dip_reset_btn" onclick="resetZamestDipSync()" style="display:none;background:none;border:none;color:#4ADE80;font-size:11px;cursor:pointer;padding:0">↺ Zrcadlit s DPS</button>
+            </div>
+            <input class="fmt-input" type="text" inputmode="numeric" id="d_zamest" value="" placeholder="např. 1 000" oninput="formatLive(this); dZamestDipSync(this.value.replace(/[^0-9]/g,''))">
           </div>
           <div style="margin-top:.75rem;border-top:1px solid var(--border);padding-top:.75rem">
             <button onclick="toggleDipSazby()" id="dip-sazby-btn" style="background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;padding:0;display:flex;align-items:center;gap:5px">⚙ Upravit sazby zhodnocení</button>
@@ -3189,6 +3192,31 @@ function resetDipSync() {
   setMoneyInputValue("d_dip", v);
   const slDip = document.getElementById("d_dip_slider");
   if (slDip) slDip.value = Math.min(v, 10000);
+  calcDip();
+}
+
+let isZamestDipDecoupled = false;
+function dZamestDpsSync(val) {
+  const v = parseInt(String(val).replace(/[^0-9]/g,'')) || 0;
+  setMoneyInputValue("d_zamest_dps", v);
+  if (!isZamestDipDecoupled) {
+    setMoneyInputValue("d_zamest", v);
+  }
+  calcDip();
+}
+function dZamestDipSync(val) {
+  isZamestDipDecoupled = true;
+  document.getElementById('d_zamest_dip_reset_btn').style.display = 'inline-block';
+  const v = parseInt(String(val).replace(/[^0-9]/g,'')) || 0;
+  setMoneyInputValue("d_zamest", v);
+  calcDip();
+}
+function resetZamestDipSync() {
+  isZamestDipDecoupled = false;
+  document.getElementById('d_zamest_dip_reset_btn').style.display = 'none';
+  const origVal = document.getElementById("d_zamest_dps").value;
+  const v = parseInt(origVal.replace(/[^0-9]/g,'')) || 0;
+  setMoneyInputValue("d_zamest", v);
   calcDip();
 }
 
