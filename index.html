@@ -1043,6 +1043,7 @@ input[type="range"]::-webkit-slider-runnable-track {
           <div><div style="font-size:11px;color:var(--text3)" id="tf_dan_label">Zaplacená daň ze zisku</div><div style="font-size:14px;font-weight:600;color:var(--red)" id="tf_dan">—</div></div>
           <div><div style="font-size:11px;color:var(--text3)">Vložil klient (celkem)</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="tf_klient_celkem">—</div></div>
           <div><div style="font-size:11px;color:var(--text3)">Vložil zaměstnavatel (celkem)</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="tf_zamest_celkem">—</div></div>
+          <div><div style="font-size:11px;color:var(--text3)">Stát. příspěvek / měs.</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="tf_stat_mes">—</div></div>
           <div><div style="font-size:11px;color:var(--text3)">Státní příspěvky celkem</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="tf_stat_celkem">—</div></div>
         </div>
       </div>
@@ -1063,29 +1064,16 @@ input[type="range"]::-webkit-slider-runnable-track {
           <div><div style="font-size:11px;color:var(--text3)" id="p_dps_dan_label">Zaplacená daň ze zisku</div><div style="font-size:14px;font-weight:600;color:var(--red)" id="p_dps_dan">—</div></div>
           <div><div style="font-size:11px;color:var(--text3)">Vložil klient (celkem)</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="p_dps_klient_celkem">—</div></div>
           <div><div style="font-size:11px;color:var(--text3)">Vložil zaměstnavatel (celkem)</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="p_dps_zamest_celkem">—</div></div>
+          <div><div style="font-size:11px;color:var(--text3)">Stát. příspěvek / měs.</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="p_dps_stat_mes">—</div></div>
           <div><div style="font-size:11px;color:var(--text3)">Státní příspěvky celkem</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="p_dps_stat_celkem">—</div></div>
+          <div style="grid-column:1/-1;border-top:1px solid rgba(255,255,255,0.05);padding-top:6px;margin-top:2px;display:flex;justify-content:space-between;align-items:center">
+            <div style="font-size:11px;color:var(--text3)">Roční úspora na daních</div>
+            <div style="font-size:14px;font-weight:600;color:var(--text2)" id="p_dan_uspora_grid">—</div>
+          </div>
         </div>
       </div>
 
-      <!-- Státní příspěvky a daňová úleva -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
-        <div style="background:var(--surface2);padding:10px;border-radius:8px;border:1px solid var(--border)">
-          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;margin-bottom:3px">Stát. příspěvek / měs.</div>
-          <div style="font-size:15px;font-weight:700;color:#4ADE80" id="p_res_prispevek">—</div>
-        </div>
-        <div style="background:var(--surface2);padding:10px;border-radius:8px;border:1px solid var(--border)">
-          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;margin-bottom:3px">Stát. příspěvek / rok</div>
-          <div style="font-size:15px;font-weight:700;color:#4ADE80" id="p_stat_rok">—</div>
-        </div>
-        <div style="background:var(--surface2);padding:10px;border-radius:8px;border:1px solid var(--border)">
-          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;margin-bottom:3px">Daňová úspora / rok</div>
-          <div style="font-size:15px;font-weight:700;color:#4ADE80" id="p_dan_uspora">—</div>
-        </div>
-        <div style="background:var(--surface2);padding:10px;border-radius:8px;border:1px solid var(--border)">
-          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;margin-bottom:3px">Celková výhoda / rok</div>
-          <div style="font-size:15px;font-weight:700;color:#4ADE80" id="p_rocni_vyhoda">—</div>
-        </div>
-      </div>
+
 
       <div style="background:rgba(200,240,74,0.1);border-radius:10px;padding:.85rem 1rem;border:1px solid rgba(200,240,74,0.3)">
         <div style="font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);margin-bottom:.6rem">Výhoda DPS oproti TF</div>
@@ -1379,7 +1367,12 @@ input[type="range"]::-webkit-slider-runnable-track {
               <div><div style="font-size:11px;color:var(--text3)" id="d_dps_dan_label">Zaplacená daň ze zisku</div><div style="font-size:14px;font-weight:600;color:var(--red)" id="d_dps_dan">—</div></div>
               <div><div style="font-size:11px;color:var(--text3)">Vložil klient (celkem)</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="d_dps_klient_celkem">—</div></div>
               <div><div style="font-size:11px;color:var(--text3)">Vložil zaměstnavatel (celkem)</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="d_dps_zamest_celkem">—</div></div>
+              <div><div style="font-size:11px;color:var(--text3)">Stát. příspěvek / měs.</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="d_dps_stat_mes">—</div></div>
               <div><div style="font-size:11px;color:var(--text3)">Státní příspěvky celkem</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="d_dps_stat_celkem">—</div></div>
+              <div style="grid-column:1/-1;border-top:1px solid rgba(255,255,255,0.05);padding-top:6px;margin-top:2px;display:flex;justify-content:space-between;align-items:center">
+                <div style="font-size:11px;color:var(--text3)">Roční úspora na daních</div>
+                <div style="font-size:14px;font-weight:600;color:var(--text2)" id="d_dps_dan_uspora_grid">—</div>
+              </div>
             </div>
             <div id="d_dps_kratky_horizont" style="display:none;margin-top:10px;padding:8px 12px;background:rgba(239,68,68,0.08);border-left:3px solid var(--red);border-radius:0 6px 6px 0;font-size:12px;font-weight:700;color:var(--red);line-height:1.5">⚠️ Krátký horizont: Nové DPS pod 10 let ztrácí státní podporu a daňové zvýhodnění, proto se tato výhoda počítá jako 0 Kč.</div>
             <div id="d_dps_dan_tip" style="display:none;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:11px;color:var(--text3);line-height:1.6"></div>
@@ -2809,7 +2802,7 @@ function calcPenze() {
   // Require both vklad and vek to be filled
   const vekRaw = document.getElementById("p_vek").value;
   if (!vekRaw || rokNarozeni < 1940 || vek <= 0 || vek >= 65) {
-    ["tf_celkem","tf_vynos","tf_renta","tf_dan","tf_klient_celkem","tf_zamest_celkem","tf_stat_celkem","p_dps_celkem","p_dps_vynos","p_dps_renta","p_dps_dan","p_dps_klient_celkem","p_dps_zamest_celkem","p_dps_stat_celkem","p_rozdil_celkem","p_rozdil_renta","p_res_prispevek","p_stat_rok","p_dan_uspora","p_rocni_vyhoda","p_roky_do","p_roky_do_card","p_vlozeno","p_klient_celkem","p_zamest_celkem"].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = "—"; });
+    ["tf_celkem","tf_vynos","tf_renta","tf_dan","tf_klient_celkem","tf_zamest_celkem","tf_stat_celkem","tf_stat_mes","p_dps_celkem","p_dps_vynos","p_dps_renta","p_dps_dan","p_dps_klient_celkem","p_dps_zamest_celkem","p_dps_stat_celkem","p_dps_stat_mes","p_dps_dan_uspora_grid","p_rozdil_celkem","p_rozdil_renta","p_res_prispevek","p_stat_rok","p_dan_uspora","p_rocni_vyhoda","p_roky_do","p_roky_do_card","p_vlozeno","p_klient_celkem","p_zamest_celkem","p_dan_uspora_grid"].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = "—"; });
     const predReset = document.getElementById("p_predcasna_ztraty"); if(predReset) predReset.style.display = "none";
     const dop = document.getElementById("p_doporuceni"); if (dop) dop.style.display = "none";
     const di = document.getElementById("p_dan_info"); if (di) di.style.display = "none";
@@ -2901,7 +2894,7 @@ function calcPenze() {
     } else { danInfo.style.display = "none"; }
   }
   if (vklad <= 0) {
-    ["tf_celkem","tf_vynos","tf_renta","tf_dan","tf_klient_celkem","tf_zamest_celkem","tf_stat_celkem","p_dps_celkem","p_dps_vynos","p_dps_renta","p_dps_dan","p_dps_klient_celkem","p_dps_zamest_celkem","p_dps_stat_celkem","p_rozdil_celkem","p_rozdil_renta","p_klient_celkem","p_zamest_celkem"].forEach(id => setT(id, "—"));
+    ["tf_celkem","tf_vynos","tf_renta","tf_dan","tf_klient_celkem","tf_zamest_celkem","tf_stat_celkem","tf_stat_mes","p_dps_celkem","p_dps_vynos","p_dps_renta","p_dps_dan","p_dps_klient_celkem","p_dps_zamest_celkem","p_dps_stat_celkem","p_dps_stat_mes","p_dps_dan_uspora_grid","p_rozdil_celkem","p_rozdil_renta","p_klient_celkem","p_zamest_celkem","p_dan_uspora_grid"].forEach(id => setT(id, "—"));
     const dop = document.getElementById("p_doporuceni"); if (dop) dop.style.display = "none";
     const predReset2 = document.getElementById("p_predcasna_ztraty"); if(predReset2) predReset2.style.display = "none";
     return;
@@ -2914,6 +2907,9 @@ function calcPenze() {
   setT("tf_klient_celkem", fmt(klientCelkem));
   setT("tf_zamest_celkem", zamest > 0 ? fmt(zamestCelkem) : "0 Kč");
   setT("tf_stat_celkem", fmt(statCelkem));
+  setT("tf_stat_mes", statEfektivni > 0 ? fmt(statEfektivni) : "0 Kč");
+  setT("p_dps_stat_mes", statEfektivni > 0 ? fmt(statEfektivni) : "0 Kč");
+  setT("p_dan_uspora_grid", danUspora > 0 ? fmt(danUspora) + "/rok" : "0 Kč/rok");
   setT("p_dps_klient_celkem", fmt(klientCelkem));
   setT("p_dps_zamest_celkem", zamest > 0 ? fmt(zamestCelkem) : "0 Kč");
   setT("p_dps_stat_celkem", fmt(statCelkem));
@@ -3207,7 +3203,7 @@ function calcDip() {
      "d_dan_uspora_dip","d_dan_uspora_dps","d_stat_rok",
      "d_dps_vyhoda_rok","d_dip_vyhoda_rok",
      "dk_klient","dk_zamest","dk_zhodnoceni",
-     "d_dps_klient_celkem","d_dps_zamest_celkem","d_dps_stat_celkem","d_dip_klient_celkem","d_dip_zamest_celkem"
+     "d_dps_klient_celkem","d_dps_zamest_celkem","d_dps_stat_celkem","d_dps_stat_mes","d_dps_dan_uspora_grid","d_dip_klient_celkem","d_dip_zamest_celkem"
     ].forEach(id => setT(id,"—"));
     ["d_doporuceni","d_dan_info"].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display="none"; });
     ["d_dps_dan_tip","d_dip_dan_tip"].forEach(id=>{ const el=document.getElementById(id); if(el) el.style.display="none"; });
@@ -3294,6 +3290,8 @@ function calcDip() {
     setT("d_dps_klient_celkem",  fmt(dpsKlientCelkem));
     setT("d_dps_zamest_celkem",  dpsZam > 0 ? fmt(dpsZamestCelkem) : "0 Kč");
     setT("d_dps_stat_celkem",    fmt(dpsStatCelkem));
+    setT("d_dps_stat_mes", statDPSEfektivni > 0 ? fmt(statDPSEfektivni) : "0 Kč");
+    setT("d_dps_dan_uspora_grid", danUsporaDPS > 0 ? fmt(danUsporaDPS) + "/rok" : "0 Kč/rok");
 
     // DPS daňový tip
     const dpsTipEl = document.getElementById("d_dps_dan_tip");
