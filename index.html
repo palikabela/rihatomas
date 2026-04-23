@@ -477,8 +477,8 @@ input[type="range"]::-webkit-slider-runnable-track {
     <button class="tab" onclick="showTab('hypo')">Hypotéka</button>
     <button class="tab" onclick="showTab('refi')">Refinancování</button>
     <button class="tab" onclick="showTab('invest')">Investice</button>
-    <button class="tab" onclick="showTab('dluhopis')">Dluhopisy</button>
     <button class="tab" onclick="showTab('penze')">Kalkulace penze</button>
+    <button class="tab" onclick="showTab('dluhopis')">Dluhopisy</button>
     <button class="tab" onclick="showTab('rc')">Rodné číslo</button>
   </div>
 </div>
@@ -2265,7 +2265,7 @@ function calcRefi() {
 
 // TABS
 function showTab(id) {
-  const ids = ["kalk", "hypo", "refi", "invest", "dluhopis", "penze", "rc"];
+  const ids = ["kalk", "hypo", "refi", "invest", "penze", "dluhopis", "rc"];
   document.querySelectorAll(".tab").forEach((t, i) => {
     t.classList.toggle("active", ids[i] === id);
   });
