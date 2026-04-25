@@ -1016,6 +1016,17 @@ input[type="range"]::-webkit-slider-runnable-track {
             </div>
           </div>
         </div>
+        <!-- PŘEVOD TF → DPS TOGGLE -->
+        <div style="margin-bottom:14px;margin-top:4px">
+          <button id="tf_prechod_btn" onclick="toggleTfPrevod()" style="width:100%;padding:11px 16px;border-radius:10px;border:2px solid var(--surface3);background:var(--surface3);color:var(--text2);font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:space-between">
+            <span style="display:flex;align-items:center;gap:8px">
+              <span id="tf_prechod_icon" style="font-size:16px">🔄</span>
+              PŘEVOD TF → DPS (zachování let)
+            </span>
+            <span id="tf_prechod_status" style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;background:rgba(255,255,255,0.08);color:var(--text3)">VYPNUTO</span>
+          </button>
+          <div style="font-size:11px;color:var(--text3);margin-top:5px;padding:0 4px">Při převodu se započítává celá doba spoření z&nbsp;TF.</div>
+        </div>
         <div id="p_hack_banner" style="display:none;margin-bottom:14px;padding:10px;background:rgba(234,179,8,0.1);border:1px solid rgba(234,179,8,0.3);border-radius:8px;font-size:12px;color:var(--text);line-height:1.5"></div>
         <div id="p_warning" style="display:none;color:var(--red);background:var(--red-dim);padding:10px;border-radius:8px;font-size:13px;margin-bottom:14px;border:1px solid rgba(239,68,68,0.3)"></div>
         <div class="field">
@@ -1062,15 +1073,19 @@ input[type="range"]::-webkit-slider-runnable-track {
 
       <div style="background:var(--surface2);border-radius:10px;padding:.85rem 1rem;margin-bottom:10px;border:1px solid var(--border)">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.25rem">
-          <div style="font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--red)">Transformovaný fond (TF)</div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <div style="font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--red)">Transformovaný fond (TF)</div>
+            <span id="tf_prevod_badge" style="display:none;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(74,222,128,0.18);color:#4ADE80;border:1px solid rgba(74,222,128,0.4);letter-spacing:0.04em">LÉTA SE ZAPOČÍTÁVAJÍ ✓</span>
+          </div>
           <div style="display:flex;gap:4px">
             <button id="tf-mode-jednor" onclick="setTfDpsMode('jednor')" style="padding:3px 8px;border-radius:6px;border:1px solid var(--red);background:var(--red);color:#fff;font-size:10px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;transition:all .15s">Výběr (15% daň)</button>
             <button id="tf-mode-renta"  onclick="setTfDpsMode('renta')"  style="padding:3px 8px;border-radius:6px;border:1px solid var(--border2);background:transparent;color:var(--text3);font-size:10px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s">Renta 10+ let (0%)</button>
           </div>
         </div>
         <div style="font-size:11px;color:var(--text3);margin-bottom:.75rem;line-height:1.4" id="tf_mode_info">1,5% hrubý − 0,8% správa − 10% success fee = cca 0,6% · + stát. příspěvek · <span style="color:var(--red)">15% daň ze zisku</span></div>
+        <div id="tf_prevod_info" style="display:none;font-size:12px;color:#60A5FA;background:rgba(96,165,250,0.08);border:1px solid rgba(96,165,250,0.25);border-radius:7px;padding:7px 10px;margin-bottom:.75rem;line-height:1.5">TF generuje minimální výnos. Převodem do DPS získáte vyšší zhodnocení při zachování nároku na státní příspěvky i daňové testy.</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <div class="premium-total-box"><div class="premium-total-label">Čistá hodnota celkem</div><div class="premium-total-value" id="tf_celkem">—</div></div>
+          <div class="premium-total-box"><div class="premium-total-label">CELKEM NASPOŘENO</div><div class="premium-total-value" id="tf_celkem">—</div></div>
           <div><div style="font-size:11px;color:var(--text3)">Měsíční renta</div><div style="font-size:17px;font-weight:700;color:var(--red)" id="tf_renta">—</div></div>
           <div><div style="font-size:11px;color:var(--text3)">Čistý výnos</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="tf_vynos">—</div></div>
           <div><div style="font-size:11px;color:var(--text3)" id="tf_dan_label"><span id="tf_dan_label_text">Zaplacená daň ze zisku</span></div><div style="font-size:14px;font-weight:600;color:var(--red)" id="tf_dan">—</div></div>
@@ -1078,6 +1093,9 @@ input[type="range"]::-webkit-slider-runnable-track {
           <div><div style="font-size:11px;color:var(--text3)">Vložil zaměstnavatel (celkem)</div><div id="tf_zamest_celkem" style="font-size:14px;font-weight:600;color:var(--text2)">—</div><div class="sankce-zamest-box" style="font-size:10px;font-weight:700;color:var(--red);margin-top:2px;display:none"></div></div>
           <div><div style="font-size:11px;color:var(--text3)">Stát. příspěvek / měs.</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="tf_stat_mes">—</div></div>
           <div><div style="font-size:11px;color:var(--text3)">Státní příspěvky celkem <span style="display:block;color:var(--red);font-size:9px;font-weight:600;margin-top:2px;line-height:1.2">⚠️ Při dřívějším zrušení vracíte</span></div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="tf_stat_celkem">—</div></div>
+          <div style="grid-column:1/-1;margin-top:4px;padding:7px 10px;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.25);border-radius:7px;display:flex;justify-content:space-between;align-items:center">
+            <div style="font-size:11px;color:var(--red);font-weight:600">Ztráta nízkým výnosem vs. DPS</div>
+          </div>
         </div>
       </div>
 
@@ -1092,10 +1110,10 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div style="font-size:11px;color:var(--text3);margin-bottom:.75rem;line-height:1.4" id="p_dps_mode_info">8% hrubý − 1% správa − 15% success fee = <span style="color:#000;font-weight:700">5,95 %</span> · + stát. příspěvek · <span style="color:var(--red)">15% daň ze zisku</span></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
           <div style="grid-column:1/-1;font-size:11px;color:var(--red);font-weight:600" id="p_dps_fee_loss">Ztráta na poplatcích: —</div>
-          <div class="premium-total-box"><div class="premium-total-label">Čistá hodnota celkem</div><div class="premium-total-value" id="p_dps_celkem">—</div></div>
+          <div class="premium-total-box"><div class="premium-total-label">CELKEM NASPOŘENO</div><div class="premium-total-value" id="p_dps_celkem">—</div></div>
           <div><div style="font-size:11px;color:var(--text3)">Měsíční renta</div><div style="font-size:17px;font-weight:700;color:#4ADE80" id="p_dps_renta">—</div></div>
           <div><div style="font-size:11px;color:var(--text3)">Čistý výnos</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="p_dps_vynos">—</div></div>
-          <div><div style="font-size:11px;color:var(--text3)" id="p_dps_dan_label"><span id="p_dps_dan_label_text">Daň ze zisku</span></div><div style="font-size:14px;font-weight:600;color:var(--red)" id="p_dps_dan">—</div></div>
+          <div><div style="font-size:11px;color:var(--text3)" id="p_dps_dan_label"><span id="p_dps_dan_label_text">Daň ze zisku</span></div><div style="font-size:14px;font-weight:600;color:var(--red)" id="p_dps_dan">—</div><div id="p_dps_dan_zamest" style="font-size:11px;color:var(--red);font-weight:600;margin-top:4px;display:none"></div></div>
           <div><div style="font-size:11px;color:var(--text3)">Vložil klient (celkem)</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="p_dps_klient_celkem">—</div></div>
           <div><div style="font-size:11px;color:var(--text3)">Vložil zaměstnavatel (celkem)</div><div id="p_dps_zamest_celkem" style="font-size:14px;font-weight:600;color:var(--text2)">—</div><div class="sankce-zamest-box" style="font-size:10px;font-weight:700;color:var(--red);margin-top:2px;display:none"></div></div>
           <div><div style="font-size:11px;color:var(--text3)">Stát. příspěvek / měs.</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="p_dps_stat_mes">—</div></div>
@@ -1420,10 +1438,10 @@ input[type="range"]::-webkit-slider-runnable-track {
             <div style="font-size:11px;color:var(--text3);margin-bottom:.75rem;line-height:1.4" id="d_dps_mode_info">8% hrubý − 1% správa − 15% success fee = <span style="color:#000;font-weight:700">5,95 %</span> · + stát. příspěvek · <span style="color:var(--red)">15% daň ze zisku</span></div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
               <div style="grid-column:1/-1;font-size:11px;color:var(--red);font-weight:600" id="d_dps_fee_loss">Ztráta na poplatcích: —</div>
-              <div class="premium-total-box"><div class="premium-total-label">Čistá hodnota celkem</div><div class="premium-total-value" id="d_dps_celkem">—</div></div>
+              <div class="premium-total-box"><div class="premium-total-label">CELKEM NASPOŘENO</div><div class="premium-total-value" id="d_dps_celkem">—</div></div>
               <div><div style="font-size:11px;color:var(--text3)">Měsíční renta</div><div style="font-size:17px;font-weight:700;color:var(--accent)" id="d_dps_renta">—</div></div>
               <div><div style="font-size:11px;color:var(--text3)">Čistý výnos</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="d_dps_vynos">—</div></div>
-              <div><div style="font-size:11px;color:var(--text3)" id="d_dps_dan_label"><span id="d_dps_dan_label_text">Daň ze zisku</span></div><div style="font-size:14px;font-weight:600;color:var(--red)" id="d_dps_dan">—</div></div>
+              <div><div style="font-size:11px;color:var(--text3)" id="d_dps_dan_label"><span id="d_dps_dan_label_text">Daň ze zisku</span></div><div style="font-size:14px;font-weight:600;color:var(--red)" id="d_dps_dan">—</div><div id="d_dps_dan_zamest" style="font-size:11px;color:var(--red);font-weight:600;margin-top:4px;display:none"></div></div>
               <div><div style="font-size:11px;color:var(--text3)">Vložil klient (celkem)</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="d_dps_klient_celkem">—</div></div>
               <div><div style="font-size:11px;color:var(--text3)">Vložil zaměstnavatel (celkem)</div><div id="d_dps_zamest_celkem" style="font-size:14px;font-weight:600;color:var(--text2)">—</div><div class="sankce-zamest-box" style="font-size:10px;font-weight:700;color:var(--red);margin-top:2px;display:none"></div></div>
               <div><div style="font-size:11px;color:var(--text3)">Stát. příspěvek / měs.</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="d_dps_stat_mes">—</div></div>
@@ -1440,7 +1458,7 @@ input[type="range"]::-webkit-slider-runnable-track {
             <div style="font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#4ADE80;margin-bottom:.5rem">DIP — Dlouhodobý investiční produkt</div>
             <div style="font-size:11px;color:var(--text3);margin-bottom:.75rem;line-height:1.4">8% hrubý − 0,2% TER = 7,8% · 0% daň ze zisku</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-              <div class="premium-total-box"><div class="premium-total-label">Čistá hodnota celkem</div><div class="premium-total-value" id="d_dip_celkem">—</div></div>
+              <div class="premium-total-box"><div class="premium-total-label">CELKEM NASPOŘENO</div><div class="premium-total-value" id="d_dip_celkem">—</div></div>
               <div><div style="font-size:11px;color:var(--text3)">Měsíční renta</div><div style="font-size:17px;font-weight:700;color:#4ADE80" id="d_dip_renta">—</div></div>
               <div><div style="font-size:11px;color:var(--text3)">Čistý výnos</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="d_dip_vynos">—</div></div>
               <div><div style="font-size:11px;color:var(--text3)">Daň ze zisku</div><div style="font-size:13px;font-weight:600;color:#4ADE80">0 Kč ✓</div></div>
@@ -1771,6 +1789,29 @@ function calcPhases(vkladKlienta, vkladZamest, statPrispevek, sazba, mesPlne, me
   };
 }
 let tfDpsMode = 'jednor';
+let tfPrevodActive = false;
+
+function toggleTfPrevod() {
+  tfPrevodActive = !tfPrevodActive;
+  const btn = document.getElementById('tf_prechod_btn');
+  const status = document.getElementById('tf_prechod_status');
+  const badge = document.getElementById('tf_prevod_badge');
+  const info = document.getElementById('tf_prevod_info');
+  if (btn) {
+    btn.style.borderColor = tfPrevodActive ? 'var(--green)' : 'var(--surface3)';
+    btn.style.background  = tfPrevodActive ? 'rgba(74,222,128,0.12)' : 'var(--surface3)';
+    btn.style.color       = tfPrevodActive ? 'var(--green)' : 'var(--text2)';
+    btn.style.boxShadow   = tfPrevodActive ? '0 0 0 1px rgba(74,222,128,0.3)' : 'none';
+  }
+  if (status) {
+    status.textContent = tfPrevodActive ? 'AKTIVNÍ ✓' : 'VYPNUTO';
+    status.style.background = tfPrevodActive ? 'rgba(74,222,128,0.18)' : 'rgba(255,255,255,0.08)';
+    status.style.color = tfPrevodActive ? 'var(--green)' : 'var(--text3)';
+  }
+  if (badge) badge.style.display = tfPrevodActive ? 'inline-block' : 'none';
+  if (info)  info.style.display  = tfPrevodActive ? 'block' : 'none';
+}
+
 function setTfDpsMode(mode) {
   tfDpsMode = mode;
   const btnsJednor = [document.getElementById('tf-mode-jednor'), document.getElementById('tfdps-dpsmode-jednor')];
@@ -1792,7 +1833,7 @@ function setTfDpsMode(mode) {
     if (mode === 'jednor') {
       info2.innerHTML = '8% hrubý − 1% správa − 15% success fee = <span style="color:#000;font-weight:700">5,95 %</span> · + stát. příspěvek · <span style="color:var(--red)">15% daň ze zisku</span>';
     } else {
-      info2.innerHTML = '8% hrubý − 1% správa − 15% success fee = <span style="color:#000;font-weight:700">5,95 %</span> · + stát. příspěvek · <span style="color:#16A34A">0% daň (renta 10+ let)</span> · <span style="font-weight:600; color:var(--red)">⚠ 1% správa i při výplatě</span>';
+      info2.innerHTML = '8% hrubý − 1% správa − 15% success fee = <span style="color:#000;font-weight:700">5,95 %</span> · + stát. příspěvek · <span style="color:#16A34A">0% daň (renta 10+ let)</span> · <span style="font-weight:600;color:var(--text3)">Strategie výplaty: konzervativní 1% zhodnocení</span>';
     }
   }
   const lbl1t = document.getElementById('tf_dan_label_text'); if(lbl1t) lbl1t.textContent = 'Zaplacená daň ze zisku';
@@ -2943,7 +2984,7 @@ function setDpsMode(mode) {
   btnsJednor.forEach(btn => { if(btn) { btn.style.background = mode==='jednor' ? 'var(--red)' : 'transparent'; btn.style.borderColor = mode==='jednor' ? 'var(--red)' : 'var(--border2)'; btn.style.color = mode==='jednor' ? '#fff' : 'var(--text3)'; } });
   btnsRenta.forEach(btn => { if(btn) { btn.style.background = mode==='renta' ? '#4ADE80' : 'transparent'; btn.style.borderColor = mode==='renta' ? '#4ADE80' : 'var(--border2)'; btn.style.color = mode==='renta' ? '#111' : 'var(--text3)'; btn.style.fontWeight = mode==='renta' ? '600' : '400'; } });
   const info = document.getElementById('d_dps_mode_info');
-  if(info) info.innerHTML = mode==='jednor' ? '8% hrubý − 1% správa − 15% success fee = <span style="color:#000;font-weight:700">5,95 %</span> · + stát. příspěvek · <span style="color:var(--red)">15% daň ze zisku</span>' : '8% hrubý − 1% správa − 15% success fee = <span style="color:#000;font-weight:700">5,95 %</span> · + stát. příspěvek · <span style="color:#16A34A">0% daň (renta 10+ let)</span> · <span style="font-weight:600;color:var(--red)">⚠ 1% správa i při výplatě</span>';
+  if(info) info.innerHTML = mode==='jednor' ? '8% hrubý − 1% správa − 15% success fee = <span style="color:#000;font-weight:700">5,95 %</span> · + stát. příspěvek · <span style="color:var(--red)">15% daň ze zisku</span>' : '8% hrubý − 1% správa − 15% success fee = <span style="color:#000;font-weight:700">5,95 %</span> · + stát. příspěvek · <span style="color:#16A34A">0% daň (renta 10+ let)</span> · <span style="font-weight:600;color:var(--text3)">Strategie výplaty: konzervativní 1% zhodnocení</span>';
   const dlblT = document.getElementById('d_dps_dan_label_text'); if(dlblT) dlblT.textContent = 'Daň ze zisku';
   const danEl = document.getElementById('d_dps_dan');
   if(danEl) danEl.style.color = mode==='jednor' ? 'var(--red)' : '#4ADE80';
@@ -3080,7 +3121,7 @@ function calcPenze() {
   if (hackBanner) {
     if (rokyUdrz > 0 && vklad > 100) {
       hackBanner.style.display = "block";
-      hackBanner.innerHTML = `⚠️ <strong>Pozor na legislativní past:</strong> Podle zákona ztrácíte nárok na státní příspěvky v měsíci přiznání starobního důchodu (v ${starobni} letech). Do splnění podmínky 120 měsíců vám ale chybí ještě ${rokyUdrz} let. <br><br><strong>Řešení:</strong> Smlouvu nerušte! Model automaticky aktivoval "udržovací fázi" (vklad 100 Kč od ${starobni} do ${vekOdchodu} let), díky které zachráníte státní příspěvky.`;
+      hackBanner.innerHTML = `ℹ️ <strong>Udržovací fáze:</strong> Model aktivoval snížený vklad 100 Kč od ${starobni} do ${vekOdchodu} let, díky čemuž jsou zachovány podmínky pro 120 měsíců spoření.`;
     } else { hackBanner.style.display = "none"; }
   }
 
@@ -3098,10 +3139,15 @@ function calcPenze() {
 
   const dpsRes = calcPhases(vklad, zamest, statEfektivni, 5.95, mesicePlne, mesiceUdrz, prevod);
   const dpsGrossRes = calcPhases(vklad, zamest, statEfektivni, 8, mesicePlne, mesiceUdrz, prevod);
-  const dpsDanovyZaklad = Math.max(dpsRes.fv - dpsRes.klient - dpsRes.stat - prevod, 0);
-  const dpsDanZisk = tfDpsMode === 'jednor' ? dpsDanovyZaklad * 0.15 : 0;
-  const dpsCelkem  = dpsRes.fv - dpsDanZisk;
-  const dpsZisk    = Math.max(dpsRes.fv - dpsRes.klient - dpsRes.stat - dpsRes.zamest - prevod, 0);
+  // Čistý zisk = výnos fondu bez jistin (klient, stát, zaměstnavatel, převod)
+  const dpsZiskCisty    = Math.max(dpsRes.fv - dpsRes.klient - dpsRes.stat - dpsRes.zamest - prevod, 0);
+  // Daň ze zisku (jen z výnosu, bez jistiny zaměstnavatele)
+  const dpsDanZeZisku   = tfDpsMode === 'jednor' ? Math.round(dpsZiskCisty * 0.15) : 0;
+  // Daň z jistiny zaměstnavatele (samostatně)
+  const dpsDanZeZamest  = tfDpsMode === 'jednor' ? Math.round(dpsRes.zamest * 0.15) : 0;
+  // Celkem naspořeno = fv − obě daně
+  const dpsCelkem  = dpsRes.fv - dpsDanZeZisku - dpsDanZeZamest;
+  const dpsZisk    = dpsZiskCisty;
   const dpsRenta   = calcAnuita(dpsCelkem, 1, rentaLet);
   const dpsFeeLoss = Math.max(dpsGrossRes.fv - dpsRes.fv, 0);
 
@@ -3119,14 +3165,29 @@ function calcPenze() {
   setT("tf_stat_celkem",    fmt(tfRes.stat));
   setT("tf_stat_mes",       statEfektivni > 0 ? fmt(statEfektivni) : "0 Kč");
 
+  // Ztráta nízkým výnosem TF vs DPS
+  const tfLoss = Math.max(dpsCelkem - tfCelkem, 0);
+  const tfLossEl = document.getElementById("tf_loss_vs_dps");
+  if (tfLossEl) tfLossEl.textContent = tfLoss > 0 ? "-" + fmt(Math.round(tfLoss)) + " Kč" : "—";
+
   setT("p_dps_celkem",         fmt(dpsCelkem));
   setT("p_dps_vynos",          fmt(dpsZisk));
   setT("p_dps_renta",          fmt(Math.round(dpsRenta)) + "/m");
   if (tfDpsMode === 'jednor') {
-    setT("p_dps_dan", fmt(dpsDanZisk));
+    setT("p_dps_dan", fmt(dpsDanZeZisku));
   } else {
     const pDanEl = document.getElementById("p_dps_dan");
     if (pDanEl) pDanEl.innerHTML = '<span style="color:#4ADE80">0 Kč ✓</span>';
+  }
+  // Daň 15 % z jistiny zaměstnavatele (jen u jednorázového výběru)
+  const pDanZamestEl = document.getElementById("p_dps_dan_zamest");
+  if (pDanZamestEl) {
+    if (tfDpsMode === 'jednor' && dpsRes.zamest > 0) {
+      pDanZamestEl.style.display = "block";
+      pDanZamestEl.textContent = "+ 15% daň ze zam. příspěvků: -" + fmt(dpsDanZeZamest);
+    } else {
+      pDanZamestEl.style.display = "none";
+    }
   }
   setT("p_dps_klient_celkem",  fmt(dpsRes.klient));
   setT("p_dps_zamest_celkem",  fmt(dpsRes.zamest));
@@ -3304,20 +3365,35 @@ function calcDip() {
   if (dpsVkl > 0 || dpsZam > 0) {
     dpsRes = calcPhases(dpsVkl, dpsZam, statDPSEfektivni, DPS_SAZBA, mesicePlne, mesiceUdrzDPS, 0);
     const dpsGrossRes = calcPhases(dpsVkl, dpsZam, statDPSEfektivni, 8, mesicePlne, mesiceUdrzDPS, 0);
-    const dpsDanovyZaklad = Math.max(dpsRes.fv - dpsRes.klient - dpsRes.stat, 0);
-    dpsDanZisk = dpsMode === 'jednor' ? dpsDanovyZaklad * 0.15 : 0;
-    dpsCelkem  = dpsRes.fv - dpsDanZisk;
-    const dpsZisk = Math.max(dpsRes.fv - dpsRes.klient - dpsRes.zamest - dpsRes.stat, 0);
+    // Čistý zisk = výnos fondu bez jistin
+    const dpsZiskCisty   = Math.max(dpsRes.fv - dpsRes.klient - dpsRes.zamest - dpsRes.stat, 0);
+    // Daň ze zisku (jen výnos)
+    const dpsDanZeZisku  = dpsMode === 'jednor' ? Math.round(dpsZiskCisty * 0.15) : 0;
+    // Daň z jistiny zaměstnavatele
+    const dpsDanZeZamest = dpsMode === 'jednor' ? Math.round(dpsRes.zamest * 0.15) : 0;
+    dpsDanZisk = dpsDanZeZisku; // zachování kompatibility pro rozdilový výpočet níže
+    dpsCelkem  = dpsRes.fv - dpsDanZeZisku - dpsDanZeZamest;
+    const dpsZisk = dpsZiskCisty;
     dpsRenta = calcAnuita(dpsCelkem, 1, rentaLet);
     const dpsFeeLoss = Math.max(dpsGrossRes.fv - dpsRes.fv, 0);
     setT("d_dps_celkem",        fmt(dpsCelkem));
-    setT("d_dps_vynos",         fmt(Math.max(dpsZisk - dpsDanZisk, 0)));
+    setT("d_dps_vynos",         fmt(Math.max(dpsZisk - dpsDanZeZisku, 0)));
     setT("d_dps_renta",         fmt(dpsRenta) + "/m");
     if (dpsMode === 'jednor') {
-      setT("d_dps_dan", fmt(dpsDanZisk));
+      setT("d_dps_dan", fmt(dpsDanZeZisku));
     } else {
       const dpsDanEl = document.getElementById("d_dps_dan");
       if (dpsDanEl) dpsDanEl.innerHTML = '<span style="color:#4ADE80">0 Kč ✓</span>';
+    }
+    // Daň 15 % z jistiny zaměstnavatele (jen u jednorázového výběru)
+    const dDanZamestEl = document.getElementById("d_dps_dan_zamest");
+    if (dDanZamestEl) {
+      if (dpsMode === 'jednor' && dpsRes.zamest > 0) {
+        dDanZamestEl.style.display = "block";
+        dDanZamestEl.textContent = "+ 15% daň ze zam. příspěvků: -" + fmt(dpsDanZeZamest);
+      } else {
+        dDanZamestEl.style.display = "none";
+      }
     }
     setT("d_vlozeno",           fmt(dpsRes.klient + dpsRes.zamest));
     setT("d_dps_klient_celkem", fmt(dpsRes.klient));
