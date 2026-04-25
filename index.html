@@ -1088,7 +1088,7 @@ input[type="range"]::-webkit-slider-runnable-track {
           <div class="premium-total-box"><div class="premium-total-label">CELKEM NASPOŘENO</div><div class="premium-total-value" id="tf_celkem">—</div></div>
           <div><div style="font-size:11px;color:var(--text3)">Měsíční renta</div><div style="font-size:17px;font-weight:700;color:var(--red)" id="tf_renta">—</div></div>
           <div><div style="font-size:11px;color:var(--text3)">Čistý výnos</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="tf_vynos">—</div></div>
-          <div><div style="font-size:11px;color:var(--text3)" id="tf_dan_label"><span id="tf_dan_label_text">Zaplacená daň ze zisku</span></div><div style="font-size:14px;font-weight:600;color:var(--red)" id="tf_dan">—</div></div>
+          <div><div style="font-size:11px;color:var(--text3)" id="tf_dan_label"><span id="tf_dan_label_text">Zaplacená daň ze zisku</span></div><div style="font-size:14px;font-weight:600;color:var(--red)" id="tf_dan">—</div><div id="tf_dan_zamest" style="font-size:11px;color:var(--red);font-weight:600;margin-top:4px;display:none"></div></div>
           <div><div style="font-size:11px;color:var(--text3)">Vložil klient (celkem)</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="tf_klient_celkem">—</div></div>
           <div><div style="font-size:11px;color:var(--text3)">Vložil zaměstnavatel (celkem)</div><div id="tf_zamest_celkem" style="font-size:14px;font-weight:600;color:var(--text2)">—</div><div class="sankce-zamest-box" style="font-size:10px;font-weight:700;color:var(--red);margin-top:2px;display:none"></div></div>
           <div><div style="font-size:11px;color:var(--text3)">Stát. příspěvek / měs.</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="tf_stat_mes">—</div></div>
@@ -1787,6 +1787,85 @@ function calcPhases(vkladKlienta, vkladZamest, statPrispevek, sazba, mesPlne, me
     zamest: vkladZamest * (mesPlne + mesUdrz),
     stat: statPrispevek * mesPlne
   };
+}
+
+/**
+ * simulateDPS — jediná kanonická funkce pro výpočet DPS.
+ * Používají ji calcPenze, calcDip i calcInvest.
+ *
+ * Model: čistý výnos 5,95 % p.a. (8 % hrubý − 1 % správa − 15 % success fee),
+ * přes vzorec annuity-due (platba na začátku měsíce), dvě fáze:
+ *   fáze 1 (plné spoření): mesPlne měsíců, vkladKlienta + statPrispevek + vkladZamest
+ *   fáze 2 (udržovací):    mesUdrz měsíců, 100 Kč klient + vkladZamest (stat. přísp. 0)
+ *
+ * Zdanění při jednorázovém výběru:
+ *   danZeZisku  = čistý výnos * 0,15        (do d/p_dps_dan)
+ *   danZeZamest = vklady zaměstnavatele * 0,15  (do d/p_dps_dan_zamest)
+ *   celkem      = fvHruba − danZeZisku − danZeZamest
+ *
+ * @param {number} vkladKlienta    měsíční vklad klienta (Kč)
+ * @param {number} vkladZamest     měsíční vklad zaměstnavatele (Kč)
+ * @param {number} statPrispevek   měsíční státní příspěvek (Kč) — předpočítaný volajícím
+ * @param {number} mesPlne         počet měsíců plného spoření
+ * @param {number} mesUdrz         počet měsíců udržovací fáze (0 pokud není)
+ * @param {string} mode            'jednor' | 'renta'
+ * @param {number} [pocatecni=0]   počáteční vložená částka (převod z TF)
+ * @returns {{fvHruba, klient, zamest, stat, ziskCisty, danZeZisku, danZeZamest, celkem}}
+ */
+function simulateDPS(vkladKlienta, vkladZamest, statPrispevek, mesPlne, mesUdrz, mode, pocatecni) {
+  pocatecni = pocatecni || 0;
+  let balance = pocatecni;
+  let highWaterMark = pocatecni;
+  let totalKlient = 0;
+  let totalZamest = 0;
+  let totalStat = 0;
+  const rM = 8 / 100 / 12;
+  const feeM = 1 / 100 / 12;
+  const sFee = 0.15;
+  for (let m = 1; m <= mesPlne; m++) {
+    const vklad = vkladKlienta + vkladZamest + statPrispevek;
+    balance += vklad;
+    highWaterMark += vklad;
+    totalKlient += vkladKlienta;
+    totalZamest += vkladZamest;
+    totalStat += statPrispevek;
+    const zhodnoceni = balance * rM;
+    balance += zhodnoceni;
+    balance -= balance * feeM;
+    if (balance > highWaterMark) {
+      const profit = balance - highWaterMark;
+      balance -= profit * sFee;
+      highWaterMark = balance;
+    }
+  }
+  for (let m = 1; m <= mesUdrz; m++) {
+    const vklad = 100 + vkladZamest;
+    balance += vklad;
+    highWaterMark += vklad;
+    totalKlient += 100;
+    totalZamest += vkladZamest;
+    const zhodnoceni = balance * rM;
+    balance += zhodnoceni;
+    balance -= balance * feeM;
+    if (balance > highWaterMark) {
+      const profit = balance - highWaterMark;
+      balance -= profit * sFee;
+      highWaterMark = balance;
+    }
+  }
+  const ziskCisty   = Math.max(balance - totalKlient - totalStat - totalZamest - pocatecni, 0);
+  const danZeZisku  = mode === 'jednor' ? Math.round(ziskCisty * 0.15) : 0;
+  const danZeZamest = mode === 'jednor' ? Math.round(totalZamest * 0.15) : 0;
+  const celkem      = balance - danZeZisku - danZeZamest;
+  return { fvHruba: balance, klient: totalKlient, zamest: totalZamest, stat: totalStat,
+           ziskCisty, danZeZisku, danZeZamest, celkem };
+}
+
+/** Zpětně kompatibilní wrapper — volán z calcInvest (bez fází, bez stat. přísp. parametru). */
+function vypocitejDPS(vkladKlienta, vkladZamest, roky, mode, pocatecni) {
+  const stat = getStatniPrispevek(vkladKlienta);
+  const mes  = Math.round(roky) * 12;
+  return simulateDPS(vkladKlienta, vkladZamest, stat, mes, 0, mode, pocatecni || 0);
 }
 let tfDpsMode = 'jednor';
 let tfPrevodActive = false;
@@ -2688,12 +2767,13 @@ function calcInvest() {
   produkty.forEach(p => {
     const fvJednoraz = jednoraz * Math.pow(1 + Math.max(p.sazba, 0) / 100 / 12, roky * 12);
     if (p.id === "penzijko") {
-      const statPrispevek = getStatniPrispevek(vklad);
-      const celkMesicni = vklad + statPrispevek;
-      const hrubaHodnota = calcFV(celkMesicni, Math.max(p.sazba, 0), roky) + fvJednoraz;
-      const vsechnyVklady = celkMesicni * 12 * roky + jednoraz;
-      const zisk = Math.max(hrubaHodnota - vsechnyVklady, 0);
-      p.hodnota = hrubaHodnota - zisk * 0.15;
+      const dpsRes = vypocitejDPS(vklad, 0, roky, 'jednor', jednoraz > 0 ? jednoraz : 0);
+      if (roky < 10) {
+        // Drsná pravda: Při nedodržení 120 měsíců klient vrací všechny státní příspěvky
+        p.hodnota = dpsRes.celkem - dpsRes.stat;
+      } else {
+        p.hodnota = dpsRes.celkem;
+      }
     } else if (p.isIZP) {
       let z = vklad * 0.97;
       for (let m = 1; m <= roky * 12; m++) {
@@ -2737,11 +2817,9 @@ function calcInvest() {
       // Daňová past penzijka — horizont < 10 let NEBO nedosáhne 60 let
       let penzijkoWarning = "";
       if (p.id === "penzijko" && (vklad > 0 || jednoraz > 0)) {
-        const statPrispevekMes = getStatniPrispevek(vklad);
-        const statCelkem = statPrispevekMes * 12 * roky;
-        const vsechnyVklady = (vklad + statPrispevekMes) * 12 * roky + jednoraz;
-        const ziskPenz = Math.max((calcFV(vklad + statPrispevekMes, sPenzijko, roky) + jednoraz * Math.pow(1 + sPenzijko/100/12, roky*12)) - vsechnyVklady, 0);
-        const ziskDan = ziskPenz * 0.15;
+        const dpsW = vypocitejDPS(vklad, 0, roky, 'jednor', jednoraz > 0 ? jednoraz : 0);
+        const statCelkem = dpsW.stat;
+        const ziskDan = dpsW.danZeZisku;
         const celkZtrata = statCelkem + ziskDan;
         if (roky < 10) {
           penzijkoWarning =
@@ -2792,13 +2870,10 @@ function calcInvest() {
   const datasets = produkty.map(p => {
     let data;
     if (p.id === "penzijko") {
-      const statPrispevek = getStatniPrispevek(vklad);
-      const celkMesicni = vklad + statPrispevek;
       data = labels.map((l, idx) => {
-        const hruby = calcFV(celkMesicni, Math.max(p.sazba, 0), idx) + jednoraz * Math.pow(1 + Math.max(p.sazba, 0) / 100 / 12, idx * 12);
-        const vsechnyVklady = celkMesicni * 12 * idx + jednoraz;
-        const zisk = Math.max(hruby - vsechnyVklady, 0);
-        return Math.round(hruby - zisk * 0.15);
+        if (idx === 0) return Math.round(jednoraz > 0 ? jednoraz : 0);
+        const v = vypocitejDPS(vklad, 0, idx, 'jednor', jednoraz > 0 ? jednoraz : 0);
+        return Math.round(v.celkem);
       });
     } else {
       data = labels.map((l, idx) => Math.round(calcFV(vklad, Math.max(p.sazba, 0), idx) + jednoraz * Math.pow(1 + Math.max(p.sazba, 0) / 100 / 12, idx * 12)));
@@ -3130,35 +3205,46 @@ function calcPenze() {
   const statEfektivni = getStatniPrispevek(vklad);
   const danUspora     = getDanUspora(vklad);
 
-  const tfRes = calcPhases(vklad, zamest, statEfektivni, 1.5, mesicePlne, mesiceUdrz, prevod);
-  const tfDanovyZaklad = Math.max(tfRes.fv - tfRes.klient - tfRes.stat - prevod, 0);
-  const tfDanZisk = tfDpsMode === 'jednor' ? tfDanovyZaklad * 0.15 : 0;
-  const tfCelkem  = tfRes.fv - tfDanZisk;
-  const tfZisk    = Math.max(tfRes.fv - tfRes.klient - tfRes.stat - tfRes.zamest - prevod, 0);
+  const tfRes = calcPhases(vklad, zamest, statEfektivni, 0.6, mesicePlne, mesiceUdrz, prevod);
+  // Čistý zisk = výnos fondu bez jistin (klient, stát, zaměstnavatel, převod)
+  const tfZiskCisty    = Math.max(tfRes.fv - tfRes.klient - tfRes.stat - tfRes.zamest - prevod, 0);
+  // Daň ze zisku (jen z výnosu, bez jistiny zaměstnavatele)
+  const tfDanZeZisku   = tfDpsMode === 'jednor' ? Math.round(tfZiskCisty * 0.15) : 0;
+  // Daň z jistiny zaměstnavatele (samostatně)
+  const tfDanZeZamest  = tfDpsMode === 'jednor' ? Math.round(tfRes.zamest * 0.15) : 0;
+  // Celkem naspořeno = fv − obě daně
+  const tfCelkem  = tfRes.fv - tfDanZeZisku - tfDanZeZamest;
+  const tfZisk    = tfZiskCisty;
   const tfRenta   = calcAnuita(tfCelkem, 1, rentaLet);
 
-  const dpsRes = calcPhases(vklad, zamest, statEfektivni, 5.95, mesicePlne, mesiceUdrz, prevod);
-  const dpsGrossRes = calcPhases(vklad, zamest, statEfektivni, 8, mesicePlne, mesiceUdrz, prevod);
-  // Čistý zisk = výnos fondu bez jistin (klient, stát, zaměstnavatel, převod)
-  const dpsZiskCisty    = Math.max(dpsRes.fv - dpsRes.klient - dpsRes.stat - dpsRes.zamest - prevod, 0);
-  // Daň ze zisku (jen z výnosu, bez jistiny zaměstnavatele)
-  const dpsDanZeZisku   = tfDpsMode === 'jednor' ? Math.round(dpsZiskCisty * 0.15) : 0;
-  // Daň z jistiny zaměstnavatele (samostatně)
-  const dpsDanZeZamest  = tfDpsMode === 'jednor' ? Math.round(dpsRes.zamest * 0.15) : 0;
-  // Celkem naspořeno = fv − obě daně
-  const dpsCelkem  = dpsRes.fv - dpsDanZeZisku - dpsDanZeZamest;
-  const dpsZisk    = dpsZiskCisty;
-  const dpsRenta   = calcAnuita(dpsCelkem, 1, rentaLet);
-  const dpsFeeLoss = Math.max(dpsGrossRes.fv - dpsRes.fv, 0);
+  const dpsVypocet = simulateDPS(vklad, zamest, statEfektivni, mesicePlne, mesiceUdrz, tfDpsMode, prevod);
+  const dpsRes      = calcPhases(vklad, zamest, statEfektivni, 5.95, mesicePlne, mesiceUdrz, prevod); // zachováno pro grafy
+  const dpsGrossRes = calcPhases(vklad, zamest, statEfektivni, 8,    mesicePlne, mesiceUdrz, prevod);
+  const dpsCelkem   = dpsVypocet.celkem;
+  const dpsZisk     = dpsVypocet.ziskCisty;
+  const dpsDanZeZisku  = dpsVypocet.danZeZisku;
+  const dpsDanZeZamest = dpsVypocet.danZeZamest;
+  const dpsRenta    = calcAnuita(dpsCelkem, 1, rentaLet);
+  const dpsFeeLoss  = Math.max(dpsGrossRes.fv - dpsVypocet.fvHruba, 0);
 
   setT("tf_celkem",         fmt(tfCelkem));
   setT("tf_vynos",          fmt(tfZisk));
   setT("tf_renta",          fmt(Math.round(tfRenta)) + "/m");
   if (tfDpsMode === 'jednor') {
-    setT("tf_dan", fmt(tfDanZisk));
+    setT("tf_dan", fmt(tfDanZeZisku));
   } else {
     const tfDanEl = document.getElementById("tf_dan");
     if (tfDanEl) tfDanEl.innerHTML = '<span style="color:#4ADE80">0 Kč ✓</span>';
+  }
+  // Daň 15 % z jistiny zaměstnavatele u TF (jen u jednorázového výběru)
+  const tfDanZamestEl = document.getElementById("tf_dan_zamest");
+  if (tfDanZamestEl) {
+    if (tfDpsMode === 'jednor' && tfRes.zamest > 0) {
+      tfDanZamestEl.style.display = "block";
+      tfDanZamestEl.textContent = "+ 15% daň ze zam. příspěvků: -" + fmt(tfDanZeZamest);
+    } else {
+      tfDanZamestEl.style.display = "none";
+    }
   }
   setT("tf_klient_celkem",  fmt(tfRes.klient));
   setT("tf_zamest_celkem",  fmt(tfRes.zamest));
@@ -3222,7 +3308,7 @@ function calcPenze() {
     const m = y * 12;
     const mP = Math.min(m, mesicePlne);
     const mU = Math.max(0, m - mesicePlne);
-    const tRes = calcPhases(vklad, zamest, statEfektivni, 1.5, mP, mU, prevod);
+    const tRes = calcPhases(vklad, zamest, statEfektivni, 0.6, mP, mU, prevod);
     const tDanZkl = Math.max(tRes.fv - tRes.klient - tRes.stat - prevod, 0);
     tfData.push(Math.round(tRes.fv - (tfDpsMode === 'jednor' ? tDanZkl * 0.15 : 0)));
     const dRes = calcPhases(vklad, zamest, statEfektivni, 5.95, mP, mU, prevod);
@@ -3304,7 +3390,6 @@ function calcDip() {
   const zamest = getSafeNum("d_zamest");
 
   const DIP_SAZBA = getCleanNum("d_sazba_dip") || 7.8;
-  const DPS_SAZBA = getCleanNum("d_sazba_dps") || 5.95;
 
   const starobni  = parseInt(document.getElementById('d_starobni')?.value) || 65;
   const odsporeno = parseInt(document.getElementById('d_odsporeno')?.value) || 0;
@@ -3363,19 +3448,17 @@ function calcDip() {
   let dpsRenta = 0, dpsCelkem = 0, dpsDanZisk = 0;
   let dpsRes = null;
   if (dpsVkl > 0 || dpsZam > 0) {
-    dpsRes = calcPhases(dpsVkl, dpsZam, statDPSEfektivni, DPS_SAZBA, mesicePlne, mesiceUdrzDPS, 0);
-    const dpsGrossRes = calcPhases(dpsVkl, dpsZam, statDPSEfektivni, 8, mesicePlne, mesiceUdrzDPS, 0);
-    // Čistý zisk = výnos fondu bez jistin
-    const dpsZiskCisty   = Math.max(dpsRes.fv - dpsRes.klient - dpsRes.zamest - dpsRes.stat, 0);
-    // Daň ze zisku (jen výnos)
-    const dpsDanZeZisku  = dpsMode === 'jednor' ? Math.round(dpsZiskCisty * 0.15) : 0;
-    // Daň z jistiny zaměstnavatele
-    const dpsDanZeZamest = dpsMode === 'jednor' ? Math.round(dpsRes.zamest * 0.15) : 0;
+    dpsRes = calcPhases(dpsVkl, dpsZam, statDPSEfektivni, 5.95, mesicePlne, mesiceUdrzDPS, 0); // zachováno pro grafy
+    const dpsGrossRes  = calcPhases(dpsVkl, dpsZam, statDPSEfektivni, 8, mesicePlne, mesiceUdrzDPS, 0);
+    const dpsVypocet   = simulateDPS(dpsVkl, dpsZam, statDPSEfektivni, mesicePlne, mesiceUdrzDPS, dpsMode, 0);
+    const dpsZiskCisty   = dpsVypocet.ziskCisty;
+    const dpsDanZeZisku  = dpsVypocet.danZeZisku;
+    const dpsDanZeZamest = dpsVypocet.danZeZamest;
     dpsDanZisk = dpsDanZeZisku; // zachování kompatibility pro rozdilový výpočet níže
-    dpsCelkem  = dpsRes.fv - dpsDanZeZisku - dpsDanZeZamest;
+    dpsCelkem  = dpsVypocet.celkem;
     const dpsZisk = dpsZiskCisty;
     dpsRenta = calcAnuita(dpsCelkem, 1, rentaLet);
-    const dpsFeeLoss = Math.max(dpsGrossRes.fv - dpsRes.fv, 0);
+    const dpsFeeLoss = Math.max(dpsGrossRes.fv - dpsVypocet.fvHruba, 0);
     setT("d_dps_celkem",        fmt(dpsCelkem));
     setT("d_dps_vynos",         fmt(Math.max(dpsZisk - dpsDanZeZisku, 0)));
     setT("d_dps_renta",         fmt(dpsRenta) + "/m");
@@ -3448,10 +3531,8 @@ function calcDip() {
     const mUDPS = Math.max(0, Math.min(m - mesicePlne, mesiceUdrzDPS));
     const mUDIP = Math.max(0, Math.min(m - mesicePlne, mesiceUdrzDIP));
     if (dpsVkl > 0 || dpsZam > 0) {
-      const dRes = calcPhases(dpsVkl, dpsZam, statDPSEfektivni, DPS_SAZBA, mP, mUDPS, 0);
-      const dDanZkl = Math.max(dRes.fv - dRes.klient - dRes.stat, 0);
-      const dan = dpsMode === 'jednor' ? dDanZkl * 0.15 : 0;
-      dpsD.push(Math.round(dRes.fv - dan));
+      const dSim = simulateDPS(dpsVkl, dpsZam, statDPSEfektivni, mP, mUDPS, dpsMode, 0);
+      dpsD.push(Math.round(dSim.celkem));
     } else { dpsD.push(0); }
     if (dipVkl > 0 || zamest > 0) {
       const diRes = calcPhases(dipVkl, zamest, 0, DIP_SAZBA, mP, mUDIP, 0);
