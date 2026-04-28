@@ -753,7 +753,10 @@ input[type="range"]::-webkit-slider-runnable-track {
             style="width:100%;accent-color:var(--accent);cursor:pointer;margin-bottom:4px">
         </div>
         <div class="field">
-          <label>Doba spoření — <span id="i_roky_label">20</span> let</label>
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:6px">
+            <label style="margin:0">Doba spoření — <span id="i_roky_label">20 let</span></label>
+            <input type="number" id="i_rok_srovnani" placeholder="Můj ročník" oninput="syncIRoky(document.getElementById('i_roky').value)" style="width:75px;padding:3px 6px;font-size:10px;font-weight:600;text-align:center;border-radius:6px;border:1px dashed var(--border2);background:transparent;color:var(--text3);transition:all 0.2s" title="Zadejte ročník pro výpočet vašeho věku na konci spoření">
+          </div>
           <div style="display:flex;align-items:center;gap:10px">
             <button onclick="syncIRoky(parseInt(document.getElementById('i_roky').value)-1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
             <input type="range" id="i_roky_slider" min="1" max="50" value="20" oninput="syncIRoky(this.value)" style="flex:1;accent-color:var(--accent);height:8px">
@@ -869,7 +872,10 @@ input[type="range"]::-webkit-slider-runnable-track {
             <input class="fmt-input" type="text" inputmode="numeric" id="ci_jednoraz" value="" placeholder="např. 100 000" oninput="formatLive(this); calcCil()">
           </div>
           <div class="field">
-            <label>Doba investice — <span id="ci_roky_label">20</span> let</label>
+            <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:6px">
+              <label style="margin:0">Doba investice — <span id="ci_roky_label">20 let</span></label>
+              <input type="number" id="ci_rok_cil" placeholder="Můj ročník" oninput="syncCiRoky(document.getElementById('ci_roky').value)" style="width:75px;padding:3px 6px;font-size:10px;font-weight:600;text-align:center;border-radius:6px;border:1px dashed var(--border2);background:transparent;color:var(--text3);transition:all 0.2s" title="Zadejte ročník pro výpočet vašeho věku na konci spoření">
+            </div>
             <div style="display:flex;align-items:center;gap:10px">
               <button onclick="syncCiRoky(parseInt(document.getElementById('ci_roky').value)-1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
               <input type="range" id="ci_roky_slider" min="1" max="50" value="20" oninput="syncCiRoky(this.value)" style="flex:1;accent-color:var(--accent)">
@@ -2107,6 +2113,9 @@ document.addEventListener("DOMContentLoaded", function() {
       el.addEventListener('input', function() { formatLive(this); });
     }
   });
+  // Inicializace labelů s cílovým rokem pro výchozích 20 let
+  syncIRoky(20);
+  syncCiRoky(20);
 });
 
 function fmt(n) {
@@ -2703,7 +2712,31 @@ function syncIRoky(val) {
   const v = Math.min(Math.max(parseInt(val) || 1, 1), 50);
   document.getElementById("i_roky").value = v;
   document.getElementById("i_roky_slider").value = v;
-  document.getElementById("i_roky_label").textContent = v;
+
+  const cilovyRok = new Date().getFullYear() + v;
+  let text = v + " let (do roku " + cilovyRok + ")";
+
+  const rokInput = document.getElementById("i_rok_srovnani");
+  if (rokInput) {
+    if (rokInput.value.length === 4) {
+      const nar = parseInt(rokInput.value);
+      const dnesRok = new Date().getFullYear();
+      if (nar > 1900 && nar <= dnesRok) {
+        const vekTed = dnesRok - nar;
+        const cilovyVek = vekTed + v;
+        text = v + " let (do " + cilovyRok + ") · V cíli vám bude " + cilovyVek + " let";
+        rokInput.style.border = "1px solid var(--accent)";
+        rokInput.style.color = "var(--text)";
+        rokInput.style.background = "var(--surface2)";
+      }
+    } else {
+      rokInput.style.border = "1px dashed var(--border2)";
+      rokInput.style.color = "var(--text3)";
+      rokInput.style.background = "transparent";
+    }
+  }
+
+  document.getElementById("i_roky_label").textContent = text;
   calcInvest();
 }
 
@@ -3664,7 +3697,31 @@ function syncCiRoky(val) {
   const v = Math.min(Math.max(parseInt(val) || 1, 1), 50);
   document.getElementById("ci_roky").value = v;
   document.getElementById("ci_roky_slider").value = v;
-  document.getElementById("ci_roky_label").textContent = v;
+
+  const cilovyRok = new Date().getFullYear() + v;
+  let text = v + " let (do roku " + cilovyRok + ")";
+
+  const rokInput = document.getElementById("ci_rok_cil");
+  if (rokInput) {
+    if (rokInput.value.length === 4) {
+      const nar = parseInt(rokInput.value);
+      const dnesRok = new Date().getFullYear();
+      if (nar > 1900 && nar <= dnesRok) {
+        const vekTed = dnesRok - nar;
+        const cilovyVek = vekTed + v;
+        text = v + " let (do " + cilovyRok + ") · V cíli vám bude " + cilovyVek + " let";
+        rokInput.style.border = "1px solid var(--accent)";
+        rokInput.style.color = "var(--text)";
+        rokInput.style.background = "var(--surface2)";
+      }
+    } else {
+      rokInput.style.border = "1px dashed var(--border2)";
+      rokInput.style.color = "var(--text3)";
+      rokInput.style.background = "transparent";
+    }
+  }
+
+  document.getElementById("ci_roky_label").textContent = text;
   calcCil();
 }
 
