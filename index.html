@@ -743,6 +743,7 @@ input[type="range"]::-webkit-slider-runnable-track {
           <input type="range" id="i_vklad_slider" min="0" max="15000" value="0" step="100"
             oninput="syncIVklad(this.value,true)"
             style="width:100%;accent-color:var(--accent);cursor:pointer;margin-bottom:4px">
+          <div id="i_vklad_denne" style="font-size:11px;color:var(--text3);text-align:right;margin-top:-2px;height:14px;transition:color 0.2s"></div>
         </div>
         <div class="field">
           <label>Jednorázový vklad (Kč)</label>
@@ -2751,6 +2752,15 @@ function syncIRoky(val) {
 function calcInvest() {
   const prev = document.getElementById("i_vklad_prev");
   const vklad = getCleanNum("i_vklad");
+  const elDenne = document.getElementById("i_vklad_denne");
+  if (elDenne) {
+    if (vklad > 0) {
+      const denne = Math.round(vklad / 30);
+      elDenne.innerHTML = "= cca <strong style='color:var(--text)'>" + denne + " Kč</strong> denně";
+    } else {
+      elDenne.textContent = "";
+    }
+  }
   const jednoraz = getCleanNum("i_jednoraz");
   const roky = Math.round(getCleanNum("i_roky")) || 1;
   const inflace = getCleanNum("i_inflace");
@@ -2858,7 +2868,7 @@ function calcInvest() {
     {id:"stavebko", name:"Stavební spoření", desc:"Garantovaný výnos + státní podpora (nedoporučujeme jednorázový vklad bez pravidelné úložky)", sazba:sStavebko},
     {id:"sporici", name:"Spořicí účet", desc:"Bankovní spořicí produkty", sazba:sSporici},
     {id:"izp", name:"Životní pojištění", desc:"Poplatkově nevýhodné — vysoká provize zprostředkovatele", sazba:1.0, isIZP:true},
-    {id:"bezny", name:"Běžný účet (inflace)", desc:"Peníze ztrácejí reálnou hodnotu", sazba:sBezny - inflace},
+    {id:"bezny", name:"Běžný účet (inflace)", desc:"⚠️ Garantovaná ztráta kupní síly", sazba:sBezny - inflace},
   ];
   produkty.forEach(p => {
     const fvJednoraz = jednoraz * Math.pow(1 + Math.max(p.sazba, 0) / 100 / 12, roky * 12);
@@ -2906,7 +2916,7 @@ function calcInvest() {
         stavebko: { liq: "⚠️ Min. 6 let vázací lhůta", fee: "" },
         sporici:  { liq: "✅ Plně likvidní", fee: "" },
         izp:      { liq: "🔒 Vázáno pojistnou smlouvou", fee: "Vysoké poplatky zprostředkovatele" },
-        bezny:    { liq: "✅ Plně likvidní", fee: "" },
+        bezny:    { liq: "⚠️ Garantovaná ztráta (požírá inflace)", fee: "" },
       };
       const info = infoMap[p.id] || { liq: "", fee: "" };
 
@@ -2939,11 +2949,17 @@ function calcInvest() {
         ? "<div style='font-size:10px;color:" + (p.id==="penzijko" ? "var(--red)" : "var(--text3)") + ";margin-top:1px'>" + info.fee + "</div>"
         : "";
 
+      let freedomHtml = "";
+      if (isEtf && p.hodnota > 0) {
+        const renta10 = Math.round(p.hodnota / (10 * 12));
+        freedomHtml = "<div style='font-size:11px;color:var(--bg);margin-top:6px;font-weight:600;background:var(--accent);padding:4px 8px;border-radius:6px;display:inline-block'>🏝️ Renta cca " + fmt(renta10) + " / měs. (na 10 let)</div>";
+      }
+
       div.innerHTML =
         "<div style='display:flex;flex-direction:column;flex:1;min-width:0'>" +
           etfLabel +
           "<div class='product-name' style='white-space:nowrap'>" + rank + p.name + "</div>" +
-          liqHtml + feeHtml +
+          liqHtml + feeHtml + freedomHtml +
         "</div>" +
         "<div style='text-align:right;flex-shrink:0;margin-left:8px'>" +
           "<div class='product-amount " + (isEtf ? "pos" : p.isNeg ? "neg" : "") + "'>" + fmt(p.hodnota) + "</div>" +
@@ -2984,15 +3000,35 @@ function calcInvest() {
       tension: 0.4,
     };
   });
+
+  if (roky > 3 && (vklad > 0 || jednoraz > 0)) {
+    const delayedData = labels.map((l, idx) => {
+      const activeY = Math.max(0, idx - 3);
+      if (activeY === 0) return 0;
+      return Math.round(calcFV(vklad, sEtf, activeY) + jednoraz * Math.pow(1 + sEtf/100/12, activeY * 12));
+    });
+    datasets.push({
+      label: "ETF (zpoždění 3 roky)",
+      data: delayedData,
+      borderColor: isDark ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.35)",
+      backgroundColor: "transparent",
+      borderWidth: 2,
+      borderDash: [5, 5],
+      pointRadius: 0,
+      tension: 0.4
+    });
+  }
+
   // Custom legend
   const legendEl = document.getElementById("invest-chart-legend");
   if (legendEl) {
     legendEl.innerHTML = "";
     datasets.forEach(ds => {
       const isEtf = ds.label === "ETF / Akciový index";
+      const isDelayed = ds.label === "ETF (zpoždění 3 roky)";
       const row = document.createElement("div");
       row.style.cssText = "display:flex;align-items:center;gap:6px;font-size:11px;color:" + textColor;
-      row.innerHTML = "<div style='width:24px;height:" + (isEtf ? "3px" : "2px") + ";background:" + ds.borderColor + ";border-radius:2px;flex-shrink:0'></div>" +
+      row.innerHTML = "<div style='width:24px;height:" + (isEtf ? "3px" : "2px") + ";background:" + (isDelayed ? "transparent" : ds.borderColor) + (isDelayed ? ";border-top:2px dashed " + ds.borderColor : "") + ";border-radius:2px;flex-shrink:0'></div>" +
         "<span style='font-weight:" + (isEtf ? "600" : "400") + ";color:" + (isEtf ? ds.borderColor : textColor) + "'>" + ds.label + "</span>";
       legendEl.appendChild(row);
     });
