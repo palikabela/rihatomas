@@ -455,27 +455,28 @@ input[type="range"]::-webkit-slider-runnable-track {
 .retirement-toggle.active{background:var(--accent)!important;color:var(--bg)!important;border-color:var(--accent)!important}
 .premium-total-box{
   background:var(--surface2);
-  padding:16px 20px;
-  border-radius:12px;
+  padding:12px 14px;
+  border-radius:10px;
   border:1px solid var(--border);
   box-shadow:0 4px 15px rgba(0,0,0,0.05);
-  margin:4px 0 8px 0;
+  margin:0 0 8px 0;
 }
 .premium-total-label{
-  font-size:11px;
+  font-size:10px;
   color:var(--text);
   font-weight:800;
   text-transform:uppercase;
   letter-spacing:0.05em;
-  margin-bottom:4px;
+  margin-bottom:2px;
 }
 .premium-total-value{
   font-family:'Inter',sans-serif;
-  font-size:26px;
+  font-size:20px;
   font-weight:800;
   color:var(--text);
   font-variant-numeric:tabular-nums;
-  letter-spacing:-0.02em;
+  letter-spacing:-0.03em;
+  white-space:nowrap;
 }
 </style>
 </head>
@@ -757,9 +758,9 @@ input[type="range"]::-webkit-slider-runnable-track {
             style="width:100%;accent-color:var(--accent);cursor:pointer;margin-bottom:4px">
         </div>
         <div class="field">
-          <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:6px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px">
             <label style="margin:0">Doba spoření — <span id="i_roky_label">20 let</span></label>
-            <input type="number" id="i_rok_srovnani" placeholder="Můj ročník" oninput="syncIRoky(document.getElementById('i_roky').value)" style="width:75px;padding:3px 6px;font-size:10px;font-weight:600;text-align:center;border-radius:6px;border:1px dashed var(--border2);background:transparent;color:var(--text3);transition:all 0.2s" title="Zadejte ročník pro výpočet vašeho věku na konci spoření">
+            <input type="number" id="i_rok_srovnani" placeholder="1989" oninput="syncIRoky(document.getElementById('i_roky').value)" style="width:75px;padding:3px 6px;font-size:10px;font-weight:600;text-align:center;border-radius:6px;border:1px dashed var(--border2);background:transparent;color:var(--text3);transition:all 0.2s" title="Zadejte ročník pro výpočet vašeho věku na konci spoření">
           </div>
           <div style="display:flex;align-items:center;gap:10px">
             <button onclick="syncIRoky(parseInt(document.getElementById('i_roky').value)-1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
@@ -872,9 +873,9 @@ input[type="range"]::-webkit-slider-runnable-track {
             <input class="fmt-input" type="text" inputmode="numeric" id="ci_jednoraz" value="" placeholder="např. 100 000" oninput="formatLive(this); calcCil()">
           </div>
           <div class="field">
-            <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:6px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px">
               <label style="margin:0">Doba investice — <span id="ci_roky_label">20 let</span></label>
-              <input type="number" id="ci_rok_cil" placeholder="Můj ročník" oninput="syncCiRoky(document.getElementById('ci_roky').value)" style="width:75px;padding:3px 6px;font-size:10px;font-weight:600;text-align:center;border-radius:6px;border:1px dashed var(--border2);background:transparent;color:var(--text3);transition:all 0.2s" title="Zadejte ročník pro výpočet vašeho věku na konci spoření">
+              <input type="number" id="ci_rok_cil" placeholder="1989" oninput="syncCiRoky(document.getElementById('ci_roky').value)" style="width:75px;padding:3px 6px;font-size:10px;font-weight:600;text-align:center;border-radius:6px;border:1px dashed var(--border2);background:transparent;color:var(--text3);transition:all 0.2s" title="Zadejte ročník pro výpočet vašeho věku na konci spoření">
             </div>
             <div style="display:flex;align-items:center;gap:10px">
               <button onclick="syncCiRoky(parseInt(document.getElementById('ci_roky').value)-1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
@@ -2733,7 +2734,7 @@ function syncIRoky(val) {
       if (nar > 1900 && nar <= dnesRok) {
         const vekTed = dnesRok - nar;
         const cilovyVek = vekTed + v;
-        text = "<span style='color:var(--text);font-weight:700'>" + v + " let</span> (do " + cilovyRok + ") · V cíli: <span style='color:var(--text);font-weight:700'>" + cilovyVek + " let</span>";
+        text = "<span style='color:var(--text);font-weight:700'>" + v + "&nbsp;let</span> (do " + cilovyRok + ") <span style='white-space:nowrap'>· V&nbsp;cíli: <span style='color:var(--text);font-weight:700'>" + cilovyVek + "&nbsp;let</span></span>";
         rokInput.style.border = "1px solid var(--accent)";
         rokInput.style.color = "var(--text)";
         rokInput.style.background = "var(--surface2)";
@@ -3763,7 +3764,7 @@ function syncCiRoky(val) {
       if (nar > 1900 && nar <= dnesRok) {
         const vekTed = dnesRok - nar;
         const cilovyVek = vekTed + v;
-        text = "<span style='color:var(--text);font-weight:700'>" + v + " let</span> (do " + cilovyRok + ") · V cíli: <span style='color:var(--text);font-weight:700'>" + cilovyVek + " let</span>";
+        text = "<span style='color:var(--text);font-weight:700'>" + v + "&nbsp;let</span> (do " + cilovyRok + ") <span style='white-space:nowrap'>· V&nbsp;cíli: <span style='color:var(--text);font-weight:700'>" + cilovyVek + "&nbsp;let</span></span>";
         rokInput.style.border = "1px solid var(--accent)";
         rokInput.style.color = "var(--text)";
         rokInput.style.background = "var(--surface2)";
