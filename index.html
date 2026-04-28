@@ -454,25 +454,28 @@ input[type="range"]::-webkit-slider-runnable-track {
 .retirement-toggle{transition:background 0.2s,color 0.2s,border-color 0.2s}
 .retirement-toggle.active{background:var(--accent)!important;color:var(--bg)!important;border-color:var(--accent)!important}
 .premium-total-box{
-  background:rgba(255,255,255,0.05);
-  padding:12px;
-  border-radius:10px;
-  border:1px solid rgba(255,255,255,0.1);
-  box-shadow:0 4px 20px rgba(0,0,0,0.3);
-  margin-top:10px;
+  background:var(--surface2);
+  padding:16px 20px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  box-shadow:0 4px 15px rgba(0,0,0,0.05);
+  margin:4px 0 8px 0;
 }
 .premium-total-label{
   font-size:11px;
-  color:#000;
-  font-weight:700;
+  color:var(--text);
+  font-weight:800;
   text-transform:uppercase;
-  letter-spacing:0.3px;
+  letter-spacing:0.05em;
+  margin-bottom:4px;
 }
 .premium-total-value{
-  font-size:18px;
+  font-family:'Inter',sans-serif;
+  font-size:26px;
   font-weight:800;
   color:var(--text);
   font-variant-numeric:tabular-nums;
+  letter-spacing:-0.02em;
 }
 </style>
 </head>
@@ -981,12 +984,12 @@ input[type="range"]::-webkit-slider-runnable-track {
 
     <!-- SUB-TABS -->
     <div style="display:flex;gap:6px;padding:0 0 1.25rem 0;border-bottom:1px solid var(--border);margin-bottom:1.25rem">
-      <button class="invest-tab active" id="ptab-tfvsdps"   onclick="showPenzeTab('tfvsdps')">TF vs DPS</button>
-      <button class="invest-tab"        id="ptab-dpsvssdip" onclick="showPenzeTab('dpsvssdip')">DPS vs DIP</button>
+      <button class="invest-tab active" id="ptab-dpsvssdip" onclick="showPenzeTab('dpsvssdip')">DPS vs DIP</button>
+      <button class="invest-tab"        id="ptab-tfvsdps"   onclick="showPenzeTab('tfvsdps')">TF vs DPS</button>
     </div>
 
     <!-- ═══ TAB 1: TF vs DPS (původní obsah) ═══ -->
-    <div id="penze-tfvsdps">
+    <div id="penze-tfvsdps" style="display:none">
     <div class="grid2">
       <!-- LEVÁ KARTA: Parametry -->
       <div class="card">
@@ -1340,7 +1343,7 @@ input[type="range"]::-webkit-slider-runnable-track {
     </div> <!-- /penze-tfvsdps -->
 
     <!-- ═══ TAB 2: DPS vs DIP ═══ -->
-    <div id="penze-dpsvssdip" style="display:none">
+    <div id="penze-dpsvssdip">
 
       <!-- ŘÁDEK 1: Slidery vlevo + živé srovnání vpravo -->
       <div class="grid2" style="margin-bottom:14px">
@@ -1599,10 +1602,11 @@ input[type="range"]::-webkit-slider-runnable-track {
             <div class="field">
               <label>Vlastní zdroje (Kč)</label>
               <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-                <button onclick="hAdj('vlastni',-10000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+                <button onclick="hAdj('vlastni',-50000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
                 <input type="text" inputmode="numeric" id="h_vlastni" placeholder="vlastní zdroje Kč" class="fmt-input" oninput="formatLive(this); hVlastniIn(this)" onblur="formatInputValue(this);hCalc()" style="flex:1;text-align:center">
-                <button onclick="hAdj('vlastni',10000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+                <button onclick="hAdj('vlastni',50000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
               </div>
+              <input type="range" id="h_vlastni_sl" min="0" max="5000000" value="0" step="50000" oninput="hSliderVlastni(this.value)" style="width:100%;accent-color:var(--accent);cursor:pointer;margin-bottom:8px">
               <div id="h_vlastni_warn" style="font-size:12px;min-height:16px;margin-bottom:4px"></div>
               <div id="h_rovnice_vypoctu" style="font-size:13px;color:var(--text2);background:var(--surface2);padding:8px 12px;border-radius:6px;border:1px solid var(--border);display:none"></div>
             </div>
@@ -1654,31 +1658,38 @@ input[type="range"]::-webkit-slider-runnable-track {
       <div class="card">
         <div class="card-label">Výsledek výpočtu</div>
         <div style="background:var(--surface2);border-radius:10px;padding:1.25rem;margin-bottom:1.5rem;border:1px solid var(--border)">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:center">
+            <div class="premium-total-box" style="margin:0;padding:12px 16px">
+              <div class="premium-total-label" style="font-size:10px">MĚSÍČNÍ SPLÁTKA</div>
+              <div class="premium-total-value" id="h_res_splatka" style="font-size:20px;white-space:nowrap;letter-spacing:-0.03em">—</div>
+            </div>
             <div><div style="font-size:11px;color:var(--text3)">Výše hypotéky</div><div style="font-size:17px;font-weight:700;color:var(--green)" id="h_res_hypo">—</div></div>
+            
             <div><div style="font-size:11px;color:var(--text3)">Vlastní zdroje / Zástava</div><div style="font-size:17px;font-weight:700;color:var(--text)" id="h_res_vlastni">—</div></div>
-            <div style="grid-column:1/-1;height:1px;background:var(--border);margin:4px 0"></div>
-            <div><div style="font-size:11px;color:var(--text3)">Měsíční splátka</div><div style="font-size:17px;font-weight:700;color:var(--green)" id="h_res_splatka">—</div></div>
-            <div><div style="font-size:11px;color:var(--text3)">Celkem zaplatíte</div><div style="font-size:17px;font-weight:700;color:var(--text)" id="h_res_celkem">—</div></div>
-            <div style="grid-column:1/-1;height:1px;background:var(--border);margin:4px 0"></div>
-            <div><div style="font-size:11px;color:var(--text3)">Přeplatek (úroky)</div><div style="font-size:17px;font-weight:700;color:var(--red)" id="h_res_uroky">—</div></div>
             <div><div style="font-size:11px;color:var(--text3)">Max. splatnost dle věku</div><div style="font-size:17px;font-weight:700;color:var(--text)" id="h_res_maxroky">—</div></div>
+            
+            <div style="grid-column:1/-1;height:1px;background:var(--border);margin:4px 0"></div>
+            
+            <div><div style="font-size:11px;color:var(--text3)">Celkem zaplatíte</div><div style="font-size:17px;font-weight:700;color:var(--text)" id="h_res_celkem">—</div></div>
+            <div><div style="font-size:11px;color:var(--text3)">Přeplatek (úroky)</div><div style="font-size:17px;font-weight:700;color:var(--red)" id="h_res_uroky">—</div></div>
           </div>
         </div>
 
         <div id="h_ltv_tbl" style="margin-top:1.25rem;display:none">
           <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:.5rem">Přehled LTV variant</div>
-          <table style="width:100%;border-collapse:collapse;font-size:12px">
-            <thead>
-              <tr style="border-bottom:1px solid var(--border)">
-                <th style="text-align:left;padding:6px 8px;color:var(--text3);font-weight:500">Vlastní zdroje</th>
-                <th style="text-align:right;padding:6px 8px;color:var(--text3);font-weight:500">Částka</th>
-                <th style="text-align:right;padding:6px 8px;color:var(--text3);font-weight:500">Hypotéka</th>
-                <th style="text-align:right;padding:6px 8px;color:var(--text3);font-weight:500">Splátka/měs.</th>
-              </tr>
-            </thead>
-            <tbody id="h_ltv_tbody"></tbody>
-          </table>
+          <div style="overflow-x:auto">
+            <table style="width:100%;min-width:400px;border-collapse:collapse;font-size:12px;table-layout:fixed">
+              <thead>
+                <tr style="border-bottom:1px solid var(--border)">
+                  <th style="width:28%;text-align:left;padding:6px 8px;color:var(--text3);font-weight:500">Vlastní zdroje</th>
+                  <th style="width:24%;text-align:right;padding:6px 8px;color:var(--text3);font-weight:500">Částka</th>
+                  <th style="width:24%;text-align:right;padding:6px 8px;color:var(--text3);font-weight:500">Hypotéka</th>
+                  <th style="width:24%;text-align:right;padding:6px 8px;color:var(--text3);font-weight:500">Splátka/měs.</th>
+                </tr>
+              </thead>
+              <tbody id="h_ltv_tbody"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -1813,7 +1824,7 @@ const pageContent = {
   refi: { tag: "Optimalizace úvěru", title: "Spočítejte si,<br>kolik <em>přeplácíte</em>", desc: "Zjistěte, kolik můžete ušetřit refinancováním na nižší úrok u konkurenčních bank." },
   invest: { tag: "Investiční strategie", title: "Zjistěte, kde<br>lépe <em>investovat</em>", desc: "Porovnejte výnosy ETF, DIPu, penzijka, stavebního spoření a dopady inflace." },
   dluhopis: { tag: "Dluhopisy", title: "Kalkulačka<br><em>dluhopisů</em>", desc: "Výpočet kvartálního a celkového výnosu firemních dluhopisů EAG před a po zdanění." },
-  penze: { tag: "Penzijní spoření", title: "Srovnání<br><em>penzijních fondů</em>", desc: "Porovnejte TF a DPS, zjistěte daňové výhody a kolik získáte převodem do účastnického fondu." },
+  penze: { tag: "Penzijní spoření", title: "Srovnání<br><em>penzijních fondů</em>", desc: "Porovnejte výnosy DIPu a penzijka, zjistěte daňové výhody a poplatkovou strukturu." },
   hypo: { tag: "Hypotéka", title: "Kalkulačka<br><em>hypotéky</em>", desc: "LTV, vlastní zdroje a maximální splatnost dle věku." },
   rc: { tag: "Nástroje", title: "Užitečné<br><em>kalkulačky</em>", desc: "Pomocné nástroje pro finanční poradce a jejich klienty." }
 };
@@ -2565,6 +2576,7 @@ function showTab(id) {
     if (desc) desc.textContent = pc.desc;
   }
   if (id === "invest") calcInvest();
+  if (id === "penze") showPenzeTab('dpsvssdip');
   if (id === "hypo") renderHypoSazby();
 }
 
@@ -3022,6 +3034,7 @@ function calcInvest() {
 // PENZE
 let penzeChart = null;
 let penzeKolacChartInstance = null;
+let dipChart = null;
 
 function getStatniPrispevek(mesicni) {
   if (mesicni < 500) return 0;
@@ -3623,7 +3636,7 @@ function calcDip() {
       dipD.push(Math.round(diRes.fv));
     } else { dipD.push(0); }
   }
-  if (typeof dipChart !== "undefined" && dipChart) { dipChart.destroy(); dipChart = null; }
+  if (dipChart) { dipChart.destroy(); }
   const ctxD = document.getElementById("dipChart")?.getContext("2d");
   if (ctxD) {
     dipChart = new Chart(ctxD, {
@@ -4044,7 +4057,17 @@ function hSliderCena(val) {
   hCalc();
 }
 
-function hVlastniIn(el) { hCalc(); }
+function hVlastniIn(el) {
+  const v = parseInt(el.value.replace(/[^0-9]/g,''))||0;
+  const sl = document.getElementById('h_vlastni_sl');
+  if (sl) sl.value = Math.min(v, 5000000);
+  hCalc();
+}
+function hSliderVlastni(val) {
+  const v = parseInt(val)||0;
+  setMoneyInputValue('h_vlastni', v);
+  hCalc();
+}
 function hZastavaIn(el) {
   const v = parseInt(el.value.replace(/[^0-9]/g,''))||0;
   const sl = document.getElementById('h_cena_sl');
@@ -4094,6 +4117,8 @@ function hAdj(field, delta) {
     const cur = hGetN('h_vlastni');
     const v = Math.max(0, cur+delta);
     setMoneyInputValue('h_vlastni', v);
+    const sl = document.getElementById('h_vlastni_sl');
+    if (sl) sl.value = Math.min(v, 5000000);
   } else if (field === 'zastava') {
     const cur = hGetN('h_zastava');
     const v = Math.max(0, cur+delta);
@@ -4223,16 +4248,50 @@ function hCalc() {
   if (tbl && tbody) {
     tbl.style.display = 'block';
     tbody.innerHTML = '';
-    [10,15,20,25].filter(p => p >= minPct).forEach(p => {
-      const vl = Math.round(cena * p / 100);
-      const hp = cena - vl;
+    // Základní varianty jako objekty
+    let rows = [10, 15, 20, 30, 40, 50, 60].map(p => ({
+      pct: p,
+      exactPct: p,
+      vl: Math.round(cena * p / 100),
+      isCustom: false
+    }));
+    // Dynamické přidání přesného vstupu od klienta
+    if (hMode === 'hotovost' && vlastni > 0 && cena > 0) {
+      const exactPct = (vlastni / cena) * 100;
+      if (exactPct > 0 && exactPct < 100) {
+        // Zkontrolujeme, zda se nekryje s nějakou základní hladinou (tolerance 0.1)
+        const existing = rows.find(r => Math.abs(r.pct - exactPct) < 0.1);
+        if (existing) {
+          existing.isCustom = true;
+          existing.vl = vlastni; // použijeme naprosto přesnou zadanou částku
+          existing.exactPct = exactPct;
+        } else {
+          rows.push({
+            pct: exactPct,
+            exactPct: exactPct,
+            vl: vlastni,
+            isCustom: true
+          });
+        }
+      }
+    }
+    // Seřadit vzestupně
+    rows.sort((a, b) => a.pct - b.pct);
+    // Vykreslení řádků (vlastní zadání se propíše vždy, i když nesplňuje minPct)
+    rows.filter(r => r.pct >= minPct - 0.1 || r.isCustom).forEach(r => {
+      const hp = Math.max(cena - r.vl, 0);
       const sp = monthlyPayment(hp, sazba, mes);
-      const isActive = hMode==='hotovost' && Math.abs(vlastni - vl) < 5000;
+      const isActive = r.isCustom;
+      const formatPct = Number.isInteger(r.exactPct) ? r.exactPct : parseFloat(r.exactPct.toFixed(1));
+      const formatLTV = Number.isInteger(100 - r.exactPct) ? (100 - r.exactPct) : parseFloat((100 - r.exactPct).toFixed(1));
+      const isRed = r.exactPct < minPct;
+      const rowColor = isActive ? 'var(--accent)' : (isRed ? 'var(--red)' : 'var(--text2)');
+      const bg = isActive ? ';background:var(--accent-dim)' : '';
       const tr = document.createElement('tr');
-      tr.style.cssText = 'border-bottom:1px solid var(--border)' + (isActive?';background:var(--accent-dim)':'');
+      tr.style.cssText = 'border-bottom:1px solid var(--border)' + bg;
       tr.innerHTML =
-        "<td style='padding:6px 8px;font-weight:"+(isActive?'600':'400')+";color:"+(isActive?'var(--accent)':'var(--text2)')+";white-space:nowrap'>"+p+" % <span style='font-size:11px;color:var(--text3)'>(LTV "+(100-p)+" %)</span></td>"+
-        "<td style='text-align:right;padding:6px 8px;font-variant-numeric:tabular-nums;white-space:nowrap'>"+fmt(vl)+"</td>"+
+        "<td style='padding:6px 8px;font-weight:"+(isActive?'600':'400')+";color:"+rowColor+";white-space:nowrap'>"+formatPct.toString().replace('.',',')+" % <span style='font-size:11px;color:var(--text3)'>(LTV "+formatLTV.toString().replace('.',',')+" %)</span></td>"+
+        "<td style='text-align:right;padding:6px 8px;font-variant-numeric:tabular-nums;white-space:nowrap'>"+fmt(r.vl)+"</td>"+
         "<td style='text-align:right;padding:6px 8px;font-variant-numeric:tabular-nums;color:var(--green);white-space:nowrap'>"+fmt(hp)+"</td>"+
         "<td style='text-align:right;padding:6px 8px;font-variant-numeric:tabular-nums;white-space:nowrap'>"+fmt(sp)+"/m</td>";
       tbody.appendChild(tr);
