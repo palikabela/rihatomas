@@ -611,11 +611,11 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div class="field">
           <label>Zbývající dluh (Kč)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <button onclick="syncRDluh(getRaw('r_dluh')-5000,false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <button onclick="syncRDluh(getRaw('r_dluh')-50000,false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
             <input type="text" inputmode="numeric" id="r_dluh" value="" placeholder="např. 2 500 000" class="fmt-input" oninput="formatLive(this); syncRDluh(this.value.replace(/[^\d]/g,''),false)" onblur="formatInputValue(this)" style="flex:1;text-align:center">
-            <button onclick="syncRDluh(getRaw('r_dluh')+5000,false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+            <button onclick="syncRDluh(getRaw('r_dluh')+50000,false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
-          <input type="range" id="r_dluh_slider" min="0" max="100000000" value="0" step="5000"
+          <input type="range" id="r_dluh_slider" min="0" max="50000000" value="0" step="100000"
             oninput="syncRDluh(this.value,true)"
             style="width:100%;accent-color:var(--accent);cursor:pointer;margin-top:8px">
         </div>
@@ -2147,7 +2147,7 @@ function syncRDluh(val, fromSlider) {
     document.getElementById("r_dluh_slider").value = 0;
     calcRefi(); return;
   }
-  const v = Math.min(parsed, 100000000);
+  const v = Math.min(parsed, 50000000);
   setMoneyInputValue("r_dluh", v);
   document.getElementById("r_dluh_slider").value = v;
   calcRefi();
