@@ -2904,8 +2904,7 @@ function calcInvest() {
       const isFirst = i === 0;
       const div = document.createElement("div");
       div.className = "product-card" + (isEtf ? " best" : "");
-      div.style.flexWrap = "wrap";
-      div.style.alignItems = "flex-start";
+      div.style.display = "block"; // Zrušíme flex na hlavní kartě, layout vyřešíme uvnitř
       const rank = isFirst ? "🥇 " : (i===1 ? "🥈 " : (i===2 ? "🥉 " : (i+1)+". "));
 
       // Likvidita a poplatky dle produktu
@@ -2920,25 +2919,31 @@ function calcInvest() {
       };
       const info = infoMap[p.id] || { liq: "", fee: "" };
 
-      // Daňová past penzijka — horizont < 10 let NEBO nedosáhne 60 let
+      // Daňová past pro Penzijko i DIP — horizont < 10 let
       let penzijkoWarning = "";
-      if (p.id === "penzijko" && (vklad > 0 || jednoraz > 0)) {
-        const dpsW = vypocitejDPS(vklad, 0, roky, 'jednor', jednoraz > 0 ? jednoraz : 0);
-        const statCelkem = dpsW.stat;
-        const ziskDan = dpsW.danZeZisku;
-        const celkZtrata = statCelkem + ziskDan;
-        if (roky < 10) {
+      if (roky < 10 && (vklad > 0 || jednoraz > 0)) {
+        if (p.id === "penzijko") {
+          const dpsW = vypocitejDPS(vklad, 0, roky, 'jednor', jednoraz > 0 ? jednoraz : 0);
+          const statCelkem = dpsW.stat;
+          const ziskDan = dpsW.danZeZisku;
+          const celkZtrata = statCelkem + ziskDan;
           penzijkoWarning =
             "<div style='width:100%;margin-top:6px;padding:7px 10px;background:rgba(239,68,68,0.1);border-left:3px solid var(--red);border-radius:0 5px 5px 0;font-size:11px;line-height:1.5'>" +
-            "<strong style='color:var(--red)'>⚠️ DAŇOVÁ PAST: Při výběru dříve než v 60 letech přijdete o " + fmt(celkZtrata) + "</strong><br>" +
+            "<strong style='color:var(--red)'>⚠️ DAŇOVÁ PAST: Při zrušení dříve než za 10 let přijdete o " + fmt(celkZtrata) + "</strong><br>" +
             "<span style='color:var(--text2)'>Vrácení st. podpory: " + fmt(statCelkem) + " · Dodanění zisku 15 %: " + fmt(ziskDan) + "</span>" +
+            "</div>";
+        } else if (p.id === "dip") {
+          penzijkoWarning =
+            "<div style='width:100%;margin-top:6px;padding:7px 10px;background:rgba(239,68,68,0.1);border-left:3px solid var(--red);border-radius:0 5px 5px 0;font-size:11px;line-height:1.5'>" +
+            "<strong style='color:var(--red)'>⚠️ PORUŠENÍ PODMÍNEK (min. 120 měsíců)</strong><br>" +
+            "<span style='color:var(--text2)'>Při zrušení dříve než za 10 let musíte státu vrátit uplatněné daňové úlevy a zisk dodanit 15 %. Na horizont " + roky + " let tento produkt nedává smysl.</span>" +
             "</div>";
         }
       }
 
-      // Label ETF
+      // Label ETF - přesunutý nad flexbox
       const etfLabel = isEtf
-        ? "<div style='font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:2px'>🏆 VÍTĚZ PRO DLOUHODOBÉ BOHATSTVÍ</div>"
+        ? "<div style='font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:6px'>🏆 VÍTĚZ PRO DLOUHODOBÉ BOHATSTVÍ</div>"
         : "";
 
       // Extra info řádky (likvidita + poplatky)
@@ -2949,21 +2954,25 @@ function calcInvest() {
         ? "<div style='font-size:10px;color:" + (p.id==="penzijko" ? "var(--red)" : "var(--text3)") + ";margin-top:1px'>" + info.fee + "</div>"
         : "";
 
+      // Výpočet renty se zákazem zalamování (white-space:nowrap)
       let freedomHtml = "";
       if (isEtf && p.hodnota > 0) {
         const renta10 = Math.round(p.hodnota / (10 * 12));
-        freedomHtml = "<div style='font-size:11px;color:var(--bg);margin-top:6px;font-weight:600;background:var(--accent);padding:4px 8px;border-radius:6px;display:inline-block'>🏝️ Renta cca " + fmt(renta10) + " / měs. (na 10 let)</div>";
+        freedomHtml = "<div style='font-size:11px;color:var(--bg);margin-top:6px;font-weight:600;background:var(--accent);padding:4px 8px;border-radius:6px;display:inline-block;white-space:nowrap'>🏝️ Renta cca " + fmt(renta10) + " / měs. (na 10 let)</div>";
       }
 
+      // Sestavení HTML s dokonalým zarovnáním
       div.innerHTML =
-        "<div style='display:flex;flex-direction:column;flex:1;min-width:0'>" +
-          etfLabel +
-          "<div class='product-name' style='white-space:nowrap'>" + rank + p.name + "</div>" +
-          liqHtml + feeHtml + freedomHtml +
-        "</div>" +
-        "<div style='text-align:right;flex-shrink:0;margin-left:8px'>" +
-          "<div class='product-amount " + (isEtf ? "pos" : p.isNeg ? "neg" : "") + "'>" + fmt(p.hodnota) + "</div>" +
-          "<div class='product-gain " + (p.isNeg ? "neg" : "pos") + "'>" + (p.isNeg ? "−" : "+") + fmt(Math.abs(p.zisk)) + "</div>" +
+        etfLabel +
+        "<div style='display:flex;justify-content:space-between;align-items:flex-start;width:100%'>" +
+          "<div style='display:flex;flex-direction:column;flex:1;min-width:0'>" +
+            "<div class='product-name' style='white-space:nowrap'>" + rank + p.name + "</div>" +
+            liqHtml + feeHtml + freedomHtml +
+          "</div>" +
+          "<div style='text-align:right;flex-shrink:0;margin-left:8px'>" +
+            "<div class='product-amount " + (isEtf ? "pos" : p.isNeg ? "neg" : "") + "'>" + fmt(p.hodnota) + "</div>" +
+            "<div class='product-gain " + (p.isNeg ? "neg" : "pos") + "'>" + (p.isNeg ? "−" : "+") + fmt(Math.abs(p.zisk)) + "</div>" +
+          "</div>" +
         "</div>" +
         penzijkoWarning;
 
