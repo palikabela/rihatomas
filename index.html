@@ -602,6 +602,7 @@ input[type="range"]::-webkit-slider-runnable-track {
     <div class="grid2" style="margin-bottom:16px">
       <div class="card">
         <div style="font-size:15px;font-weight:700;color:var(--text);letter-spacing:0.02em;text-transform:uppercase;margin-bottom:1.25rem">VÁŠ SOUČASNÝ ÚVĚR</div>
+
         <div class="field">
           <label>Zbývající dluh (Kč)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
@@ -613,6 +614,7 @@ input[type="range"]::-webkit-slider-runnable-track {
             oninput="syncRDluh(this.value,true)"
             style="width:100%;accent-color:var(--accent);cursor:pointer;margin-top:8px">
         </div>
+
         <div class="field">
           <label>Stávající sazba (% ročně)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
@@ -624,16 +626,65 @@ input[type="range"]::-webkit-slider-runnable-track {
             oninput="syncRSazba(this.value, true)"
             style="width:100%;accent-color:var(--accent);cursor:pointer">
         </div>
-        <div class="field">
-          <label>Zbývající splatnost (roky)</label>
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <button onclick="syncRRoky((parseInt(document.getElementById('r_roky').value)||0)-1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-            <input type="number" id="r_roky" value="20" min="1" max="65" oninput="syncRRoky(this.value)" style="flex:1;text-align:center">
-            <button onclick="syncRRoky((parseInt(document.getElementById('r_roky').value)||0)+1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+
+        <div style="background:var(--surface2); border:1px dashed var(--border2); border-radius:10px; padding:12px; margin-bottom:1rem">
+          <div style="font-size:11px; font-weight:700; color:var(--text3); text-transform:uppercase; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center">
+            Pomocník: Kdy úvěr začal?
+            <button onclick="clearHelper()" style="background:none; border:none; color:var(--red); font-size:10px; cursor:pointer; padding:0">✕ smazat</button>
           </div>
-          <input type="range" id="r_roky_slider" min="1" max="65" value="20" step="1"
-            oninput="syncRRoky(this.value, true)"
-            style="width:100%;accent-color:var(--accent);cursor:pointer">
+          <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px">
+            <div class="field" style="margin:0">
+              <label style="font-size:10px">Měsíc</label>
+              <select id="h_start_mes" onchange="autoCalcRemaining()" style="padding:6px; font-size:12px">
+                <option value="">—</option>
+                <option value="1">Leden</option><option value="2">Únor</option><option value="3">Březen</option>
+                <option value="4">Duben</option><option value="5">Květen</option><option value="6">Červen</option>
+                <option value="7">Červenec</option><option value="8">Srpen</option><option value="9">Září</option>
+                <option value="10">Říjen</option><option value="11">Listopad</option><option value="12">Prosinec</option>
+              </select>
+            </div>
+            <div class="field" style="margin:0">
+              <label style="font-size:10px">Rok</label>
+              <input type="number" id="h_start_rok" placeholder="2020" oninput="autoCalcRemaining()" style="padding:6px; font-size:12px; text-align:center">
+            </div>
+            <div class="field" style="margin:0">
+              <label style="font-size:10px">Na jak dlouho (let)</label>
+              <input type="number" id="h_orig_roky" placeholder="30" oninput="autoCalcRemaining()" style="padding:6px; font-size:12px; text-align:center">
+            </div>
+          </div>
+          <div id="helper_result" style="display:none; margin-top:10px; padding-top:8px; border-top:1px solid var(--border); text-align:center">
+             <button onclick="applyCalculatedTime()" style="background:var(--accent); color:var(--bg); border:none; border-radius:6px; padding:6px 12px; font-size:11px; font-weight:700; cursor:pointer; width:100%">
+                Dopočítat splatnost: <span id="helper_text"></span> → Použít
+             </button>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:1rem">
+          <div class="field">
+            <label>Zbývající splatnost (roky)</label>
+            <div style="display:flex;align-items:center;gap:4px;margin-bottom:8px">
+              <button onclick="syncRRoky((parseInt(document.getElementById('r_roky').value)||0)-1)" style="width:28px;height:32px;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">−</button>
+              <input type="number" id="r_roky" value="20" min="0" max="45" oninput="syncRRoky(this.value)" style="flex:1;text-align:center;padding:6px;border:1px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text)">
+              <button onclick="syncRRoky((parseInt(document.getElementById('r_roky').value)||0)+1)" style="width:28px;height:32px;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">+</button>
+            </div>
+            <input type="range" id="r_roky_slider" min="0" max="45" value="20" step="1" oninput="syncRRoky(this.value, true)" style="width:100%;accent-color:var(--accent);cursor:pointer">
+          </div>
+          <div class="field">
+            <label style="margin-bottom:5px;display:block">+ měsíce</label>
+            <div style="display:flex;align-items:center;gap:4px">
+              <button onclick="syncRMes(-1)" style="width:28px;height:32px;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">−</button>
+              <input type="number" id="r_mes" value="0" min="0" max="11" oninput="syncRMes(0)" style="flex:1;text-align:center;padding:6px;border:1px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text)">
+              <button onclick="syncRMes(1)" style="width:28px;height:32px;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+            <label style="margin:0">Skutečná splátka z výpisu (Kč) — <span style="font-weight:400;color:var(--text3)">přebije výpočet</span></label>
+            <button onclick="document.getElementById('r_splatka_manual').value=''; document.getElementById('r_splatka_manual').dataset.raw=''; calcRefi()" style="background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:0">✕ Vymazat</button>
+          </div>
+          <input type="text" inputmode="numeric" id="r_splatka_manual" placeholder="např. 15 500" class="fmt-input" oninput="formatLive(this); calcRefi()" style="background:var(--accent-dim2); border-color:var(--accent-dim)">
         </div>
         <div style="border-top:1px solid var(--border);margin:.75rem 0 .6rem;opacity:.5"></div>
         <div style="font-size:15px;font-weight:700;color:var(--text);letter-spacing:0.02em;text-transform:uppercase;margin-bottom:1.25rem">PARAMETRY NOVÉHO ÚVĚRU</div>
@@ -648,17 +699,32 @@ input[type="range"]::-webkit-slider-runnable-track {
             oninput="syncRSazbaNova(this.value, true)"
             style="width:100%;accent-color:var(--accent);cursor:pointer">
         </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:1rem">
+          <div class="field">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+              <label style="margin:0">Nová splatnost (roky)</label>
+              <button id="r_roky_reset_btn" onclick="resetRRokyNova()" style="display:none;background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:0">↺ Zrcadlit</button>
+            </div>
+            <div style="display:flex;align-items:center;gap:4px;margin-bottom:8px">
+              <button onclick="syncRRokyNova((parseInt(document.getElementById('r_roky_nova').value)||0)-1)" style="width:28px;height:32px;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">−</button>
+              <input type="number" id="r_roky_nova" value="20" min="1" max="45" oninput="syncRRokyNova(this.value)" style="flex:1;text-align:center;padding:6px;border:1px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text)">
+              <button onclick="syncRRokyNova((parseInt(document.getElementById('r_roky_nova').value)||0)+1)" style="width:28px;height:32px;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">+</button>
+            </div>
+            <input type="range" id="r_roky_nova_slider" min="1" max="45" value="20" step="1" oninput="syncRRokyNova(this.value, true)" style="width:100%;accent-color:var(--accent);cursor:pointer">
+          </div>
+          <div class="field">
+            <label style="margin-bottom:5px;display:block">+ měsíce</label>
+            <div style="display:flex;align-items:center;gap:4px">
+              <button onclick="syncRMesNova(-1)" style="width:28px;height:32px;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">−</button>
+              <input type="number" id="r_mes_nova" value="0" min="0" max="11" oninput="syncRMesNova(0)" style="flex:1;text-align:center;padding:6px;border:1px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text)">
+              <button onclick="syncRMesNova(1)" style="width:28px;height:32px;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">+</button>
+            </div>
+          </div>
+        </div>
+
         <div class="field">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-            <label style="margin-bottom:0">Nová splatnost (roky)</label>
-            <button id="r_roky_reset_btn" onclick="resetRRokyNova()" style="display:none;background:none;border:none;color:var(--accent);font-size:11px;cursor:pointer;padding:0">↺ Vrátit na původní</button>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <button onclick="syncRRokyNova((parseInt(document.getElementById('r_roky_nova').value)||0)-1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-            <input type="number" id="r_roky_nova" value="20" min="1" max="65" oninput="syncRRokyNova(this.value)" style="flex:1;text-align:center">
-            <button onclick="syncRRokyNova((parseInt(document.getElementById('r_roky_nova').value)||0)+1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
-          </div>
-          <input type="range" id="r_roky_nova_slider" min="1" max="65" value="20" step="1" oninput="syncRRokyNova(this.value, true)" style="width:100%;accent-color:var(--accent);cursor:pointer">
+          <label>Náklady na refinancování (Kč) — <span style="font-weight:400;color:var(--text3)">odhad, katastr...</span></label>
+          <input type="text" inputmode="numeric" id="r_naklady" placeholder="0" class="fmt-input" oninput="formatLive(this); calcRefi()">
         </div>
       </div>
       <div class="card">
@@ -673,8 +739,11 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div id="r_nova_box" style="display:none">
           <div style="background:rgba(74,222,128,0.06);border-radius:10px;padding:.85rem 1rem;border:1px solid rgba(74,222,128,0.25)">
             <div style="font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--green);margin-bottom:.5rem">Návrh refinancování</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-              <div><div style="font-size:11px;color:var(--text3)">Nová splátka</div><div style="font-size:17px;font-weight:700;color:var(--text)" id="r_nova_splatka">—</div></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:center">
+              <div class="premium-total-box" style="margin:0;padding:12px 14px;background:var(--surface);border-color:rgba(74,222,128,0.3)">
+                <div class="premium-total-label" style="color:var(--green)">Nová splátka</div>
+                <div class="premium-total-value" id="r_nova_splatka" style="color:var(--green);font-size:20px">—</div>
+              </div>
               <div><div style="font-size:11px;color:var(--text3)">Celkem zaplatíte</div><div style="font-size:17px;font-weight:700;color:var(--text)" id="r_nova_celkem">—</div></div>
               <div id="r_uspora_vysledek" style="grid-column:1/-1;border-top:1px solid rgba(255,255,255,0.1);padding-top:10px;margin-top:6px;display:none;grid-template-columns:1fr 1fr;gap:12px">
                 <div><div style="font-size:11px;color:var(--text3)" id="r_uspora_mes_label">Měsíčně ušetříte</div><div style="font-size:17px;font-weight:800" id="r_uspora_mes_hodnota">—</div></div>
@@ -743,11 +812,11 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div class="field">
           <label>Jednorázový vklad (Kč)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <button onclick="syncIJednoraz((parseInt((document.getElementById('i_jednoraz').value||'').replace(/[^0-9]/g,''))||0)-1000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <button onclick="syncIJednoraz((parseInt((document.getElementById('i_jednoraz').value||'').replace(/[^0-9]/g,''))||0)-10000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
             <input class="fmt-input" type="text" inputmode="numeric" id="i_jednoraz" value="" placeholder="např. 100 000" oninput="formatLive(this); syncIJednoraz(this.value.replace(/[^0-9]/g,''))" style="flex:1;text-align:center">
-            <button onclick="syncIJednoraz((parseInt((document.getElementById('i_jednoraz').value||'').replace(/[^0-9]/g,''))||0)+1000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+            <button onclick="syncIJednoraz((parseInt((document.getElementById('i_jednoraz').value||'').replace(/[^0-9]/g,''))||0)+10000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
-          <input type="range" id="i_jednoraz_slider" min="0" max="5000000" value="0" step="1000"
+          <input type="range" id="i_jednoraz_slider" min="0" max="5000000" value="0" step="50000"
             oninput="syncIJednoraz(this.value, true)"
             style="width:100%;accent-color:var(--accent);cursor:pointer;margin-bottom:4px">
         </div>
@@ -2137,7 +2206,8 @@ let kalkMode = "uver";
 function syncRDluh(val, fromSlider) {
   const parsed = parseFormattedInt(val);
   if (!parsed || parsed <= 0) {
-    if (!fromSlider) document.getElementById("r_dluh").value = "";
+    const el = document.getElementById("r_dluh");
+    if (el) { el.value = ""; el.dataset.raw = ""; }
     document.getElementById("r_dluh_slider").value = 0;
     calcRefi(); return;
   }
@@ -2393,20 +2463,48 @@ function calcKalk() {
   document.getElementById("k_pct_u").textContent = (100-pctJ).toFixed(0) + " %";
 }
 
+function syncRMes(delta) {
+  const el = document.getElementById("r_mes");
+  let v = Math.max(0, Math.min(11, (parseInt(el.value) || 0) + delta));
+  if (el) el.value = v;
+  if (!isRokyNovaDecoupled) {
+    const elN = document.getElementById("r_mes_nova");
+    if (elN) elN.value = v;
+  }
+  calcRefi();
+}
+
+function syncRMesNova(delta) {
+  isRokyNovaDecoupled = true;
+  const el = document.getElementById("r_mes_nova");
+  let v = Math.max(0, Math.min(11, (parseInt(el.value) || 0) + delta));
+  if (el) el.value = v;
+  calcRefi();
+}
+
 // REFINANCOVÁNÍ
 function calcRefi() {
   const prev = document.getElementById("r_dluh_prev");
   const dluh = getCleanNum("r_dluh");
   const sazSou = getCleanNum("r_sazba_sou");
-  const roky = Math.round(getCleanNum("r_roky")) || 1;
-  const mes = roky * 12;
+
+  const rY = parseInt(document.getElementById('r_roky').value)||0;
+  const rM = parseInt(document.getElementById('r_mes').value)||0;
+  const totalMesSou = (rY * 12) + rM;
+
+  const nY = parseInt(document.getElementById('r_roky_nova').value)||0;
+  const nM = parseInt(document.getElementById('r_mes_nova').value)||0;
+  const totalMesNova = Math.max((nY * 12) + nM, 1);
+
+  const manualSpl = getCleanNum("r_splatka_manual");
+  const naklady = getCleanNum("r_naklady");
+
   if (prev) prev.textContent = dluh > 0 ? fmt(dluh) : "";
 
-  // Reset srovnávací karty
   const setEl = (id, txt) => { const e = document.getElementById(id); if(e) e.textContent = txt; };
   const showEl = (id, show) => { const e = document.getElementById(id); if(e) e.style.display = show ? (id.includes("uspora_pozitivni") || id.includes("uspora_negativni") ? "grid" : "block") : "none"; };
 
-  if (dluh <= 0) {
+  if (dluh <= 0 || totalMesSou <= 0) {
     ["r_sou_splatka","r_sou_celkem","r_best_splatka","r_best_celkem","r_uspora_celkem","r_uspora_mes",
      "r_nova_splatka","r_nova_celkem","r_uspora_mes_hodnota","r_uspora_celkem_hodnota"].forEach(id => setEl(id, "—"));
     setEl("r_best_label", "🏆 Nejlepší nabídka");
@@ -2416,16 +2514,18 @@ function calcRefi() {
     const advReset = document.getElementById("r_advisory_box"); if(advReset) advReset.style.display = "none";
     return;
   }
-  const splatSou = monthlyPayment(dluh, sazSou, mes);
-  const celkemSou = splatSou * mes;
+
+  let splatSou = monthlyPayment(dluh, sazSou, totalMesSou);
+  if (manualSpl > 0) splatSou = manualSpl;
+
+  const celkemSou = splatSou * totalMesSou;
   setEl("r_sou_splatka", fmt(splatSou) + " / měs.");
   setEl("r_sou_celkem", fmt(celkemSou));
 
-  // Nejlepší nabídka ze seznamu sazeb
   const bestSazba = sazby.reduce((best, s) => s.sazba < best.sazba ? s : best, sazby[0]);
   if (bestSazba) {
-    const bestSpl = monthlyPayment(dluh, bestSazba.sazba, mes);
-    const bestCelk = bestSpl * mes;
+    const bestSpl = monthlyPayment(dluh, bestSazba.sazba, totalMesSou);
+    const bestCelk = bestSpl * totalMesSou;
     const uspTotal = celkemSou - bestCelk;
     const uspMes = splatSou - bestSpl;
     const bestLabel = document.getElementById("r_best_label");
@@ -2441,26 +2541,21 @@ function calcRefi() {
     }
   }
 
-  // Výpočet s manuálně zadanou novou sazbou
   const sazNova = getCleanNum("r_sazba_nova") || 4.99;
-  const rokyNova = Math.round(parseInt(document.getElementById("r_roky_nova")?.value) || roky);
-  const mesNova = Math.max(rokyNova, 1) * 12;
   if (dluh > 0) {
-    const novaSpl  = monthlyPayment(dluh, sazNova, mesNova);
-    const novaCelk = novaSpl * mesNova;
+    const novaSpl  = monthlyPayment(dluh, sazNova, totalMesNova);
+    const novaCelk = (novaSpl * totalMesNova) + naklady;
     const uspMesN  = splatSou - novaSpl;
     const uspTotN  = celkemSou - novaCelk;
     setEl("r_nova_splatka", fmt(novaSpl) + " / měs.");
     setEl("r_nova_celkem",  fmt(novaCelk));
     showEl("r_nova_box", true);
 
-    // Dynamický box úspory
     const usporaBox = document.getElementById("r_uspora_vysledek");
     if (usporaBox) {
       usporaBox.style.display = "grid";
       usporaBox.style.borderTop = uspTotN >= 0 ? "1px solid rgba(74,222,128,0.15)" : "1px solid rgba(239,68,68,0.15)";
     }
-    // Měsíční úspora / přeplatek
     const mesLabel = document.getElementById("r_uspora_mes_label");
     const mesHodnota = document.getElementById("r_uspora_mes_hodnota");
     if (mesLabel && mesHodnota) {
@@ -2473,7 +2568,6 @@ function calcRefi() {
         mesHodnota.style.color = "var(--red)";
       }
     }
-    // Celková úspora / přeplatek
     const celkemLabel = document.getElementById("r_uspora_celkem_label");
     const celkemHodnota = document.getElementById("r_uspora_celkem_hodnota");
     if (celkemLabel && celkemHodnota) {
@@ -2486,15 +2580,18 @@ function calcRefi() {
         celkemHodnota.style.color = "var(--red)";
       }
     }
-    // POZNÁMKA PORADCE
+
     const advisoryBox = document.getElementById("r_advisory_box");
     const advisoryText = document.getElementById("r_advisory_text");
     if (advisoryBox && advisoryText) {
       advisoryBox.style.display = "block";
-      const diffRoky = Math.abs(rokyNova - roky);
+      const diffMesice = Math.abs(totalMesNova - totalMesSou);
+      const diffRokyValue = diffMesice / 12;
+      const diffRokyAbs = diffRokyValue.toFixed(1).replace('.0', '');
+      const diffRoky = diffRokyAbs.replace('.', ',');
       const formatUspTotN = fmt(Math.abs(uspTotN));
       const hl = (txt) => `<strong style="color:var(--text);font-weight:900;font-size:13px;">${txt}</strong>`;
-      if (rokyNova > roky) {
+      if (totalMesNova > totalMesSou) {
         if (uspTotN < 0) {
           advisoryText.innerHTML = `⚠️ POZNÁMKA PORADCE: Prodloužením splatnosti o ${hl(diffRoky + ' let')} sice ulevíte měsíčnímu rozpočtu, ale bance celkově odevzdáte o ${hl(formatUspTotN + ' více')}. Banka profituje z delšího času, po který vám drží kapitál.`;
           advisoryBox.style.borderLeftColor = "var(--red)";
@@ -2502,11 +2599,11 @@ function calcRefi() {
           advisoryText.innerHTML = `💡 POZNÁMKA PORADCE: I přes prodloužení splatnosti o ${hl(diffRoky + ' let')} celkově ušetříte ${hl(formatUspTotN)}, a to díky mnohem lepší sazbě. Pokud byste ale splatnost neprodlužovali, byla by vaše úspora ještě výrazně vyšší!`;
           advisoryBox.style.borderLeftColor = "#F59E0B";
         }
-      } else if (rokyNova < roky) {
+      } else if (totalMesNova < totalMesSou) {
         advisoryText.innerHTML = `✅ POZNÁMKA PORADCE: Zkrácením doby splácení o ${hl(diffRoky + ' let')} drasticky snižujete celkové náklady úvěru. Bance na úrocích odevzdáte o ${hl(formatUspTotN + ' méně')}.`;
         advisoryBox.style.borderLeftColor = "var(--green)";
       } else {
-        advisoryText.innerHTML = `📊 POZNÁMKA PORADCE: Splatnost zůstává stejná. Úspora ${hl(formatUspTotN)} je tvořena čistě rozdílem úrokových sazeb — nižší sazba znamená méně peněz pro banku za stejnou dobu.`;
+        advisoryText.innerHTML = `📊 POZNÁMKA PORADCE: Splatnost zůstává stejná. Úspora ${hl(formatUspTotN)} je tvořena čistě rozdílem úrokových sazeb a je očištěna o poplatky na převod úvěru.`;
         advisoryBox.style.borderLeftColor = "var(--border2)";
       }
     }
@@ -2515,43 +2612,44 @@ function calcRefi() {
     const advBoxReset = document.getElementById("r_advisory_box");
     if (advBoxReset) advBoxReset.style.display = "none";
   }
+
   const container = document.getElementById("refi-offers");
-  // Záhlaví tabulky
-  container.innerHTML = '<div style="display:grid;grid-template-columns:2fr 80px 110px 110px;gap:12px;padding:4px 12px;margin-bottom:2px">' +
-    '<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3)">Banka</div>' +
-    '<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);text-align:right">Sazba</div>' +
-    '<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);text-align:right">Splátka/měs.</div>' +
-    '<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);text-align:right">Úspora</div>' +
-    '</div>';
-  sazby.forEach((s, i) => {
-    const novaSpl = monthlyPayment(dluh, s.sazba, mes);
-    const novaCelk = novaSpl * mes;
-    const uspMes = splatSou - novaSpl;
-    const uspTotal = celkemSou - novaCelk;
-    const isBest = i === 0;
-    const div = document.createElement("div");
-    div.className = "offer-card" + (isBest ? " best" : "");
-    const uspColor = uspTotal >= 0 ? "var(--green)" : "var(--red)";
-    const uspSign  = uspTotal >= 0 ? "↓ " : "↑ ";
-    const valColor = isBest ? "var(--accent)" : "var(--text)";
-    div.innerHTML =
-      "<div style=\"min-width:0\">" +
-        "<div style=\"font-size:13px;font-weight:" + (isBest ? "700" : "500") + ";color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis\">" +
-          (isBest ? "🏆 " : "") + s.partner +
+  if (container) {
+    container.innerHTML = '<div style="display:grid;grid-template-columns:2fr 80px 110px 110px;gap:12px;padding:4px 12px;margin-bottom:2px">' +
+      '<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3)">Banka</div>' +
+      '<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);text-align:right">Sazba</div>' +
+      '<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);text-align:right">Splátka/měs.</div>' +
+      '<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);text-align:right">Úspora</div>' +
+      '</div>';
+    sazby.forEach((s, i) => {
+      const novaSpl = monthlyPayment(dluh, s.sazba, totalMesSou);
+      const novaCelk = novaSpl * totalMesSou;
+      const uspTotal = celkemSou - novaCelk;
+      const isBest = i === 0;
+      const div = document.createElement("div");
+      div.className = "offer-card" + (isBest ? " best" : "");
+      const uspColor = uspTotal >= 0 ? "var(--green)" : "var(--red)";
+      const uspSign  = uspTotal >= 0 ? "↓ " : "↑ ";
+      const valColor = isBest ? "var(--accent)" : "var(--text)";
+      div.innerHTML =
+        "<div style=\"min-width:0\">" +
+          "<div style=\"font-size:13px;font-weight:" + (isBest ? "700" : "500") + ";color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis\">" +
+            (isBest ? "🏆 " : "") + s.partner +
+          "</div>" +
+          "<div style=\"font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis\">" + s.nazev + "</div>" +
         "</div>" +
-        "<div style=\"font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis\">" + s.nazev + "</div>" +
-      "</div>" +
-      "<div style=\"text-align:right\">" +
-        "<div style=\"font-size:14px;font-weight:700;color:" + valColor + ";white-space:nowrap\">" + s.sazba.toFixed(2) + " %</div>" +
-      "</div>" +
-      "<div style=\"text-align:right\">" +
-        "<div style=\"font-size:14px;font-weight:700;color:" + valColor + ";white-space:nowrap\">" + fmt(novaSpl) + " / m</div>" +
-      "</div>" +
-      "<div style=\"text-align:right\">" +
-        "<div style=\"font-size:14px;font-weight:700;color:" + uspColor + ";white-space:nowrap\">" + uspSign + fmt(Math.abs(uspTotal)) + "</div>" +
-      "</div>";
-    container.appendChild(div);
-  });
+        "<div style=\"text-align:right\">" +
+          "<div style=\"font-size:14px;font-weight:700;color:" + valColor + ";white-space:nowrap\">" + s.sazba.toFixed(2) + " %</div>" +
+        "</div>" +
+        "<div style=\"text-align:right\">" +
+          "<div style=\"font-size:14px;font-weight:700;color:" + valColor + ";white-space:nowrap\">" + fmt(novaSpl) + " / m</div>" +
+        "</div>" +
+        "<div style=\"text-align:right\">" +
+          "<div style=\"font-size:14px;font-weight:700;color:" + uspColor + ";white-space:nowrap\">" + uspSign + fmt(Math.abs(uspTotal)) + "</div>" +
+        "</div>";
+      container.appendChild(div);
+    });
+  }
 }
 
 // TABS
@@ -2702,7 +2800,7 @@ function syncIVklad(val, fromSlider) {
   const parsed = parseFormattedInt(val);
   if (!parsed || parsed <= 0) {
     const el = document.getElementById("i_vklad");
-    if (!fromSlider && el) { el.value = ""; el.dataset.raw = ""; }
+    if (el) { el.value = ""; el.dataset.raw = ""; }
     document.getElementById("i_vklad_slider").value = 0;
     calcInvest(); return;
   }
@@ -3732,7 +3830,7 @@ function syncCiCil(val, fromSlider) {
   const slider = document.getElementById("ci_cil_slider");
   const input = document.getElementById("ci_cil");
   if (!parsed || parsed <= 0) {
-    if (!fromSlider && input) input.value = "";
+    if (input) { input.value = ""; input.dataset.raw = ""; }
     if (slider) slider.value = 0;
     calcCil(); return;
   }
@@ -4471,6 +4569,61 @@ function dlCalc() {
 calcKalk();
 calcRefi();
 loadSazbyFromSheets();
+
+let calculatedRemainingMonths = 0;
+
+function autoCalcRemaining() {
+  const m = parseInt(document.getElementById('h_start_mes').value);
+  const y = parseInt(document.getElementById('h_start_rok').value);
+  const orig = parseInt(document.getElementById('h_orig_roky').value);
+  const resBox = document.getElementById('helper_result');
+  const resText = document.getElementById('helper_text');
+
+  if (!m || !y || !orig) { resBox.style.display = 'none'; return; }
+
+  const startDate = new Date(y, m - 1, 1);
+  const endDate = new Date(startDate);
+  endDate.setFullYear(startDate.getFullYear() + orig);
+
+  const now = new Date();
+  const nowNormal = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  const totalMonths = (endDate.getFullYear() * 12 + endDate.getMonth()) - (nowNormal.getFullYear() * 12 + nowNormal.getMonth());
+
+  if (totalMonths <= 0) {
+    resBox.style.display = 'block';
+    resText.textContent = "Úvěr již měl být doplacen";
+    calculatedRemainingMonths = 0;
+  } else {
+    resBox.style.display = 'block';
+    const rY = Math.floor(totalMonths / 12);
+    const rM = totalMonths % 12;
+    resText.textContent = `${rY} let a ${rM} měs.`;
+    calculatedRemainingMonths = totalMonths;
+  }
+}
+
+function applyCalculatedTime() {
+  if (calculatedRemainingMonths < 0) return;
+  const rY = Math.floor(calculatedRemainingMonths / 12);
+  const rM = calculatedRemainingMonths % 12;
+
+  const rokyInput = document.getElementById('r_roky');
+  const mesiceInput = document.getElementById('r_mes');
+
+  if (rokyInput) syncRRoky(rY);
+  if (mesiceInput) {
+    mesiceInput.value = rM;
+    syncRMes(0);
+  }
+}
+
+function clearHelper() {
+  document.getElementById('h_start_mes').value = '';
+  document.getElementById('h_start_rok').value = '';
+  document.getElementById('h_orig_roky').value = '';
+  document.getElementById('helper_result').style.display = 'none';
+}
 </script>
 </body>
 </html>
