@@ -637,10 +637,10 @@ input[type="range"]::-webkit-slider-runnable-track {
               <label style="font-size:10px">Měsíc</label>
               <select id="h_start_mes" onchange="autoCalcRemaining()" style="padding:6px; font-size:12px">
                 <option value="">—</option>
-                <option value="1">Leden</option><option value="2">Únor</option><option value="3">Březen</option>
-                <option value="4">Duben</option><option value="5">Květen</option><option value="6">Červen</option>
-                <option value="7">Červenec</option><option value="8">Srpen</option><option value="9">Září</option>
-                <option value="10">Říjen</option><option value="11">Listopad</option><option value="12">Prosinec</option>
+                <option value="1">1. Leden</option><option value="2">2. Únor</option><option value="3">3. Březen</option>
+                <option value="4">4. Duben</option><option value="5">5. Květen</option><option value="6">6. Červen</option>
+                <option value="7">7. Červenec</option><option value="8">8. Srpen</option><option value="9">9. Září</option>
+                <option value="10">10. Říjen</option><option value="11">11. Listopad</option><option value="12">12. Prosinec</option>
               </select>
             </div>
             <div class="field" style="margin:0">
@@ -2615,12 +2615,17 @@ function calcRefi() {
 
   const container = document.getElementById("refi-offers");
   if (container) {
-    container.innerHTML = '<div style="display:grid;grid-template-columns:2fr 80px 110px 110px;gap:12px;padding:4px 12px;margin-bottom:2px">' +
+    container.innerHTML = '<div style="overflow-x:auto; padding-bottom:4px; margin:0 -4px; padding:0 4px;">' +
+      '<div style="min-width:480px">' +
+      '<div style="display:grid;grid-template-columns:2fr 80px 110px 110px;gap:12px;padding:4px 12px;margin-bottom:2px">' +
       '<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3)">Banka</div>' +
       '<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);text-align:right">Sazba</div>' +
       '<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);text-align:right">Splátka/měs.</div>' +
       '<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);text-align:right">Úspora</div>' +
-      '</div>';
+      '</div><div id="refi-offers-list"></div></div></div>';
+
+    const listContainer = document.getElementById("refi-offers-list");
+
     sazby.forEach((s, i) => {
       const novaSpl = monthlyPayment(dluh, s.sazba, totalMesSou);
       const novaCelk = novaSpl * totalMesSou;
@@ -2647,7 +2652,7 @@ function calcRefi() {
         "<div style=\"text-align:right\">" +
           "<div style=\"font-size:14px;font-weight:700;color:" + uspColor + ";white-space:nowrap\">" + uspSign + fmt(Math.abs(uspTotal)) + "</div>" +
         "</div>";
-      container.appendChild(div);
+        listContainer.appendChild(div);
     });
   }
 }
