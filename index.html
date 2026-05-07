@@ -583,7 +583,10 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div class="card-label">Výsledek výpočtu</div>
         <div style="background:var(--surface2);border-radius:10px;padding:1.25rem;margin-bottom:1.5rem;border:1px solid var(--border)">
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-            <div><div style="font-size:11px;color:var(--text3)">Měsíční splátka</div><div style="font-size:17px;font-weight:700;color:var(--green)" id="k_splatka">—</div></div>
+            <div class="premium-total-box" style="grid-column:1/-1;margin:0 0 4px 0">
+              <div class="premium-total-label">Měsíční splátka</div>
+              <div class="premium-total-value" id="k_splatka">—</div>
+            </div>
             <div><div style="font-size:11px;color:var(--text3)" id="k_celkem_label">Celkem zaplatíte</div><div style="font-size:17px;font-weight:700;color:var(--text)" id="k_celkem">—</div></div>
             <div style="grid-column:1/-1;height:1px;background:var(--border);margin:4px 0"></div>
             <div><div style="font-size:11px;color:var(--text3)">Přeplatek úroky</div><div style="font-size:17px;font-weight:700;color:var(--red)" id="k_uroky">—</div></div>
