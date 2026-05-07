@@ -555,18 +555,28 @@ input[type="range"]::-webkit-slider-runnable-track {
             style="width:100%;accent-color:var(--accent);cursor:pointer">
         </div>
 
-        <div class="field">
-          <label>Doba splatnosti</label>
-          <div style="display:flex;align-items:center;gap:10px">
-            <button onclick="syncRoky(parseInt(document.getElementById('k_roky').value)-1,true)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:300">−</button>
-            <div style="flex:1;text-align:center">
-              <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:700;color:var(--accent);line-height:1" id="k_roky_label">10</div>
-              <div style="font-size:12px;color:var(--text3);margin-top:2px">let</div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:1rem">
+          <div class="field" style="margin-bottom:0">
+            <label style="display:flex; justify-content:space-between; align-items:baseline">
+              <span>Doba splatnosti (roky)</span>
+              <span id="k_celkem_mes_hint" style="font-size:10px; color:var(--text3); text-transform:none; letter-spacing:0; font-weight:500">(celkem 120 měsíců)</span>
+            </label>
+            <div style="display:flex;align-items:center;gap:4px;margin-bottom:8px">
+              <button onclick="syncRoky((parseInt(document.getElementById('k_roky').value)||0)-1)" style="width:28px;height:32px;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">−</button>
+              <input type="number" id="k_roky" value="10" min="0" max="65" oninput="syncRoky(this.value)" style="flex:1;text-align:center;padding:6px;border:1px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text)">
+              <button onclick="syncRoky((parseInt(document.getElementById('k_roky').value)||0)+1)" style="width:28px;height:32px;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">+</button>
             </div>
-            <button onclick="syncRoky(parseInt(document.getElementById('k_roky').value)+1,true)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:300">+</button>
+            <input type="range" id="k_roky_slider" min="0" max="65" value="10" step="1" oninput="syncRoky(this.value, true)" style="width:100%;accent-color:var(--accent);cursor:pointer">
           </div>
-          <input type="range" id="k_roky_slider" min="1" max="65" value="10" oninput="syncRoky(this.value,true)" style="width:100%;margin-top:12px;accent-color:var(--accent);cursor:pointer">
-          <input type="number" id="k_roky" value="10" min="1" max="65" style="display:none">
+          <div class="field" style="margin-bottom:0">
+            <label style="display:block">+ měsíce</label>
+            <div style="display:flex;align-items:center;gap:4px;margin-bottom:8px">
+              <button onclick="syncKMes(-1)" style="width:28px;height:32px;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">−</button>
+              <input type="number" id="k_mes" value="0" min="0" max="11" oninput="syncKMes(0)" style="flex:1;text-align:center;padding:6px;border:1px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text)">
+              <button onclick="syncKMes(1)" style="width:28px;height:32px;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">+</button>
+            </div>
+            <input type="range" id="k_mes_slider" min="0" max="11" value="0" step="1" oninput="document.getElementById('k_mes').value=this.value; syncKMes(0)" style="width:100%;accent-color:var(--accent);cursor:pointer">
+          </div>
         </div>
       </div>
       <div class="card">
@@ -2387,10 +2397,21 @@ function syncSplatkaInput(val, fromSlider) {
 function syncRoky(val, fromSlider) {
   const parsed = parseInt(val);
   if (isNaN(parsed)) return;
-  const v = Math.min(Math.max(parsed, 1), 65);
-  document.getElementById("k_roky").value = v;
-  document.getElementById("k_roky_slider").value = v;
-  document.getElementById("k_roky_label").textContent = v;
+  const v = Math.min(Math.max(parsed, 0), 65);
+  const input = document.getElementById("k_roky");
+  const slider = document.getElementById("k_roky_slider");
+  if (input) input.value = v;
+  if (slider) slider.value = v;
+  calcKalk();
+}
+
+function syncKMes(delta) {
+  const el = document.getElementById("k_mes");
+  const sl = document.getElementById("k_mes_slider");
+  if (!el) return;
+  let v = Math.max(0, Math.min(11, (parseInt(el.value) || 0) + delta));
+  el.value = v;
+  if (sl) sl.value = v;
   calcKalk();
 }
 
@@ -2432,8 +2453,14 @@ function calcKalk() {
   const prev = document.getElementById("k_jistina_prev");
   const prevS = document.getElementById("k_splatka_prev");
   const s = getCleanNum("k_sazba");
-  const r = Math.round(getCleanNum("k_roky")) || 1;
-  const m = r * 12;
+  const r = Math.round(getCleanNum("k_roky")) || 0;
+  const mes = Math.round(getCleanNum("k_mes")) || 0;
+  let m = (r * 12) + mes;
+
+  const hintEl = document.getElementById("k_celkem_mes_hint");
+  if (hintEl) hintEl.textContent = "(celkem " + ((r * 12) + mes) + " měsíců)";
+
+  if (m === 0) m = 1; // prevence dělení nulou
 
   if (kalkMode === "splatka") {
     // Reverse calculation - from monthly payment to loan amount
@@ -2482,7 +2509,12 @@ function calcKalk() {
     const spEl = document.getElementById("k_splatka_zobrazena");
     const rokyEl = document.getElementById("k_roky_zobrazena");
     if (spEl) spEl.textContent = fmt(splatkaInput) + "/měs.";
-    if (rokyEl) rokyEl.textContent = r + " let";
+    if (rokyEl) {
+      let txt = [];
+      if (r > 0) txt.push(r + " let");
+      if (mes > 0) txt.push(mes + " měs.");
+      rokyEl.textContent = txt.join(" a ") || "0 let";
+    }
     return;
   }
 
