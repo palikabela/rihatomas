@@ -509,6 +509,7 @@ input[type="range"]::-webkit-slider-runnable-track {
     <button class="tab" onclick="showTab('dluhopis')">Dluhopisy</button>
     <button class="tab" onclick="showTab('rc')">Rodné číslo</button>
     <button class="tab" onclick="showTab('tab-zivot')">Zajištění příjmu</button>
+<button class="tab" onclick="showTab('tab-rodina')">Zajištění rodiny</button>
   </div>
 </div>
 
@@ -687,7 +688,7 @@ input[type="range"]::-webkit-slider-runnable-track {
               <input type="number" id="r_roky" value="20" min="0" max="45" oninput="syncRRoky(this.value)" style="flex:1;text-align:center;padding:6px;border:1px solid var(--border2);border-radius:6px;background:var(--surface2);color:var(--text)">
               <button onclick="syncRRoky((parseInt(document.getElementById('r_roky').value)||0)+1)" style="width:28px;height:32px;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">+</button>
             </div>
-            <input type="range" id="r_roky_slider" min="0" max="45" value="20" step="1" oninput="syncRRoky(this.value, true)" style="width:100%;accent-color:var(--accent);cursor:pointer">
+            <input type="range" id="k_roky_slider" min="0" max="45" value="20" step="1" oninput="syncRRoky(this.value, true)" style="width:100%;accent-color:var(--accent);cursor:pointer">
           </div>
           <div class="field">
             <label style="margin-bottom:5px;display:block">+ měsíce</label>
@@ -1992,7 +1993,11 @@ input[type="range"]::-webkit-slider-runnable-track {
     <div>
       <div id="z_card_pn" class="card" style="margin-bottom:10px; border-top:4px solid #3B82F6; padding:14px">
         <div style="color:#3B82F6; font-weight:700; font-size:12px; margin-bottom:4px">PRACOVNÍ NESCHOPNOST (PN)</div>
-        <div style="font-size:11px; color:var(--text2); margin-bottom:10px">Krátkodobý výpadek příjmu (max. 1 rok, poté invalidita).</div>
+        <div id="z_pn_goal_text" style="font-size:11px; color:var(--text2); margin-bottom:10px">Krátkodobý výpadek příjmu (max. 1 rok, poté invalidita).</div>
+        <div style="display:flex; background:var(--surface); border:1px solid var(--border2); border-radius:6px; padding:2px; margin-bottom:10px">
+          <button type="button" id="z_pn_target_vy" onclick="setPnTarget('vy')" style="flex:1; padding:5px; border:none; border-radius:4px; font-size:10px; font-weight:700; cursor:pointer; background:var(--accent); color:#fff; transition:all 0.2s">KRYTÍ VÝDAJŮ</button>
+          <button type="button" id="z_pn_target_p" onclick="setPnTarget('p')" style="flex:1; padding:5px; border:none; border-radius:4px; font-size:10px; font-weight:700; cursor:pointer; background:transparent; color:var(--text2); transition:all 0.2s">KRYTÍ PŘÍJMU</button>
+        </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; border-bottom:1px solid var(--border); padding-bottom:10px; margin-bottom:10px">
           <div><div style="font-size:11px; color:#60A5FA; font-weight:700; letter-spacing: 0.02em">Nemocenská (odhad — cca 60 % z příjmu)</div><div id="z_stat_pn" style="font-size:15px; font-weight:700; color:var(--text); margin-top:2px">—</div></div>
           <div><div style="font-size:11px; color:var(--accent); font-weight:700; text-transform:uppercase; letter-spacing:0.03em">Chybí /m 🚨</div><div id="z_chybi_pn" style="font-size:15px; font-weight:700; color:#3B82F6; margin-top:2px">—</div></div>
@@ -2090,6 +2095,157 @@ input[type="range"]::-webkit-slider-runnable-track {
             <span>Factsheet – Pracovní neschopnost</span>
             <span style="color:var(--accent); font-weight:600">Náhled ↗</span>
           </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tab-rodina" class="section tab-content" style="max-width:1200px; margin:0 auto">
+  <div class="grid2">
+    <div style="position: sticky; top: 20px; align-self: start;">
+      <div class="card" style="margin-bottom:12px; padding: 14px">
+        <div class="card-label" style="margin-bottom:12px; font-size: 11px;">Parametry rodiny a financí</div>
+        <div style="display:flex; flex-direction:column; gap:12px">
+          
+          <div class="field" style="margin-bottom:0">
+            <label style="font-size:10px; margin-bottom:2px; display:block">Čistý příjem / Vyměřovací základ v případě smrti (Kč)</label>
+            <div style="background:var(--surface2); padding:6px 8px; border-radius:8px; border:1px solid var(--border); display:flex; align-items:center">
+              <input type="text" id="r_prijem" value="0" class="fmt-input" oninput="formatLive(this); syncRSld('r_prijem'); calcRodina()" style="width:100%;background:transparent;border:none;color:var(--text);font-size:14px;font-weight:700;text-align:center;outline:none;padding:0">
+            </div>
+            <input type="range" id="r_prijem_slider" min="0" max="150000" step="2000" value="0" oninput="syncRInp('r_prijem'); calcRodina()" style="width:100%; margin-top:4px; accent-color:var(--accent); cursor:pointer">
+          </div>
+          
+          <div class="field" style="margin-bottom:0">
+            <label style="font-size:10px; margin-bottom:2px; display:block">Měsíční výdaje rodiny (Kč)</label>
+            <div style="background:var(--surface2); padding:6px 8px; border-radius:8px; border:1px solid var(--border); display:flex; align-items:center">
+              <input type="text" id="r_vydaje" value="0" class="fmt-input" oninput="formatLive(this); syncRSld('r_vydaje'); calcRodina()" style="width:100%;background:transparent;border:none;color:var(--text);font-size:14px;font-weight:700;text-align:center;outline:none;padding:0">
+            </div>
+            <input type="range" id="r_vydaje_slider" min="0" max="120000" step="2000" value="0" oninput="syncRInp('r_vydaje'); calcRodina()" style="width:100%; margin-top:4px; accent-color:var(--accent); cursor:pointer">
+          </div>
+
+          <div class="field" style="margin-bottom:0">
+            <label style="font-size:10px; margin-bottom:2px; display:block">Dlužná jistina / Úvěry rodiny (Kč)</label>
+            <div style="background:var(--surface2); padding:6px 8px; border-radius:8px; border:1px solid var(--border); display:flex; align-items:center">
+              <input type="text" id="r_uver" value="0" class="fmt-input" oninput="formatLive(this); syncRSld('r_uver'); calcRodina()" style="width:100%;background:transparent;border:none;color:var(--text);font-size:14px;font-weight:700;text-align:center;outline:none;padding:0">
+            </div>
+            <input type="range" id="r_uver_slider" min="0" max="8000000" step="50000" value="0" oninput="syncRInp('r_uver'); calcRodina()" style="width:100%; margin-top:4px; accent-color:var(--accent); cursor:pointer">
+          </div>
+
+          <div class="field" style="margin-bottom:0">
+            <label style="font-size:10px; margin-bottom:2px; display:block">Vlastní finanční rezerva (Kč)</label>
+            <div style="background:var(--surface2); padding:6px 8px; border-radius:8px; border:1px solid var(--border); display:flex; align-items:center">
+              <input type="text" id="r_rezerva" value="0" class="fmt-input" oninput="formatLive(this); syncRSld('r_rezerva'); calcRodina()" style="width:100%;background:transparent;border:none;color:var(--text);font-size:14px;font-weight:700;text-align:center;outline:none;padding:0">
+            </div>
+            <input type="range" id="r_rezerva_slider" min="0" max="1500000" step="10000" value="0" oninput="syncRInp('r_rezerva'); calcRodina()" style="width:100%; margin-top:4px; accent-color:var(--accent); cursor:pointer">
+          </div>
+
+        </div>
+
+        <div style="border-top:1px solid var(--border); margin-top:14px; padding-top:14px; display:flex; flex-direction:column; gap:12px">
+          <div class="field" style="margin-bottom:0">
+            <label style="font-size:10px; margin-bottom:4px; display:block">Jsou oficiálně manželé? 💍</label>
+            <div style="display:flex; gap:6px">
+              <button type="button" id="r_part_ano" onclick="setRPartner(true)" style="flex:1; padding:8px; border:none; border-radius:6px; font-size:10px; font-weight:700; cursor:pointer; background:var(--accent); color:#000; transition:all 0.2s">ANO (Svatba)</button>
+              <button type="button" id="r_part_ne" onclick="setRPartner(false)" style="flex:1; padding:8px; border:none; border-radius:6px; font-size:10px; font-weight:700; cursor:pointer; background:var(--surface); color:var(--text2); border:1px solid var(--border2); transition:all 0.2s">NE (Na psí knížku)</button>
+            </div>
+          </div>
+
+          <div class="field" style="margin-bottom:0">
+            <label style="font-size:10px; margin-bottom:4px; display:block">Počet nezaopatřených dětí 👶</label>
+            <div style="display:flex; align-items:center; gap:6px; background:var(--surface2); padding:6px; border-radius:8px; border:1px solid var(--border)">
+              <button type="button" onclick="adjRDeti(-1)" style="width:28px;height:28px;border-radius:4px;border:1px solid var(--border2);background:var(--surface);color:var(--text);cursor:pointer;font-weight:bold">−</button>
+              <input type="text" id="r_deti" value="0" readonly style="flex:1;background:transparent;border:none;color:var(--text);font-size:14px;font-weight:700;text-align:center;outline:none;padding:0">
+              <button type="button" onclick="adjRDeti(1)" style="width:28px;height:28px;border-radius:4px;border:1px solid var(--border2);background:var(--surface);color:var(--text);cursor:pointer;font-weight:bold">+</button>
+            </div>
+          </div>
+
+          <div class="field" style="margin-top:4px">
+            <label style="font-size:10px; margin-bottom:4px; display:block">Na kolik let krýt výpadek (věk nejmladšího do 26 let)</label>
+            <div style="display:flex; align-items:center; gap:10px">
+              <input type="range" id="r_roky_slider" min="1" max="25" value="10" step="1" oninput="document.getElementById('r_roky_val').textContent=this.value; calcRodina()" style="flex:1; accent-color:var(--accent); cursor:pointer">
+              <div style="font-size:14px; font-weight:700; color:var(--text); width:40px; text-align:right"><span id="r_roky_val">10</span> let</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card" style="padding:12px; background:rgba(234,179,8,0.03); border:1px solid rgba(234,179,8,0.2)">
+        <div style="font-size:11px; font-weight:700; color:#EAB308; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.05em">📊 Jak správně spočítat Vyměřovací Základ OSVČ?</div>
+        <div style="font-size:10px; color:var(--text2); line-height:1.4; display:flex; flex-direction:column; gap:6px">
+          <div>• <b>Paušální daň (1. pásmo):</b> Do příjmu zadejte natvrdo <b>cca 18 700 Kč</b> (zákonný základ). Reálný zisk stát nezajímá!</div>
+          <div>• <b>Paušální daň (2. pásmo):</b> Zadejte fixně <b>28 050 Kč</b>.</div>
+          <div>• <b>Paušální daň (3. pásmo):</b> Zadejte fixně <b>42 900 Kč</b>.</div>
+          <div>• <b>Výdajový paušál / Skutečné výdaje:</b> Spočtěte: <span style="color:var(--text); font-weight:600">(Roční příjmy − Výdaje) × 0.55 / 12</span>. Pokud vyjde méně než státní minimum (cca 15 000 Kč), zadejte minimum.</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div id="r_card_stat" class="card" style="margin-bottom:10px; border-top:4px solid #3B82F6; padding:14px">
+        <div style="color:#3B82F6; font-weight:700; font-size:12px; margin-bottom:4px">POZŮSTALOSTNÍ DŮCHODY OD STÁTU (ČSSZ)</div>
+        <div style="font-size:11px; color:var(--text2); margin-bottom:12px">Podpora se odvíjí od výdělku zemřelého. Základní fixní výměra činí 4 400 Kč na každý důchod.</div>
+        
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; border-bottom:1px solid var(--border); padding-bottom:10px; margin-bottom:10px">
+          <div>
+            <div style="font-size:11px; color:var(--text); font-weight:700">Vdovský / vdovecký důchod</div>
+            <div id="r_stat_vdovsky" style="font-size:15px; font-weight:700; margin-top:2px">—</div>
+            <div id="r_expl_vdovsky" style="font-size:9px; color:var(--text3); margin-top:2px; line-height:1.2">Pevný základ 4 400 Kč + 50 % procentní výměry.</div>
+          </div>
+          <div>
+            <div style="font-size:11px; color:var(--text); font-weight:700">Sirotčí důchod (celkem)</div>
+            <div id="r_stat_sirotci" style="font-size:15px; font-weight:700; margin-top:2px">—</div>
+            <div id="r_expl_sirotci" style="font-size:9px; color:var(--text3); margin-top:2px; line-height:1.2">Každé dítě: 4 400 Kč základ + 40 % procentní výměry.</div>
+          </div>
+        </div>
+        
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:4px">
+          <div>
+            <div style="font-size:11px; color:#60A5FA; font-weight:700">1. ROK: Celkem od státu / m</div>
+            <div id="r_stat_celkem_1" style="font-size:18px; font-weight:800; color:#3B82F6; margin-top:2px">—</div>
+            <div style="font-size:9px; color:var(--text3); line-height:1.2">Kombinace vdovského a sirotčího důchodu.</div>
+          </div>
+          <div>
+            <div style="font-size:11px; color:#60A5FA; font-weight:700">DALŠÍ ROKY: Podpora / m ⏳</div>
+            <div id="r_stat_celkem_dale" style="font-size:18px; font-weight:800; color:#93C5FD; margin-top:2px">—</div>
+            <div id="r_expl_dale" style="font-size:9px; color:var(--text3); line-height:1.2">Vdovský důchod po 1 roce končí (pokud nejsou splněny podmínky).</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="r_card_poj" class="card" style="border-top:4px solid #EF4444; padding:14px">
+        <div style="color:#EF4444; font-weight:700; font-size:12px; margin-bottom:4px">FINANČNÍ ROZDÍL V ROZPOČTU A ZAJIŠTĚNÍ</div>
+        <div style="font-size:11px; color:var(--text2); margin-bottom:12px">Analýza reálného dopadu na chod rodiny a stanovení cílové pojistné částky.</div>
+        
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; border-bottom:1px solid var(--border); padding-bottom:10px; margin-bottom:10px">
+          <div>
+            <div style="font-size:11px; color:var(--accent); font-weight:700; text-transform:uppercase">Chybí v 1. roce / m</div>
+            <div id="r_chybi_m1" style="font-size:16px; font-weight:800; color:#EF4444; margin-top:2px">—</div>
+          </div>
+          <div>
+            <div style="font-size:11px; color:var(--accent); font-weight:700; text-transform:uppercase">Chybí v dalších letech / m 🚨</div>
+            <div id="r_chybi_mdale" style="font-size:16px; font-weight:800; color:#EF4444; margin-top:2px">—</div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:12px; background:rgba(255,255,255,0.02); padding:8px; border-radius:6px; border:1px solid var(--border)">
+          <div style="font-size:11px; color:var(--text2); font-weight:600">Celkový kumulovaný deficit za <span id="r_roky_lbl_dynamicky" style="color:var(--accent); font-weight:700">10</span> let</div>
+          <div id="r_chybi_celkem" style="font-size:16px; font-weight:700; color:var(--text); margin-top:2px">—</div>
+          <div style="font-size:9px; color:var(--text3); margin-top:2px">Počítáno jako: (12 × deficit 1. roku) + (zbylé roky × 12 × dlouhodobý deficit).</div>
+        </div>
+        
+        <div>
+          <div id="r_vzorec_lbl" style="font-size:11px; color:var(--text2); font-weight:600; margin-bottom:2px">Doporučená pojistná částka (SMRT)</div>
+          <div id="r_pojistna_castka" style="font-size:24px; font-weight:800; color:var(--accent)">—</div>
+        </div>
+
+        <div style="font-size:10px; color:var(--text3); margin-top:14px; line-height:1.5; border-top:1px dashed var(--border); padding-top:10px; display:flex; flex-direction:column; gap:6px">
+          <div>🎯 <b>Na co jsou tyto peníze určeny?</b> Pojistné plnění má dva hlavní úkoly:
+            <br>1. <b>Okamžitě smazat veškeré dluhy (úvěry)</b>, aby rodině klesly fixní náklady na minimum.
+            <br>2. <b>Vytvořit kapitálový fond</b>, ze kterého bude partner postupně odčerpávat měsíční rentu pro dorovnání čistého deficitu na běžný život a studia dětí.
+          </div>
+          <div>⌛ <b>Jak dlouho má krytí trvat?</b> Horizont se volí podle věku nejmladšího dítěte tak, aby peníze bezpečně vydržely do dokončení jeho studií (standardně do 26 let). Jakmile jsou děti samostatné, finanční závislost rodiny na příjmu zemřelého zaniká.
+          </div>
         </div>
       </div>
     </div>
@@ -2899,7 +3055,7 @@ function calcRefi() {
 
 // TABS
 function showTab(id) {
-  const ids = ["kalk", "hypo", "refi", "invest", "penze", "dluhopis", "rc", "tab-zivot"];
+  const ids = ["kalk", "hypo", "refi", "invest", "penze", "dluhopis", "rc", "tab-zivot", "tab-rodina"];
   document.querySelectorAll(".tab").forEach((t, i) => {
     t.classList.toggle("active", ids[i] === id);
   });
@@ -4964,6 +5120,31 @@ function clearHelper() {
 }
 
 
+let z_pn_target = 'vy'; // výchozí cíl je krytí výdajů
+function setPnTarget(target) {
+  z_pn_target = target;
+  const btnVy = document.getElementById('z_pn_target_vy');
+  const btnP = document.getElementById('z_pn_target_p');
+  const txtGoal = document.getElementById('z_pn_goal_text');
+
+  if (btnVy && btnP) {
+    if (target === 'vy') {
+      btnVy.style.background = 'var(--accent)';
+      btnVy.style.color = '#fff';
+      btnP.style.background = 'transparent';
+      btnP.style.color = 'var(--text2)';
+      if (txtGoal) txtGoal.textContent = 'Krátkodobý výpadek příjmu (Cíl: krýt nutné výdaje).';
+    } else {
+      btnP.style.background = 'var(--accent)';
+      btnP.style.color = '#fff';
+      btnVy.style.background = 'transparent';
+      btnVy.style.color = 'var(--text2)';
+      if (txtGoal) txtGoal.textContent = 'Krátkodobý výpadek příjmu (Cíl: dorovnat čistý příjem).';
+    }
+  }
+  calcZivot();
+}
+
 function parseZivotVal(val) {
   if (!val) return 0;
   return parseInt(String(val).replace(/\s/g, '').replace(/ /g, '').replace(/[^\d-]/g, '')) || 0;
@@ -5083,7 +5264,8 @@ function calcZivot() {
   const s = getStatniDuchod(p);
 
   const nemocenska = p * 0.6;
-  const deficitPN = Math.max(0, vy - nemocenska);
+  const cilovaCastka = (typeof z_pn_target !== 'undefined' && z_pn_target === 'p') ? p : vy;
+  const deficitPN = Math.max(0, cilovaCastka - nemocenska);
   const denniDavka = Math.round(deficitPN / 30);
   const voRok = p * 12;
   const voCelkem = p > 0 ? voRok + 500000 : 0;
@@ -5143,6 +5325,127 @@ function calcZivot() {
 window.addEventListener('DOMContentLoaded', () => {
   if (typeof calcZivot === 'function') calcZivot();
 });
+
+let rPartner = true;
+
+function syncRSld(id) {
+  const inp = document.getElementById(id);
+  const sld = document.getElementById(id + '_slider');
+  if (inp && sld) {
+    let val = parseZivotVal(inp.value) || 0;
+    if (val > sld.max) val = sld.max;
+    sld.value = val;
+  }
+}
+
+function syncRInp(id) {
+  const inp = document.getElementById(id);
+  const sld = document.getElementById(id + '_slider');
+  if (inp && sld) {
+    inp.value = fmtZNum(sld.value);
+  }
+}
+
+function setRPartner(val) {
+  rPartner = val;
+  const bAno = document.getElementById('r_part_ano');
+  const bNe = document.getElementById('r_part_ne');
+  if(bAno && bNe) {
+    if(val) {
+      bAno.style.background = 'var(--accent)'; bAno.style.color = '#000'; bAno.style.border = 'none';
+      bNe.style.background = 'var(--surface)'; bNe.style.color = 'var(--text2)'; bNe.style.border = '1px solid var(--border2)';
+    } else {
+      bNe.style.background = 'var(--accent)'; bNe.style.color = '#000'; bNe.style.border = 'none';
+      bAno.style.background = 'var(--surface)'; bAno.style.color = 'var(--text2)'; bAno.style.border = '1px solid var(--border2)';
+    }
+  }
+  calcRodina();
+}
+
+function adjRDeti(delta) {
+  const el = document.getElementById('r_deti');
+  if (!el) return;
+  let val = parseInt(el.value) + delta;
+  if(val < 0) val = 0;
+  if(val > 10) val = 10;
+  el.value = val;
+  calcRodina();
+}
+
+function calcRodina() {
+  const prijem = parseZivotVal(document.getElementById('r_prijem')?.value) || 0;
+  const vydaje = parseZivotVal(document.getElementById('r_vydaje')?.value) || 0;
+  const uver = parseZivotVal(document.getElementById('r_uver')?.value) || 0;
+  const rezerva = parseZivotVal(document.getElementById('r_rezerva')?.value) || 0;
+  const deti = parseInt(document.getElementById('r_deti')?.value) || 0;
+  const roky = parseInt(document.getElementById('r_roky_slider')?.value) || 10;
+  if(document.getElementById('r_roky_val')) document.getElementById('r_roky_val').textContent = roky;
+
+  if(document.getElementById('r_roky_lbl2')) document.getElementById('r_roky_lbl2').textContent = roky;
+  if(document.getElementById('r_roky_lbl_budget')) document.getElementById('r_roky_lbl_budget').textContent = roky;
+
+  const zakladniVymera = 4400;
+  let st3 = 0;
+  if(typeof getStatniDuchod === 'function' && prijem > 0) {
+    st3 = getStatniDuchod(prijem).s3;
+  }
+  const procVymera = Math.max(0, st3 - zakladniVymera);
+
+  const vdovsky = (rPartner && prijem > 0) ? zakladniVymera + (procVymera * 0.5) : 0;
+  const sirotci1 = prijem > 0 ? zakladniVymera + (procVymera * 0.4) : 0;
+  const sirotciCelkem = deti * sirotci1;
+
+  const statCelkem1Rok = vdovsky + sirotciCelkem;
+  const statCelkemDale = sirotciCelkem;
+
+  const deficitM1 = Math.max(0, vydaje - statCelkem1Rok);
+  const deficitMDale = Math.max(0, vydaje - statCelkemDale);
+
+  let deficitCelkem = 0;
+  if (roky > 1) {
+    deficitCelkem = (deficitM1 * 12) + (deficitMDale * (roky - 1) * 12);
+  } else {
+    deficitCelkem = deficitM1 * 12;
+  }
+
+  const pojistnaCastka = (prijem === 0 && vydaje === 0 && uver === 0) ? 0 : Math.max(0, uver + deficitCelkem - rezerva);
+
+  if(document.getElementById('r_stat_vdovsky')) document.getElementById('r_stat_vdovsky').textContent = prijem > 0 && rPartner ? fmtZNum(Math.round(vdovsky)) + " Kč" : "0 Kč";
+  if(document.getElementById('r_stat_sirotci')) document.getElementById('r_stat_sirotci').textContent = prijem > 0 ? fmtZNum(Math.round(sirotciCelkem)) + " Kč" : "0 Kč";
+  if(document.getElementById('r_stat_celkem_1')) document.getElementById('r_stat_celkem_1').textContent = fmtZNum(Math.round(statCelkem1Rok)) + " Kč";
+  if(document.getElementById('r_stat_celkem_dale')) document.getElementById('r_stat_celkem_dale').textContent = fmtZNum(Math.round(statCelkemDale)) + " Kč";
+
+  if(document.getElementById('r_chybi_m1')) document.getElementById('r_chybi_m1').textContent = "-" + fmtZNum(Math.round(deficitM1)) + " Kč";
+  if(document.getElementById('r_chybi_mdale')) document.getElementById('r_chybi_mdale').textContent = "-" + fmtZNum(Math.round(deficitMDale)) + " Kč";
+  if(document.getElementById('r_chybi_celkem')) document.getElementById('r_chybi_celkem').textContent = fmtZNum(Math.round(deficitCelkem)) + " Kč";
+  if(document.getElementById('r_pojistna_castka')) document.getElementById('r_pojistna_castka').textContent = fmtZNum(Math.round(pojistnaCastka)) + " Kč";
+
+  const elExplVdov = document.getElementById('r_expl_vdovsky');
+  if (elExplVdov && prijem > 0) {
+    elExplVdov.innerHTML = rPartner
+      ? `Základ 4 400 Kč + 50 % z procentní části fiktivního důchodu (${fmtZNum(Math.round(procVymera * 0.5))} Kč).`
+      : `<span style="color:#EF4444; font-weight:600">Není nárok! Pár žije nesezdaný "na psí knížku".</span>`;
+  }
+
+  const elExplSir = document.getElementById('r_expl_sirotci');
+  if (elExplSir && prijem > 0) {
+    elExplSir.innerHTML = deti > 0
+      ? `Pro ${deti} ${deti === 1 ? 'dítě' : (deti < 5 ? 'děti' : 'dětí')}: každé dostane základ 4 400 Kč a 40 % procentní výměry (${fmtZNum(Math.round(sirotci1))} Kč / dítě).`
+      : `Zatím zadáno 0 dětí. Každé nezaopatřené dítě by mělo nárok na základ 4 400 Kč + 40 % procentní výměry.`;
+  }
+
+  const strRez = rezerva > 0 ? "(− rezerva)" : "<s style='opacity:0.4'>(− rezerva)</s>";
+  const strUver = uver > 0 ? "doplacení úvěru +" : "<s style='opacity:0.4'>doplacení úvěru +</s>";
+  if(document.getElementById('r_vzorec_lbl')) {
+    document.getElementById('r_vzorec_lbl').innerHTML = `Potřeba pojistit se na tuto částku (SMRT):<br><span style="font-weight:normal; font-size:10px; color:var(--text3)">${strUver} krytí deficitu ${strRez}</span>`;
+  }
+  if(document.getElementById('r_roky_lbl_dynamicky')) {
+    document.getElementById('r_roky_lbl_dynamicky').textContent = roky;
+  }
+}
+
+// Spuštění inicializace po načtení
+setTimeout(calcRodina, 600);
 </script>
 </body>
 </html>
