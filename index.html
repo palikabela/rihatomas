@@ -1925,9 +1925,7 @@ input[type="range"]::-webkit-slider-runnable-track {
                 <button onclick="adjZivot('z_vek', -1)" style="width:24px;height:24px;border-radius:4px;border:1px solid var(--border2);background:var(--surface);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-weight:bold;flex-shrink:0">−</button>
                 <input type="text" id="z_vek" value="0" oninput="syncZivotInput(this, 'vek')" style="width:30px;background:transparent;border:none;color:var(--text);font-size:14px;font-weight:700;text-align:center;outline:none;padding:0" placeholder="Věk">
                 <button onclick="adjZivot('z_vek', 1)" style="width:24px;height:24px;border-radius:4px;border:1px solid var(--border2);background:var(--surface);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-weight:bold;flex-shrink:0">+</button>
-                
                 <span style="font-size:10px; color:var(--text3); margin:0 4px">nebo</span>
-                
                 <input type="text" id="z_rok" value="" oninput="syncZivotInput(this, 'rok')" style="width:52px;background:var(--surface);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:13px;font-weight:700;text-align:center;outline:none;padding:2px 0" placeholder="RRRR">
               </div>
               <input type="range" id="z_vek_slider" min="0" max="65" value="0" oninput="syncZivotSlider('z_vek')" style="width:100%; cursor:pointer; accent-color:var(--accent); height:4px; display:block">
@@ -1946,15 +1944,55 @@ input[type="range"]::-webkit-slider-runnable-track {
             </div>
           </div>
 
+        </div>
+
+        <div style="grid-column:1/-1; margin-top:10px;">
+          <div style="margin-top: 5px; margin-bottom: 10px;">
+            <label style="display: block; margin-bottom: 6px; font-size: 11px; color: var(--text2); font-weight: 600;">Typ příjmu klienta:</label>
+            <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+              <button type="button" id="z_type_zam" onclick="setClientType('z', 'zam')" style="flex: 1; background: var(--surface3); color: var(--text); border: 2px solid #3B82F6; padding: 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.2s;">👨‍💼 Zaměstnanec</button>
+              <button type="button" id="z_type_osvc" onclick="setClientType('z', 'osvc')" style="flex: 1; background: var(--surface2); color: var(--text2); border: 1px solid var(--border2); padding: 8px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s;">🧮 OSVČ (Živnostník)</button>
+            </div>
+            <div id="z_osvc_helper_box" style="display: none; background: var(--surface2); border: 1px solid var(--border2); padding: 12px; border-radius: 6px; font-size: 11px;">
+              <label style="display: block; margin-bottom: 5px; font-weight: 600; color: var(--text2);">Režim daně OSVČ:</label>
+              <select id="z_osvc_type" onchange="updateOsvcCalculation('z')" style="width: 100%; background: var(--surface3); color: var(--text); border: 1px solid var(--border2); padding: 6px; border-radius: 4px; font-size: 11px; margin-bottom: 8px; font-weight: 700;">
+                <option value="none">-- Vyberte režim --</option>
+                <option value="pd1">Paušální daň (1. pásmo)</option>
+                <option value="pd2">Paušální daň (2. pásmo)</option>
+                <option value="pd3">Paušální daň (3. pásmo)</option>
+                <option value="skut">Výdajový paušál / Skutečné výdaje</option>
+              </select>
+              <div id="z_osvc_calc_fields" style="display: none;">
+                <label style="display: block; margin-bottom: 3px; color: var(--text2);">Roční příjmy (Obrat z ř. 101 / Příloha 1):</label>
+                <input type="text" id="z_osvc_prijmy" placeholder="Např. 1 000 000" oninput="handleOsvcInput(this, 'z')" style="width: 100%; background: var(--surface3); color: var(--text); border: 1px solid var(--border2); padding: 6px; border-radius: 4px; font-size: 11px; margin-bottom: 8px; font-weight: 700;">
+                <label style="display: block; margin-bottom: 3px; color: var(--text2);">Typ paušálu / Skutečné výdaje:</label>
+                <select id="z_osvc_pausal" onchange="updateOsvcCalculation('z')" style="width: 100%; background: var(--surface3); color: var(--text); border: 1px solid var(--border2); padding: 6px; border-radius: 4px; font-size: 11px;">
+                  <option value="60">60 % (většina živností)</option>
+                  <option value="80">80 % (řemesla, zemědělství)</option>
+                  <option value="40">40 % (svobodná povolání)</option>
+                  <option value="30">30 % (pronájem)</option>
+                  <option value="custom">Skutečné výdaje (zadáno ručně níže)</option>
+                </select>
+                <div id="z_osvc_custom_exp_div" style="display: none; margin-top: 8px;">
+                  <label style="display: block; margin-bottom: 3px; color: var(--text2);">Roční výdaje celkem (z ř. 102):</label>
+                  <input type="text" id="z_osvc_vydaje" placeholder="Např. 400 000" oninput="handleOsvcInput(this, 'z')" style="width: 100%; background: var(--surface3); color: var(--text); border: 1px solid var(--border2); padding: 6px; border-radius: 4px; font-size: 11px; font-weight: 700;">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:4px">
+
           <div class="field" style="margin-bottom:0">
-            <label style="font-size:10px; margin-bottom:4px; display:block">Čistý příjem (Kč)</label>
+            <label style="font-size:10px; margin-bottom:4px; display:block">Čistý příjem / Vyměř. základ (Kč)</label>
             <div style="background:var(--surface2); padding:8px; border-radius:8px; border:1px solid var(--border)">
               <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px">
                 <button onclick="adjZivot('z_prijem', -1000)" style="width:26px;height:26px;border-radius:4px;border:1px solid var(--border2);background:var(--surface);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-weight:bold;flex-shrink:0">−</button>
                 <input type="text" id="z_prijem" value="0" oninput="syncZivotInput(this)" style="flex:1;min-width:0;background:transparent;border:none;color:var(--text);font-size:14px;font-weight:700;text-align:center;outline:none;padding:0">
                 <button onclick="adjZivot('z_prijem', 1000)" style="width:26px;height:26px;border-radius:4px;border:1px solid var(--border2);background:var(--surface);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-weight:bold;flex-shrink:0">+</button>
               </div>
-              <input type="range" id="z_prijem_slider" min="0" max="150000" step="1000" value="0" oninput="syncZivotSlider('z_prijem')" style="width:100%; cursor:pointer; accent-color:var(--accent); height:4px; display:block">
+              <input type="range" id="z_prijem_slider" min="0" max="150000" step="500" value="0" oninput="syncZivotSlider('z_prijem')" style="width:100%; cursor:pointer; accent-color:var(--accent); height:4px; display:block">
             </div>
           </div>
 
@@ -1966,7 +2004,7 @@ input[type="range"]::-webkit-slider-runnable-track {
                 <input type="text" id="z_vydaje" value="0" oninput="syncZivotInput(this)" style="flex:1;min-width:0;background:transparent;border:none;color:var(--text);font-size:14px;font-weight:700;text-align:center;outline:none;padding:0">
                 <button onclick="adjZivot('z_vydaje', 1000)" style="width:26px;height:26px;border-radius:4px;border:1px solid var(--border2);background:var(--surface);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-weight:bold;flex-shrink:0">+</button>
               </div>
-              <input type="range" id="z_vydaje_slider" min="0" max="150000" step="1000" value="0" oninput="syncZivotSlider('z_vydaje')" style="width:100%; cursor:pointer; accent-color:var(--accent); height:4px; display:block">
+              <input type="range" id="z_vydaje_slider" min="0" max="150000" step="500" value="0" oninput="syncZivotSlider('z_vydaje')" style="width:100%; cursor:pointer; accent-color:var(--accent); height:4px; display:block">
             </div>
           </div>
 
@@ -1996,6 +2034,13 @@ input[type="range"]::-webkit-slider-runnable-track {
 
         </div>
       </div>
+      <div style="margin-top:20px; font-size:10px; color:var(--text2); background:var(--surface2); padding:10px; border-radius:6px; border:1px solid var(--border2); line-height:1.4">
+        <div style="font-weight:700; color:var(--text); margin-bottom:4px">📊 JAK ZADAT PŘÍJEM PRO OSVČ?</div>
+        • <b>Paušální daň (1. pásmo):</b> Zadejte natvrdo cca 18 700 Kč. Reálný zisk stát nezajímá!<br>
+        • <b>Paušální daň (2. pásmo):</b> Zadejte fixně 28 050 Kč.<br>
+        • <b>Paušální daň (3. pásmo):</b> Zadejte fixně 42 900 Kč.<br>
+        • <b>Výdajový paušál:</b> (Roční příjmy − Výdaje) × 0.55 / 12. Pokud vyjde méně než cca 15 000 Kč, zadejte minimum.
+      </div>
     </div>
 
     <div>
@@ -2018,6 +2063,9 @@ input[type="range"]::-webkit-slider-runnable-track {
           </div>
         </div>
         <div style="font-size:10px; color:var(--text3); margin-top:10px; line-height:1.4; border-top:1px dashed var(--border); padding-top:8px">
+        <div style="font-size:10.5px; color:#EF4444; background:rgba(239, 68, 68, 0.05); padding:10px; border-radius:6px; border:1px solid rgba(239, 68, 68, 0.3); margin-top:12px; margin-bottom:12px; line-height:1.4">
+          ⚠️ <b>KRUTÁ PRAVDA PRO OSVČ (Nemocenská):</b> Odhad 60 % platí převážně pro zaměstnance. Většina OSVČ si <b>neplatí</b> dobrovolné nemocenské pojištění. To v praxi znamená, že od státu dostanou při nemoci <b>přesně 0 Kč</b> a jejich propad příjmu je 100 %. Pojistnou částku je nutné adekvátně navýšit!
+        </div>
           💡 <b>Metodický cíl:</b> Soukromé pojištění neschopenky neslouží k plnému dorovnání původního příjmu, ale k bezpečnému dokrytí nutných fixních výdajů a chodu domácnosti po dobu, kdy státní nemocenská nestačí.
         </div>
       </div>
@@ -2046,11 +2094,11 @@ input[type="range"]::-webkit-slider-runnable-track {
           <div><div style="font-size:11px; color:var(--accent); font-weight:700; text-transform:uppercase; letter-spacing:0.03em">Chybí /m 🚨</div><div id="z_chybi_2" style="font-size:15px; font-weight:700; color:#F97316; margin-top:2px">—</div></div>
         </div>
         <div>
-          <div id="z_label_poj_2" style="font-size:11px; color:var(--text2); font-weight:600; margin-bottom:2px">Doplacení úvěru + poloviční krytí deficitu (− rezerva)</div>
+          <div id="z_label_poj_2" style="font-size:11px; color:var(--text2); font-weight:600; margin-bottom:2px">Doplacení úvěru + plné krytí deficitu do 65 let (− rezerva)</div>
           <div id="z_pojistna_2" style="font-size:18px; font-weight:800">—</div>
         </div>
         <div style="font-size:10px; color:var(--text3); margin-top:10px; line-height:1.4; border-top:1px dashed var(--border); padding-top:8px">
-          💡 <b>Proč to může převýšit 3. stupeň?</b> Státní důchod u 2. stupně prudce padá a vzniká velký deficit. <b>Částka odpovídající dlužné jistině jde ihned na kompletní splacení závazků (úvěru)</b>, čímž klientovi radikálně klesnou fixní výdaje. Zbytek peněz pak slouží jako doživotní měsíční renta pro vykrytí zbývajícího propadu příjmu (při předpokladu polovičního úvazku).
+          💡 <b>Proč je potřeba plné krytí?</b> Státní důchod u 2. stupně prudce padá a vzniká velký deficit. Částka odpovídající dlužné jistině jde ihned na kompletní splacení závazků (úvěru), čímž klientovi radikálně klesnou fixní výdaje. Zbytek peněz tvoří pevnou měsíční rentu až do 65 let pro stoprocentní vykrytí propadu příjmu. Na rozdíl od běžných metodik záměrně nespoléháme na to, že si klient najde poloviční úvazek – pokud práci kvůli zdravotnímu stavu nesežene, je rodina kompletně zajištěna.
         </div>
       </div>
 
@@ -2115,21 +2163,47 @@ input[type="range"]::-webkit-slider-runnable-track {
       <div class="card" style="margin-bottom:12px; padding: 14px">
         <div class="card-label" style="margin-bottom:12px; font-size: 11px;">Parametry rodiny a financí</div>
         <div style="display:flex; flex-direction:column; gap:12px">
-          
+
+          <div style="margin-top: 5px; margin-bottom: 5px;">
+            <label style="display: block; margin-bottom: 6px; font-size: 11px; color: var(--text2); font-weight: 600;">Typ příjmu klienta:</label>
+            <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+              <button type="button" id="r_type_zam" onclick="setClientType('r', 'zam')" style="flex: 1; background: var(--surface3); color: var(--text); border: 2px solid #3B82F6; padding: 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.2s;">👨‍💼 Zaměstnanec</button>
+              <button type="button" id="r_type_osvc" onclick="setClientType('r', 'osvc')" style="flex: 1; background: var(--surface2); color: var(--text2); border: 1px solid var(--border2); padding: 8px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s;">🧮 OSVČ (Živnostník)</button>
+            </div>
+            <div id="r_osvc_helper_box" style="display: none; background: var(--surface2); border: 1px solid var(--border2); padding: 12px; border-radius: 6px; font-size: 11px;">
+              <label style="display: block; margin-bottom: 5px; font-weight: 600; color: var(--text2);">Režim daně OSVČ:</label>
+              <select id="r_osvc_type" onchange="updateOsvcCalculation('r')" style="width: 100%; background: var(--surface3); color: var(--text); border: 1px solid var(--border2); padding: 6px; border-radius: 4px; font-size: 11px; margin-bottom: 8px; font-weight: 700;">
+                <option value="none">-- Vyberte režim --</option>
+                <option value="pd1">Paušální daň (1. pásmo)</option>
+                <option value="pd2">Paušální daň (2. pásmo)</option>
+                <option value="pd3">Paušální daň (3. pásmo)</option>
+                <option value="skut">Výdajový paušál / Skutečné výdaje</option>
+              </select>
+              <div id="r_osvc_calc_fields" style="display: none;">
+                <label style="display: block; margin-bottom: 3px; color: var(--text2);">Roční příjmy (Obrat z ř. 101 / Příloha 1):</label>
+                <input type="text" id="r_osvc_prijmy" placeholder="Např. 1 000 000" oninput="handleOsvcInput(this, 'r')" style="width: 100%; background: var(--surface3); color: var(--text); border: 1px solid var(--border2); padding: 6px; border-radius: 4px; font-size: 11px; margin-bottom: 8px; font-weight: 700;">
+                <label style="display: block; margin-bottom: 3px; color: var(--text2);">Typ paušálu / Skutečné výdaje:</label>
+                <select id="r_osvc_pausal" onchange="updateOsvcCalculation('r')" style="width: 100%; background: var(--surface3); color: var(--text); border: 1px solid var(--border2); padding: 6px; border-radius: 4px; font-size: 11px;">
+                  <option value="60">60 % (většina živností)</option>
+                  <option value="80">80 % (řemesla, zemědělství)</option>
+                  <option value="40">40 % (svobodná povolání)</option>
+                  <option value="30">30 % (pronájem)</option>
+                  <option value="custom">Skutečné výdaje (zadáno ručně níže)</option>
+                </select>
+                <div id="r_osvc_custom_exp_div" style="display: none; margin-top: 8px;">
+                  <label style="display: block; margin-bottom: 3px; color: var(--text2);">Roční výdaje celkem (z ř. 102):</label>
+                  <input type="text" id="r_osvc_vydaje" placeholder="Např. 400 000" oninput="handleOsvcInput(this, 'r')" style="width: 100%; background: var(--surface3); color: var(--text); border: 1px solid var(--border2); padding: 6px; border-radius: 4px; font-size: 11px; font-weight: 700;">
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div class="field" style="margin-bottom:0">
             <label style="font-size:10px; margin-bottom:2px; display:block">Čistý příjem / Vyměřovací základ v případě smrti (Kč)</label>
             <div style="background:var(--surface2); padding:6px 8px; border-radius:8px; border:1px solid var(--border); display:flex; align-items:center">
               <input type="text" id="r_prijem" value="0" class="fmt-input" oninput="formatLive(this); syncRSld('r_prijem'); calcRodina()" style="width:100%;background:transparent;border:none;color:var(--text);font-size:14px;font-weight:700;text-align:center;outline:none;padding:0">
             </div>
             <input type="range" id="r_prijem_slider" min="0" max="150000" step="500" value="0" oninput="syncRInp('r_prijem'); calcRodina()" style="width:100%; margin-top:4px; accent-color:var(--accent); cursor:pointer">
-          </div>
-          
-          <div class="field" style="margin-bottom:0">
-            <label style="font-size:10px; margin-bottom:2px; display:block">Měsíční výdaje rodiny (Kč)</label>
-            <div style="background:var(--surface2); padding:6px 8px; border-radius:8px; border:1px solid var(--border); display:flex; align-items:center">
-              <input type="text" id="r_vydaje" value="0" class="fmt-input" oninput="formatLive(this); syncRSld('r_vydaje'); calcRodina()" style="width:100%;background:transparent;border:none;color:var(--text);font-size:14px;font-weight:700;text-align:center;outline:none;padding:0">
-            </div>
-            <input type="range" id="r_vydaje_slider" min="0" max="120000" step="500" value="0" oninput="syncRInp('r_vydaje'); calcRodina()" style="width:100%; margin-top:4px; accent-color:var(--accent); cursor:pointer">
           </div>
 
           <div class="field" style="margin-bottom:0">
@@ -2138,6 +2212,14 @@ input[type="range"]::-webkit-slider-runnable-track {
               <input type="text" id="r_uver" value="0" class="fmt-input" oninput="formatLive(this); syncRSld('r_uver'); calcRodina()" style="width:100%;background:transparent;border:none;color:var(--text);font-size:14px;font-weight:700;text-align:center;outline:none;padding:0">
             </div>
             <input type="range" id="r_uver_slider" min="0" max="8000000" step="50000" value="0" oninput="syncRInp('r_uver'); calcRodina()" style="width:100%; margin-top:4px; accent-color:var(--accent); cursor:pointer">
+          </div>
+
+          <div class="field" style="margin-bottom:0">
+            <label style="font-size:10px; margin-bottom:2px; display:block">Měsíční výdaje rodiny (Kč)</label>
+            <div style="background:var(--surface2); padding:6px 8px; border-radius:8px; border:1px solid var(--border); display:flex; align-items:center">
+              <input type="text" id="r_vydaje" value="0" class="fmt-input" oninput="formatLive(this); syncRSld('r_vydaje'); calcRodina()" style="width:100%;background:transparent;border:none;color:var(--text);font-size:14px;font-weight:700;text-align:center;outline:none;padding:0">
+            </div>
+            <input type="range" id="r_vydaje_slider" min="0" max="120000" step="500" value="0" oninput="syncRInp('r_vydaje'); calcRodina()" style="width:100%; margin-top:4px; accent-color:var(--accent); cursor:pointer">
           </div>
 
           <div class="field" style="margin-bottom:0">
@@ -5209,8 +5291,10 @@ function adjZivot(id, delta) {
 }
 
 function syncZivotInput(el, type) {
+  let cursorPos = typeof el.selectionStart === "number" ? el.selectionStart : el.value.length;
+  let oldLength = el.value.length;
   let v = parseZivotVal(el.value);
-  
+
   if (type === 'vek') {
     v = Math.min(65, Math.max(0, v));
     el.value = fmtZNum(v);
@@ -5226,11 +5310,11 @@ function syncZivotInput(el, type) {
     const cy = new Date().getFullYear();
     if (v > cy) v = cy;
     el.value = v ? v : "";
-    
+
     let age = (v > 1900) ? (cy - v) : 0;
     if (age < 0) age = 0;
     if (age > 65) age = 65;
-    
+
     const vekEl = document.getElementById("z_vek");
     if (vekEl) vekEl.value = fmtZNum(age);
     const s = document.getElementById("z_vek_slider");
@@ -5239,6 +5323,11 @@ function syncZivotInput(el, type) {
     el.value = fmtZNum(v);
     const s = document.getElementById(el.id + "_slider");
     if (s) s.value = v;
+  }
+  let newLength = el.value.length;
+  cursorPos = cursorPos + (newLength - oldLength);
+  if (typeof el.setSelectionRange === "function" && type !== 'rok') {
+    el.setSelectionRange(cursorPos, cursorPos);
   }
   calcZivot();
 }
@@ -5265,6 +5354,20 @@ function getStatniDuchod(netto) {
 }
 
 function calcZivot() {
+  // Načtení klíčových hodnot pro kontrolu zadání
+  const checkVek = parseZivotVal(document.getElementById('z_vek')?.value);
+  const checkPrijem = parseZivotVal(document.getElementById('z_prijem')?.value);
+  const checkVydaje = parseZivotVal(document.getElementById('z_vydaje')?.value);
+  // Pokud není zadán věk, příjem nebo výdaje, vymaž výsledky a ukonči funkci
+  if (checkVek <= 0 || checkPrijem <= 0 || checkVydaje <= 0) {
+    const fields = ['z_pn_state', 'z_pn_deficit', 'z_pn_daily', 'z_invalidita1_state', 'z_invalidita1_deficit', 'z_invalidita1_celkem', 'z_invalidita2_state', 'z_invalidita2_deficit', 'z_invalidita2_celkem', 'z_invalidita3_state', 'z_invalidita3_deficit', 'z_invalidita3_celkem', 'z_kriticke_celkem'];
+    fields.forEach(f => {
+      const el = document.getElementById(f);
+      if (el) el.textContent = '— Kč';
+    });
+    return; // Zastavení výpočtu
+  }
+
   const v = parseZivotVal(document.getElementById("z_vek")?.value) || 0;
   const p = parseZivotVal(document.getElementById("z_prijem")?.value) || 0;
   const vy = parseZivotVal(document.getElementById("z_vydaje")?.value) || 0;
@@ -5299,7 +5402,7 @@ function calcZivot() {
   const d3 = Math.max(0, vy - s.s3), d2 = Math.max(0, vy - s.s2), d1 = Math.max(0, vy - s.s1);
 
   const poj3 = (v === 0 && h === 0 && vy === 0) ? 0 : Math.max(0, h + (d3 * m) + n - r);
-  const poj2 = (v === 0 && h === 0 && vy === 0) ? 0 : Math.max(0, h + (d2 * m * 0.5) - r);
+  const poj2 = (v === 0 && h === 0 && vy === 0) ? 0 : Math.max(0, h + (d2 * m) - r);
   const poj1 = (v === 0 && vy === 0) ? 0 : Math.max(0, (d1 * 12 * 3) - r);
 
   const updateInv = (idStat, idChybi, idPoj, st, ch, po) => {
@@ -5389,16 +5492,10 @@ function adjRDeti(delta) {
 }
 
 function kopirovatZadaniProAI() {
-  const tabs = ['tab-rodina', 'tab-hypoteka', 'tab-rentier', 'tab-rentabilita'];
-  let activeTabEl = null;
-
-  for (let tab of tabs) {
-    const el = document.getElementById(tab);
-    if (el && (el.style.display === 'block' || window.getComputedStyle(el).display === 'block')) {
-      activeTabEl = el;
-      break;
-    }
-  }
+  // Najde element, který má třídu .section nebo .tab-content a je aktuálně viditelný
+  const activeTabEl = Array.from(document.querySelectorAll('.section, .tab-content')).find(el => {
+    return window.getComputedStyle(el).display === 'block';
+  });
   if (!activeTabEl) {
     alert("Nenalezena žádná aktivní záložka ke zkopírování.");
     return;
@@ -5430,6 +5527,127 @@ function kopirovatZadaniProAI() {
   }).catch(err => {
     alert("Chyba při kopírování: " + err);
   });
+}
+
+function setClientType(prefix, type) {
+  const btnZam = document.getElementById(prefix + '_type_zam');
+  const btnOsvc = document.getElementById(prefix + '_type_osvc');
+  const helperBox = document.getElementById(prefix + '_osvc_helper_box');
+
+  if (type === 'zam') {
+    btnZam.style.background = 'var(--surface3)';
+    btnZam.style.borderColor = '#3B82F6';
+    btnZam.style.color = 'var(--text)';
+    btnZam.style.fontWeight = '700';
+    btnOsvc.style.background = 'var(--surface2)';
+    btnOsvc.style.borderColor = 'var(--border2)';
+    btnOsvc.style.color = 'var(--text2)';
+    btnOsvc.style.fontWeight = '600';
+    if (helperBox) helperBox.style.display = 'none';
+  } else {
+    btnOsvc.style.background = 'var(--surface3)';
+    btnOsvc.style.borderColor = '#3B82F6';
+    btnOsvc.style.color = 'var(--text)';
+    btnOsvc.style.fontWeight = '700';
+    btnZam.style.background = 'var(--surface2)';
+    btnZam.style.borderColor = 'var(--border2)';
+    btnZam.style.color = 'var(--text2)';
+    btnZam.style.fontWeight = '600';
+    if (helperBox) helperBox.style.display = 'block';
+    updateOsvcCalculation(prefix);
+  }
+}
+
+function handleOsvcInput(el, prefix) {
+  let cursorPos = el.selectionStart;
+  let oldLength = el.value.length;
+  let digits = el.value.replace(/\D/g, '');
+  if (!digits) {
+    el.value = '';
+    updateOsvcCalculation(prefix);
+    return;
+  }
+  let num = parseInt(digits, 10);
+  el.value = num.toLocaleString('cs-CZ');
+  let newLength = el.value.length;
+  cursorPos = cursorPos + (newLength - oldLength);
+  if (typeof el.setSelectionRange === "function") {
+    el.setSelectionRange(cursorPos, cursorPos);
+  }
+  updateOsvcCalculation(prefix);
+}
+
+function updateOsvcCalculation(prefix) {
+  const type = document.getElementById(prefix + '_osvc_type').value;
+  const fieldsDiv = document.getElementById(prefix + '_osvc_calc_fields');
+  const customExpDiv = document.getElementById(prefix + '_osvc_custom_exp_div');
+
+  if (!type || type === 'none') {
+    if (fieldsDiv) fieldsDiv.style.display = 'none';
+    return;
+  }
+
+  let finalBasis = 0;
+
+  if (type === 'pd1') {
+    finalBasis = 18700;
+    if (fieldsDiv) fieldsDiv.style.display = 'none';
+  } else if (type === 'pd2') {
+    finalBasis = 28050;
+    if (fieldsDiv) fieldsDiv.style.display = 'none';
+  } else if (type === 'pd3') {
+    finalBasis = 42900;
+    if (fieldsDiv) fieldsDiv.style.display = 'none';
+  } else if (type === 'skut') {
+    if (fieldsDiv) fieldsDiv.style.display = 'block';
+    const pausalSelect = document.getElementById(prefix + '_osvc_pausal').value;
+    if (pausalSelect === 'custom') {
+      if (customExpDiv) customExpDiv.style.display = 'block';
+    } else {
+      if (customExpDiv) customExpDiv.style.display = 'none';
+    }
+    const rawIncomeText = document.getElementById(prefix + '_osvc_prijmy').value || '0';
+    const annualIncome = parseFloat(rawIncomeText.replace(/\s/g, '').replace(/\u00a0/g, '')) || 0;
+    let annualExpenses = 0;
+    if (pausalSelect === 'custom') {
+      const rawExpensesText = document.getElementById(prefix + '_osvc_vydaje').value || '0';
+      annualExpenses = parseFloat(rawExpensesText.replace(/\s/g, '').replace(/\u00a0/g, '')) || 0;
+    } else {
+      const pct = parseFloat(pausalSelect) / 100;
+      annualExpenses = annualIncome * pct;
+    }
+    let calculatedBasis = ((annualIncome - annualExpenses) * 0.55) / 12;
+    if (annualIncome > 0 && calculatedBasis < 15000) {
+      calculatedBasis = 15000;
+    }
+    finalBasis = Math.round(calculatedBasis);
+  }
+
+  if (finalBasis > 0) {
+    if (prefix === 'r') {
+      const inputEl = document.getElementById('r_prijem');
+      const sliderEl = document.getElementById('r_prijem_slider');
+      if (inputEl) {
+        inputEl.value = fmtZNum(finalBasis);
+        if (sliderEl) {
+          // Pokud částka přesahuje standardní max slideru, dočasně ho navýšíme
+          if (finalBasis > parseInt(sliderEl.max)) {
+            sliderEl.max = finalBasis;
+          }
+          sliderEl.value = finalBasis;
+        }
+        calcRodina();
+      }
+    } else if (prefix === 'z') {
+      const inputEl = document.getElementById('z_prijem');
+      if (inputEl) {
+        inputEl.value = fmtZNum(finalBasis);
+        const s = document.getElementById('z_prijem_slider');
+        if (s) s.value = finalBasis;
+        calcZivot();
+      }
+    }
+  }
 }
 
 function calcRodina() {
