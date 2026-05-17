@@ -478,11 +478,16 @@ input[type="range"]::-webkit-slider-runnable-track {
   letter-spacing:-0.03em;
   white-space:nowrap;
 }
-@media(min-width: 641px) {
-  .dps-align-spacer { height: 65px; }
-}
-@media(max-width: 640px) {
-  .dps-align-spacer { height: 0px; display: none; }
+/* Vypnutí sticky panelů na mobilních zařízeních pro lepší scrollování */
+@media (max-width: 992px) {
+  div[style*="position: sticky"], 
+  div[style*="position:sticky"] {
+    position: relative !important;
+    top: auto !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow-y: visible !important;
+  }
 }
 </style>
 </head>
@@ -492,6 +497,9 @@ input[type="range"]::-webkit-slider-runnable-track {
   <div class="nav-right">
     <a href="https://rihatomas.com/faktura/" target="_blank">🧾 Faktury</a>
     <a href="dotaznik.html" target="_blank">📋 Dotazník</a>
+    <button onclick="kopirovatZadaniProAI()" title="Kopírovat data pro AI" style="background:var(--surface3); color:var(--text); border:1px solid var(--border2); width:36px; height:36px; border-radius:5px; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:16px; transition:all 0.2s; margin-right:8px" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='var(--surface3)'">
+      <span id="ai-copy-icon">📋</span>
+    </button>
     <button onclick="toggleTheme()" class="theme-btn" id="theme-icon">☀️</button>
     <div class="nav-dot live" id="nav-dot" title="Sazby online"></div>
 
@@ -2113,7 +2121,7 @@ input[type="range"]::-webkit-slider-runnable-track {
             <div style="background:var(--surface2); padding:6px 8px; border-radius:8px; border:1px solid var(--border); display:flex; align-items:center">
               <input type="text" id="r_prijem" value="0" class="fmt-input" oninput="formatLive(this); syncRSld('r_prijem'); calcRodina()" style="width:100%;background:transparent;border:none;color:var(--text);font-size:14px;font-weight:700;text-align:center;outline:none;padding:0">
             </div>
-            <input type="range" id="r_prijem_slider" min="0" max="150000" step="2000" value="0" oninput="syncRInp('r_prijem'); calcRodina()" style="width:100%; margin-top:4px; accent-color:var(--accent); cursor:pointer">
+            <input type="range" id="r_prijem_slider" min="0" max="150000" step="500" value="0" oninput="syncRInp('r_prijem'); calcRodina()" style="width:100%; margin-top:4px; accent-color:var(--accent); cursor:pointer">
           </div>
           
           <div class="field" style="margin-bottom:0">
@@ -2121,7 +2129,7 @@ input[type="range"]::-webkit-slider-runnable-track {
             <div style="background:var(--surface2); padding:6px 8px; border-radius:8px; border:1px solid var(--border); display:flex; align-items:center">
               <input type="text" id="r_vydaje" value="0" class="fmt-input" oninput="formatLive(this); syncRSld('r_vydaje'); calcRodina()" style="width:100%;background:transparent;border:none;color:var(--text);font-size:14px;font-weight:700;text-align:center;outline:none;padding:0">
             </div>
-            <input type="range" id="r_vydaje_slider" min="0" max="120000" step="2000" value="0" oninput="syncRInp('r_vydaje'); calcRodina()" style="width:100%; margin-top:4px; accent-color:var(--accent); cursor:pointer">
+            <input type="range" id="r_vydaje_slider" min="0" max="120000" step="500" value="0" oninput="syncRInp('r_vydaje'); calcRodina()" style="width:100%; margin-top:4px; accent-color:var(--accent); cursor:pointer">
           </div>
 
           <div class="field" style="margin-bottom:0">
@@ -2148,6 +2156,9 @@ input[type="range"]::-webkit-slider-runnable-track {
             <div style="display:flex; gap:6px">
               <button type="button" id="r_part_ano" onclick="setRPartner(true)" style="flex:1; padding:8px; border:none; border-radius:6px; font-size:10px; font-weight:700; cursor:pointer; background:var(--accent); color:#000; transition:all 0.2s">ANO (Svatba)</button>
               <button type="button" id="r_part_ne" onclick="setRPartner(false)" style="flex:1; padding:8px; border:none; border-radius:6px; font-size:10px; font-weight:700; cursor:pointer; background:var(--surface); color:var(--text2); border:1px solid var(--border2); transition:all 0.2s">NE (Na psí knížku)</button>
+            </div>
+            <div id="r_psi_knizka_info" style="display:none; font-size:10px; color:#EF4444; background:rgba(239, 68, 68, 0.05); padding:8px; border-radius:6px; border:1px solid rgba(239, 68, 68, 0.2); margin-top:8px; line-height:1.3">
+              ⚠️ <b>Na psí knížku:</b> Stát vás bere jako cizí lidi. Vdovský důchod <b>nevznikne vůbec</b> (0 Kč), i když máte děti. Rodina dostane pouze sirotčí důchody na děti. O to vyšší musí být komerční životní pojištění!
             </div>
           </div>
 
@@ -2190,7 +2201,7 @@ input[type="range"]::-webkit-slider-runnable-track {
           <div>
             <div style="font-size:11px; color:var(--text); font-weight:700">Vdovský / vdovecký důchod</div>
             <div id="r_stat_vdovsky" style="font-size:15px; font-weight:700; margin-top:2px">—</div>
-            <div id="r_expl_vdovsky" style="font-size:9px; color:var(--text3); margin-top:2px; line-height:1.2">Pevný základ 4 400 Kč + 50 % procentní výměry.</div>
+            <div id="r_expl_vdovsky" style="font-size:9px; color:var(--text3); margin-top:2px; line-height:1.2">Základ 4 400 Kč + 50 % z procentní části fiktivního důchodu.</div>
           </div>
           <div>
             <div style="font-size:11px; color:var(--text); font-weight:700">Sirotčí důchod (celkem)</div>
@@ -2205,10 +2216,12 @@ input[type="range"]::-webkit-slider-runnable-track {
             <div id="r_stat_celkem_1" style="font-size:18px; font-weight:800; color:#3B82F6; margin-top:2px">—</div>
             <div style="font-size:9px; color:var(--text3); line-height:1.2">Kombinace vdovského a sirotčího důchodu.</div>
           </div>
-          <div>
-            <div style="font-size:11px; color:#60A5FA; font-weight:700">DALŠÍ ROKY: Podpora / m ⏳</div>
-            <div id="r_stat_celkem_dale" style="font-size:18px; font-weight:800; color:#93C5FD; margin-top:2px">—</div>
-            <div id="r_expl_dale" style="font-size:9px; color:var(--text3); line-height:1.2">Vdovský důchod po 1 roce končí (pokud nejsou splněny podmínky).</div>
+          <div style="background:var(--surface2); border:1px solid #3B82F6; padding:8px; border-radius:6px; margin-top:-4px">
+            <div style="font-size:11px; color:#3B82F6; font-weight:800">DALŠÍ ROKY: Podpora / m ⏳</div>
+            <div id="r_stat_celkem_dale" style="font-size:18px; font-weight:800; color:#3B82F6; margin-top:2px">—</div>
+            <div id="r_expl_dale" style="font-size:9px; color:var(--text3); line-height:1.3; margin-top:4px">
+              Vdovský důchod po 1 roce <b>trvale končí</b>. Výjimkou (kdy pokračuje) je pouze péče o nezaopatřené dítě, péče o bezmocnou osobu, vlastní invalidita 3. st., nebo dosažení věku.
+            </div>
           </div>
         </div>
       </div>
@@ -2228,16 +2241,15 @@ input[type="range"]::-webkit-slider-runnable-track {
           </div>
         </div>
 
-        <div style="margin-bottom:12px; background:rgba(255,255,255,0.02); padding:8px; border-radius:6px; border:1px solid var(--border)">
-          <div style="font-size:11px; color:var(--text2); font-weight:600">Celkový kumulovaný deficit za <span id="r_roky_lbl_dynamicky" style="color:var(--accent); font-weight:700">10</span> let</div>
-          <div id="r_chybi_celkem" style="font-size:16px; font-weight:700; color:var(--text); margin-top:2px">—</div>
-          <div style="font-size:9px; color:var(--text3); margin-top:2px">Počítáno jako: (12 × deficit 1. roku) + (zbylé roky × 12 × dlouhodobý deficit).</div>
+        <div style="margin-top:12px; background:rgba(239, 68, 68, 0.05); padding:12px; border-radius:8px; border:1px solid rgba(239, 68, 68, 0.2)">
+          <div style="font-size:12px; color:#EF4444; font-weight:800; margin-bottom:4px; text-transform:uppercase">Potřeba pojistit se na tuto částku (SMRT):</div>
+          <div id="r_pojistna_castka" style="font-size:28px; font-weight:900; color:var(--text)">—</div>
+          <div id="r_vzorec_lbl" style="font-size:10px; color:var(--text2); margin-top:4px; font-weight:600">—</div>
+          <div style="font-size:9px; color:var(--text3); margin-top:6px; border-top:1px dashed var(--border); padding-top:6px">
+            <i>Počítáno jako: (12 × deficit 1. roku) + (zbylé roky × 12 × dlouhodobý deficit).</i>
+          </div>
         </div>
-        
-        <div>
-          <div id="r_vzorec_lbl" style="font-size:11px; color:var(--text2); font-weight:600; margin-bottom:2px">Doporučená pojistná částka (SMRT)</div>
-          <div id="r_pojistna_castka" style="font-size:24px; font-weight:800; color:var(--accent)">—</div>
-        </div>
+        <div id="r_chybi_celkem" style="display:none;"></div>
 
         <div style="font-size:10px; color:var(--text3); margin-top:14px; line-height:1.5; border-top:1px dashed var(--border); padding-top:10px; display:flex; flex-direction:column; gap:6px">
           <div>🎯 <b>Na co jsou tyto peníze určeny?</b> Pojistné plnění má dva hlavní úkoly:
@@ -5350,13 +5362,17 @@ function setRPartner(val) {
   rPartner = val;
   const bAno = document.getElementById('r_part_ano');
   const bNe = document.getElementById('r_part_ne');
+  const infoBox = document.getElementById('r_psi_knizka_info');
+
   if(bAno && bNe) {
     if(val) {
       bAno.style.background = 'var(--accent)'; bAno.style.color = '#000'; bAno.style.border = 'none';
       bNe.style.background = 'var(--surface)'; bNe.style.color = 'var(--text2)'; bNe.style.border = '1px solid var(--border2)';
+      if(infoBox) infoBox.style.display = 'none';
     } else {
       bNe.style.background = 'var(--accent)'; bNe.style.color = '#000'; bNe.style.border = 'none';
       bAno.style.background = 'var(--surface)'; bAno.style.color = 'var(--text2)'; bAno.style.border = '1px solid var(--border2)';
+      if(infoBox) infoBox.style.display = 'block';
     }
   }
   calcRodina();
@@ -5370,6 +5386,50 @@ function adjRDeti(delta) {
   if(val > 10) val = 10;
   el.value = val;
   calcRodina();
+}
+
+function kopirovatZadaniProAI() {
+  const tabs = ['tab-rodina', 'tab-hypoteka', 'tab-rentier', 'tab-rentabilita'];
+  let activeTabEl = null;
+
+  for (let tab of tabs) {
+    const el = document.getElementById(tab);
+    if (el && (el.style.display === 'block' || window.getComputedStyle(el).display === 'block')) {
+      activeTabEl = el;
+      break;
+    }
+  }
+  if (!activeTabEl) {
+    alert("Nenalezena žádná aktivní záložka ke zkopírování.");
+    return;
+  }
+  const clone = activeTabEl.cloneNode(true);
+  const originalInputs = activeTabEl.querySelectorAll('input, select, textarea');
+  const cloneInputs = clone.querySelectorAll('input, select, textarea');
+  for (let i = 0; i < originalInputs.length; i++) {
+    let val = originalInputs[i].value;
+    if ((originalInputs[i].type === 'checkbox' || originalInputs[i].type === 'radio') && !originalInputs[i].checked) {
+      val = "";
+    }
+    const span = document.createElement('span');
+    span.textContent = val ? ` [Zadáno: ${val}] ` : "";
+    span.style.fontWeight = "bold";
+    cloneInputs[i].parentNode.replaceChild(span, cloneInputs[i]);
+  }
+  clone.style.position = 'absolute';
+  clone.style.left = '-9999px';
+  document.body.appendChild(clone);
+  const textProKopirovani = clone.innerText;
+  document.body.removeChild(clone);
+  navigator.clipboard.writeText(textProKopirovani).then(() => {
+    const icon = document.getElementById('ai-copy-icon');
+    if(icon) {
+      icon.textContent = "✅";
+      setTimeout(() => { icon.textContent = "📋"; }, 2000);
+    }
+  }).catch(err => {
+    alert("Chyba při kopírování: " + err);
+  });
 }
 
 function calcRodina() {
@@ -5395,8 +5455,9 @@ function calcRodina() {
   const sirotci1 = prijem > 0 ? zakladniVymera + (procVymera * 0.4) : 0;
   const sirotciCelkem = deti * sirotci1;
 
+  // Státní podpora v čase (Vdovský garantován na 1 rok, pokračuje jen při péči o dítě)
   const statCelkem1Rok = vdovsky + sirotciCelkem;
-  const statCelkemDale = sirotciCelkem;
+  const statCelkemDale = (deti > 0) ? (vdovsky + sirotciCelkem) : sirotciCelkem;
 
   const deficitM1 = Math.max(0, vydaje - statCelkem1Rok);
   const deficitMDale = Math.max(0, vydaje - statCelkemDale);
@@ -5420,20 +5481,38 @@ function calcRodina() {
   if(document.getElementById('r_chybi_celkem')) document.getElementById('r_chybi_celkem').textContent = fmtZNum(Math.round(deficitCelkem)) + " Kč";
   if(document.getElementById('r_pojistna_castka')) document.getElementById('r_pojistna_castka').textContent = fmtZNum(Math.round(pojistnaCastka)) + " Kč";
 
+  // Dynamické rozepsání podrobností pro poradce
   const elExplVdov = document.getElementById('r_expl_vdovsky');
   if (elExplVdov && prijem > 0) {
-    elExplVdov.innerHTML = rPartner
-      ? `Základ 4 400 Kč + 50 % z procentní části fiktivního důchodu (${fmtZNum(Math.round(procVymera * 0.5))} Kč).`
-      : `<span style="color:#EF4444; font-weight:600">Není nárok! Pár žije nesezdaný "na psí knížku".</span>`;
+    if (rPartner) {
+      if (deti > 0) {
+        elExplVdov.innerHTML = `Základ 4 400 Kč + 50 % z proc. výměry. <span style="color:#10B981; font-weight:700">Pokračuje i po 1. roce (péče o dítě).</span>`;
+      } else {
+        elExplVdov.innerHTML = `Základ 4 400 Kč + 50 % z proc. výměry. <span style="background:#FEF2F2; color:#EF4444; border:1px solid #FECACA; padding:2px 4px; border-radius:4px; font-weight:800">POUZE NA 1 ROK! 🚨</span>`;
+      }
+    } else {
+      elExplVdov.innerHTML = `<span style="color:#EF4444; font-weight:600">Není nárok! Pár žije nesezdaný "na psí knížku".</span>`;
+    }
   }
 
   const elExplSir = document.getElementById('r_expl_sirotci');
   if (elExplSir && prijem > 0) {
     elExplSir.innerHTML = deti > 0
       ? `Pro ${deti} ${deti === 1 ? 'dítě' : (deti < 5 ? 'děti' : 'dětí')}: každé dostane základ 4 400 Kč a 40 % procentní výměry (${fmtZNum(Math.round(sirotci1))} Kč / dítě).`
-      : `Zatím zadáno 0 dětí. Každé nezaopatřené dítě by mělo nárok na základ 4 400 Kč + 40 % procentní výměry.`;
+      : `Zatím zadáno 0 dětí.`;
   }
-
+  const elExplDale = document.getElementById('r_expl_dale');
+  if (elExplDale) {
+    if (rPartner && deti > 0) {
+      elExplDale.innerHTML = `Vdovský i sirotčí důchod pokračují v plné výši díky péči o nezaopatřené dítě.`;
+    } else if (rPartner && deti === 0) {
+      elExplDale.innerHTML = `<span style="color:#EF4444; font-weight:700">Vdovský důchod po 1 roce trvale končí</span> (nejsou děti). Státní podpora padá na 0 Kč.`;
+    } else if (!rPartner && deti > 0) {
+      elExplDale.innerHTML = `Vyplácí se pouze sirotčí důchody na děti. Vdovský důchod vůbec nevznikl.`;
+    } else {
+      elExplDale.innerHTML = `Žádná podpora od státu.`;
+    }
+  }
   const strRez = rezerva > 0 ? "(− rezerva)" : "<s style='opacity:0.4'>(− rezerva)</s>";
   const strUver = uver > 0 ? "doplacení úvěru +" : "<s style='opacity:0.4'>doplacení úvěru +</s>";
   if(document.getElementById('r_vzorec_lbl')) {
