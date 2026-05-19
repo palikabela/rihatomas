@@ -1098,7 +1098,7 @@ input[type="range"]::-webkit-slider-runnable-track {
     <div id="penze-tfvsdps" style="display:none">
     <div class="grid2">
       <!-- LEVÁ KARTA: Parametry -->
-      <div class="card" style="position: sticky; top: 20px; align-self: start;">
+      <div class="card" style="align-self: start;">
         <div class="card-label">Parametry spoření</div>
         <div class="field">
           <label>Rok narození</label>
@@ -1108,10 +1108,6 @@ input[type="range"]::-webkit-slider-runnable-track {
             <button onclick="pAdjRok(1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
           <div id="p_vek_info" style="color:var(--text2);margin-top:6px;font-size:12px;font-weight:normal"></div>
-          <label style="display:flex;align-items:center;gap:8px;margin-top:8px;cursor:pointer;font-size:12px;color:var(--text2);background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.25);border-radius:6px;padding:7px 10px;user-select:none">
-            <input type="checkbox" id="p_duchodce" onchange="calcPenze()" style="width:15px;height:15px;accent-color:#EF4444;cursor:pointer;flex-shrink:0">
-            <span>Pobírá starobní důchod <span style="color:#EF4444;font-weight:600">(ztráta st. příspěvku)</span></span>
-          </label>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;margin-top:10px">
           <div class="field" style="margin:0">
@@ -1130,17 +1126,6 @@ input[type="range"]::-webkit-slider-runnable-track {
               <button onclick="document.getElementById('p_odsporeno').value=Math.min(15,(parseInt(document.getElementById('p_odsporeno').value)||0)+1);calcPenze()" style="width:28px;height:28px;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center">+</button>
             </div>
           </div>
-        </div>
-        <!-- PŘEVOD TF → DPS TOGGLE -->
-        <div style="margin-bottom:14px;margin-top:4px">
-          <button id="tf_prechod_btn" onclick="toggleTfPrevod()" style="width:100%;padding:11px 16px;border-radius:10px;border:2px solid var(--surface3);background:var(--surface3);color:var(--text2);font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:space-between">
-            <span style="display:flex;align-items:center;gap:8px">
-              <span id="tf_prechod_icon" style="font-size:16px">🔄</span>
-              PŘEVOD TF → DPS (zachování let)
-            </span>
-            <span id="tf_prechod_status" style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;background:rgba(255,255,255,0.08);color:var(--text3)">VYPNUTO</span>
-          </button>
-          <div style="font-size:11px;color:var(--text3);margin-top:5px;padding:0 4px">Při převodu se započítává celá doba spoření z&nbsp;TF.</div>
         </div>
         <div id="p_hack_banner" style="display:none;margin-bottom:14px;padding:10px;background:rgba(234,179,8,0.1);border:1px solid rgba(234,179,8,0.3);border-radius:8px;font-size:12px;color:var(--text);line-height:1.5"></div>
         <div id="p_warning" style="display:none;color:var(--red);background:var(--red-dim);padding:10px;border-radius:8px;font-size:13px;margin-bottom:14px;border:1px solid rgba(239,68,68,0.3)"></div>
@@ -1480,8 +1465,8 @@ input[type="range"]::-webkit-slider-runnable-track {
             <div id="d_vek_info" style="color:var(--text3); margin-bottom:12px; font-size:11px; font-weight:normal; line-height:1.3; text-align:center; padding:4px; background:rgba(255,255,255,0.03); border-radius:6px"></div>
             <div id="d_hack_banner" style="display:none;margin-bottom:14px;padding:10px;background:rgba(234,179,8,0.1);border:1px solid rgba(234,179,8,0.3);border-radius:8px;font-size:12px;color:var(--text);line-height:1.5"></div>
           
-          <div style="background:rgba(96,165,250,0.06);padding:1rem;border-radius:8px;border:1px solid rgba(96,165,250,0.25);border-top:4px solid #60A5FA;margin-bottom:1.25rem">
-            <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#60A5FA;margin-bottom:.75rem">Spoření do DPS</div>
+          <div style="background:var(--surface2);padding:1.25rem;border-radius:12px;border:1px solid var(--border);margin-bottom:1.25rem">
+            <div style="font-size:12px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:#60A5FA;margin-bottom:.75rem">Spoření do DPS</div>
             <div class="field">
               <label style="font-weight:600;color:var(--text);margin-bottom:5px;display:block">Měsíční příspěvek do DPS (Kč)</label>
               <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
@@ -1505,8 +1490,8 @@ input[type="range"]::-webkit-slider-runnable-track {
               <input type="range" id="d_jednoraz_dps_slider" min="0" max="1000000" value="0" step="10000" oninput="dJednorazDpsSync(this.value,true)" style="width:100%;accent-color:var(--accent);cursor:pointer">
             </div>
           </div>
-          <div style="background:rgba(34,197,94,0.05);padding:1rem;border-radius:8px;border:1px solid rgba(34,197,94,0.25);border-top:4px solid var(--green);margin-bottom:1.25rem">
-            <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--green);margin-bottom:.75rem">Spoření do DIP</div>
+          <div style="background:var(--surface2);padding:1.25rem;border-radius:12px;border:1px solid var(--border);margin-bottom:1.25rem">
+            <div style="font-size:12px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:var(--green);margin-bottom:.75rem">Spoření do DIP</div>
             <div class="field">
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
                 <label style="font-weight:600;color:var(--text);margin:0">Měsíční příspěvek do DIP (Kč)</label>
@@ -1554,12 +1539,12 @@ input[type="range"]::-webkit-slider-runnable-track {
           </div> </div> <div class="card" style="border-color:var(--green)">
           <div class="card-label" style="color:var(--green)">Živé srovnání</div>
           <div class="dps-align-spacer"></div>
-          <div style="background:rgba(96,165,250,0.06);border-radius:10px;padding:.85rem 1rem;margin-bottom:10px;border:1px solid rgba(96,165,250,0.25);border-top:4px solid #60A5FA">
+          <div style="background:var(--surface2);border-radius:12px;padding:1.25rem;margin-bottom:10px;border:1px solid var(--border)">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
-              <div style="font-size:13px;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;color:#60A5FA">DPS — Účastnický fond</div>
+              <div style="font-size:12px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:#60A5FA">DPS — Účastnický fond</div>
               <div style="display:flex;gap:4px">
                 <button id="dps-mode-jednor" onclick="setDpsMode('jednor')" style="padding:3px 8px;border-radius:6px;border:1px solid var(--red);background:var(--red);color:#fff;font-size:10px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;transition:all .15s">Výběr (15% daň)</button>
-                <button id="dps-mode-renta"  onclick="setDpsMode('renta')"  style="padding:3px 8px;border-radius:6px;border:1px solid rgba(96,165,250,0.3);background:transparent;color:var(--text);font-size:10px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s">Renta 10+ let (0%)</button>
+                <button id="dps-mode-renta"  onclick="setDpsMode('renta')"  style="padding:3px 8px;border-radius:6px;border:1px solid var(--border2);background:transparent;color:var(--text3);font-size:10px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s">Renta 10+ let (0%)</button>
               </div>
             </div>
             <div style="font-size:11px;color:var(--text3);margin-bottom:.75rem;line-height:1.4" id="d_dps_mode_info">8% hrubý − 1% správa − 15% success fee = <span style="color:#000;font-weight:700">5,95 %</span> · + stát. příspěvek · <span style="color:var(--red)">15% daň ze zisku</span></div>
@@ -1581,8 +1566,8 @@ input[type="range"]::-webkit-slider-runnable-track {
             <div id="d_dps_kratky_horizont" style="display:none;margin-top:10px;padding:8px 12px;background:rgba(239,68,68,0.08);border-left:3px solid var(--red);border-radius:0 6px 6px 0;font-size:12px;font-weight:700;color:var(--red);line-height:1.5">⚠️ Krátký horizont: Nové DPS pod 10 let ztrácí státní podporu a daňové zvýhodnění, proto se tato výhoda počítá jako 0 Kč.</div>
             <div id="d_dps_dan_tip" style="display:none;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:11px;color:var(--text3);line-height:1.6"></div>
           </div>
-          <div style="background:rgba(34,197,94,0.05);border-radius:10px;padding:.85rem 1rem;margin-bottom:10px;border:1px solid rgba(34,197,94,0.25);border-top:4px solid var(--green)">
-            <div style="font-size:13px;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;color:var(--green);margin-bottom:.5rem">DIP — Dlouhodobý investiční produkt</div>
+          <div style="background:var(--surface2);border-radius:12px;padding:1.25rem;margin-bottom:10px;border:1px solid var(--border)">
+            <div style="font-size:12px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:var(--green);margin-bottom:.5rem">DIP — Dlouhodobý investiční produkt</div>
             <div style="font-size:11px;color:var(--text3);margin-bottom:.75rem;line-height:1.4">8% hrubý − 0,2% TER = 7,8% · 0% daň ze zisku</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
               <div id="d_dip_main_total_container" style="grid-column:1/-1;">
