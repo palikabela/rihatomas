@@ -1457,7 +1457,7 @@ input[type="range"]::-webkit-slider-runnable-track {
 
       <!-- ŘÁDEK 1: Slidery vlevo + živé srovnání vpravo -->
       <div class="grid2" style="margin-bottom:14px">
-        <div class="card">
+        <div class="card" style="align-self:start">
           <div class="card-label">Parametry</div>
           <div style="display:flex; gap:10px; margin-bottom:6px">
               <div style="flex:1; min-width:0">
@@ -1480,8 +1480,8 @@ input[type="range"]::-webkit-slider-runnable-track {
             <div id="d_vek_info" style="color:var(--text3); margin-bottom:12px; font-size:11px; font-weight:normal; line-height:1.3; text-align:center; padding:4px; background:rgba(255,255,255,0.03); border-radius:6px"></div>
             <div id="d_hack_banner" style="display:none;margin-bottom:14px;padding:10px;background:rgba(234,179,8,0.1);border:1px solid rgba(234,179,8,0.3);border-radius:8px;font-size:12px;color:var(--text);line-height:1.5"></div>
           
-          <div style="background:var(--surface2);padding:1rem;border-radius:8px;border:1px solid var(--border);border-top:4px solid var(--accent);margin-bottom:1.25rem">
-            <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);margin-bottom:.75rem">Spoření do DPS</div>
+          <div style="background:rgba(96,165,250,0.06);padding:1rem;border-radius:8px;border:1px solid rgba(96,165,250,0.25);border-top:4px solid #60A5FA;margin-bottom:1.25rem">
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#60A5FA;margin-bottom:.75rem">Spoření do DPS</div>
             <div class="field">
               <label style="font-weight:600;color:var(--text);margin-bottom:5px;display:block">Měsíční příspěvek do DPS (Kč)</label>
               <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
@@ -1505,7 +1505,7 @@ input[type="range"]::-webkit-slider-runnable-track {
               <input type="range" id="d_jednoraz_dps_slider" min="0" max="1000000" value="0" step="10000" oninput="dJednorazDpsSync(this.value,true)" style="width:100%;accent-color:var(--accent);cursor:pointer">
             </div>
           </div>
-          <div style="background:var(--surface2);padding:1rem;border-radius:8px;border:1px solid var(--border);border-top:4px solid var(--green);margin-bottom:1.25rem">
+          <div style="background:rgba(34,197,94,0.05);padding:1rem;border-radius:8px;border:1px solid rgba(34,197,94,0.25);border-top:4px solid var(--green);margin-bottom:1.25rem">
             <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--green);margin-bottom:.75rem">Spoření do DIP</div>
             <div class="field">
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
@@ -1554,19 +1554,19 @@ input[type="range"]::-webkit-slider-runnable-track {
           </div> </div> <div class="card" style="border-color:var(--green)">
           <div class="card-label" style="color:var(--green)">Živé srovnání</div>
           <div class="dps-align-spacer"></div>
-          <div style="background:var(--surface3);border-radius:10px;padding:.85rem 1rem;margin-bottom:10px;border:1px solid var(--border);border-top:4px solid var(--accent)">
+          <div style="background:rgba(96,165,250,0.06);border-radius:10px;padding:.85rem 1rem;margin-bottom:10px;border:1px solid rgba(96,165,250,0.25);border-top:4px solid #60A5FA">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
-              <div style="font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent)">DPS — Účastnický fond</div>
+              <div style="font-size:13px;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;color:#60A5FA">DPS — Účastnický fond</div>
               <div style="display:flex;gap:4px">
                 <button id="dps-mode-jednor" onclick="setDpsMode('jednor')" style="padding:3px 8px;border-radius:6px;border:1px solid var(--red);background:var(--red);color:#fff;font-size:10px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;transition:all .15s">Výběr (15% daň)</button>
-                <button id="dps-mode-renta"  onclick="setDpsMode('renta')"  style="padding:3px 8px;border-radius:6px;border:1px solid var(--border2);background:transparent;color:var(--text3);font-size:10px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s">Renta 10+ let (0%)</button>
+                <button id="dps-mode-renta"  onclick="setDpsMode('renta')"  style="padding:3px 8px;border-radius:6px;border:1px solid rgba(96,165,250,0.3);background:transparent;color:var(--text);font-size:10px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s">Renta 10+ let (0%)</button>
               </div>
             </div>
             <div style="font-size:11px;color:var(--text3);margin-bottom:.75rem;line-height:1.4" id="d_dps_mode_info">8% hrubý − 1% správa − 15% success fee = <span style="color:#000;font-weight:700">5,95 %</span> · + stát. příspěvek · <span style="color:var(--red)">15% daň ze zisku</span></div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
               <div style="grid-column:1/-1;font-size:11px;color:var(--red);font-weight:600" id="d_dps_fee_loss">Ztráta na poplatcích: —</div>
               <div class="premium-total-box"><div class="premium-total-label">CELKEM NASPOŘENO</div><div class="premium-total-value" id="d_dps_celkem">—</div></div>
-              <div><div style="font-size:11px;color:var(--text3)">Měsíční renta</div><div style="font-size:17px;font-weight:700;color:var(--accent)" id="d_dps_renta">—</div></div>
+              <div><div style="font-size:11px;color:var(--text3)">Měsíční renta</div><div style="font-size:17px;font-weight:700;color:#60A5FA" id="d_dps_renta">—</div></div>
               <div><div style="font-size:11px;color:var(--text3)">Čistý výnos</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="d_dps_vynos">—</div></div>
               <div><div style="font-size:11px;color:var(--text3)" id="d_dps_dan_label"><span id="d_dps_dan_label_text">Daň ze zisku</span></div><div style="font-size:14px;font-weight:600;color:var(--red)" id="d_dps_dan">—</div><div id="d_dps_dan_zamest" style="font-size:11px;color:var(--red);font-weight:600;margin-top:4px;display:none"></div></div>
               <div><div style="font-size:11px;color:var(--text3)">Vložil klient (celkem)</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="d_dps_klient_celkem">—</div></div>
@@ -1581,8 +1581,8 @@ input[type="range"]::-webkit-slider-runnable-track {
             <div id="d_dps_kratky_horizont" style="display:none;margin-top:10px;padding:8px 12px;background:rgba(239,68,68,0.08);border-left:3px solid var(--red);border-radius:0 6px 6px 0;font-size:12px;font-weight:700;color:var(--red);line-height:1.5">⚠️ Krátký horizont: Nové DPS pod 10 let ztrácí státní podporu a daňové zvýhodnění, proto se tato výhoda počítá jako 0 Kč.</div>
             <div id="d_dps_dan_tip" style="display:none;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);font-size:11px;color:var(--text3);line-height:1.6"></div>
           </div>
-          <div style="background:var(--surface3);border-radius:10px;padding:.85rem 1rem;margin-bottom:10px;border:1px solid var(--border);border-top:4px solid var(--green)">
-            <div style="font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--green);margin-bottom:.5rem">DIP — Dlouhodobý investiční produkt</div>
+          <div style="background:rgba(34,197,94,0.05);border-radius:10px;padding:.85rem 1rem;margin-bottom:10px;border:1px solid rgba(34,197,94,0.25);border-top:4px solid var(--green)">
+            <div style="font-size:13px;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;color:var(--green);margin-bottom:.5rem">DIP — Dlouhodobý investiční produkt</div>
             <div style="font-size:11px;color:var(--text3);margin-bottom:.75rem;line-height:1.4">8% hrubý − 0,2% TER = 7,8% · 0% daň ze zisku</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
               <div id="d_dip_main_total_container" style="grid-column:1/-1;">
@@ -1600,24 +1600,24 @@ input[type="range"]::-webkit-slider-runnable-track {
                     <div style="font-size:18px; color:var(--text3);">+</div>
                     <div style="text-align:right;">
                        <div style="font-size:11px; color:var(--green); font-weight:700; text-transform:uppercase;">💰 Zpět na daních</div>
-                       <div id="d_dip_dan_uspora_celkem_top" style="font-size:18px; font-weight:900; color:var(--green); text-shadow:0 0 8px rgba(34,197,94,0.4);">—</div>
+                       <div id="d_dip_dan_uspora_celkem_top" style="font-size:18px; font-weight:700; color:var(--green);">—</div>
                     </div>
                   </div>
                   <div style="border-top:1px solid rgba(34,197,94,0.2); padding-top:8px; display:flex; justify-content:space-between; align-items:center;">
-                    <div style="font-size:12px; color:var(--text2);">Skutečný celkový majetek:</div>
-                    <div id="d_dip_skutecny_majetek" style="font-size:15px; font-weight:800; color:var(--green);">—</div>
+                    <div style="font-size:12px; font-weight:700; color:var(--green); text-transform:uppercase;">Skutečný celkový majetek:</div>
+                    <div id="d_dip_skutecny_majetek" style="font-size:20px; font-weight:900; color:var(--green); text-shadow:0 0 8px rgba(34,197,94,0.4);">—</div>
                   </div>
                 </div>
+              </div>
+              <div style="grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;padding-top:8px;margin-bottom:4px" id="d_dip_dan_uspora_row">
+                <div style="font-size:11px;font-weight:700;color:var(--green)">💰 Roční úspora na daních</div>
+                <div style="font-size:15px;font-weight:700;color:var(--green)" id="d_dip_dan_uspora_card">—</div>
               </div>
               <div><div style="font-size:11px;color:var(--text3)">Měsíční renta</div><div style="font-size:17px;font-weight:700;color:var(--green)" id="d_dip_renta">—</div></div>
               <div><div style="font-size:11px;color:var(--text3)">Čistý výnos</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="d_dip_vynos">—</div></div>
               <div><div style="font-size:11px;color:var(--text3)">Daň ze zisku</div><div style="font-size:13px;font-weight:600;color:var(--green)">0 Kč ✓</div></div>
               <div><div style="font-size:11px;color:var(--text3)">Vložil klient (celkem)</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="d_dip_klient_celkem">—</div></div>
               <div><div style="font-size:11px;color:var(--text3)">Vložil zaměstnavatel (celkem)</div><div id="d_dip_zamest_celkem" style="font-size:14px;font-weight:600;color:var(--text2)">—</div><div class="sankce-zamest-box" style="font-size:10px;font-weight:700;color:var(--red);margin-top:2px;display:none"></div></div>
-              <div style="grid-column:1/-1;border-top:1px solid var(--green-dim);padding-top:6px;margin-top:2px;display:flex;justify-content:space-between;align-items:center">
-                <div style="font-size:11px;color:var(--text3)">💰 Roční úspora na daních</div>
-                <div style="font-size:15px;font-weight:700;color:var(--green)" id="d_dip_dan_uspora_card">—</div>
-              </div>
               <div id="d_dip_uspora_rok_grid" style="grid-column:1/-1;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:12px;line-height:1.6;color:var(--text3);">
                 <strong style="color:var(--text2);">Daňový tip DIP:</strong><br>
                 • Odpočet <span id="d_dip_odpocet_tip" style="font-weight:600">0 Kč</span>/rok → <span id="d_dip_uspora_tip" style="color:var(--green);font-weight:600;">úspora 0 Kč/rok</span><br>
@@ -4311,21 +4311,25 @@ function calcDip() {
 
     if (elDpsDanRow && elDpsDanLabel && elDpsDanGrid) {
       if (danUsporaDPS > 0) {
-        elDpsDanRow.style.background = "var(--accent-dim2)";
-        elDpsDanRow.style.borderTop = "1px solid rgba(200,240,74,0.3)";
-        elDpsDanRow.style.padding = "6px 10px";
-        elDpsDanRow.style.borderRadius = "6px";
-        elDpsDanRow.style.marginTop = "6px";
-        elDpsDanLabel.style.color = "var(--text)";
-        elDpsDanLabel.innerHTML = "💡 Roční úspora na daních";
-        elDpsDanGrid.style.color = "var(--accent)";
+        elDpsDanRow.style.background = "rgba(234, 179, 8, 0.1)";
+        elDpsDanRow.style.border = "1px solid #EAB308";
+        elDpsDanRow.style.borderTop = "1px solid #EAB308";
+        elDpsDanRow.style.padding = "8px 12px";
+        elDpsDanRow.style.borderRadius = "8px";
+        elDpsDanRow.style.marginTop = "8px";
+        elDpsDanLabel.style.color = "#EAB308";
+        elDpsDanLabel.style.fontWeight = "700";
+        elDpsDanLabel.innerHTML = "💰 Roční úspora na daních";
+        elDpsDanGrid.style.color = "#EAB308";
       } else {
         elDpsDanRow.style.background = "transparent";
+        elDpsDanRow.style.border = "none";
         elDpsDanRow.style.borderTop = "1px solid rgba(255,255,255,0.05)";
         elDpsDanRow.style.padding = "6px 0 0 0";
         elDpsDanRow.style.borderRadius = "0";
         elDpsDanRow.style.marginTop = "2px";
         elDpsDanLabel.style.color = "var(--text3)";
+        elDpsDanLabel.style.fontWeight = "400";
         elDpsDanLabel.innerHTML = "Roční úspora na daních";
         elDpsDanGrid.style.color = "var(--text2)";
       }
@@ -4374,7 +4378,11 @@ function calcDip() {
   }
 
   if (dpsCelkem > 0 || dipCelkem > 0) {
-    const rozdilCelkem = dipCelkem - dpsCelkem;
+    // Pro spravedlivé porovnání přičteme daňovou úsporu do celkového majetku DIPu
+    const celkovaDanUsporaDIP = danUsporaDIP * rokyPlne;
+    const skutecnyMajetekDIP = dipCelkem + celkovaDanUsporaDIP;
+    const rozdilCelkem = skutecnyMajetekDIP - dpsCelkem;
+    
     const rozdilRenta  = dipRenta  - dpsRenta;
     const dop = document.getElementById("d_doporuceni");
     if (dop) { dop.style.display = "block"; dop.innerHTML = "DIP přinese o <strong>" + fmt(Math.abs(rozdilCelkem)) + "</strong> " + (rozdilCelkem >= 0 ? "více" : "méně") + " čistého. Renta je " + (rozdilRenta >= 0 ? "vyšší" : "nižší") + " o <strong>" + fmt(Math.abs(Math.round(rozdilRenta))) + "/m</strong>."; }
