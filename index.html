@@ -2049,6 +2049,7 @@ input[type="range"]::-webkit-slider-runnable-track {
         • <b>Paušální daň (3. pásmo):</b> Zadejte fixně 42 900 Kč.<br>
         • <b>Výdajový paušál:</b> (Roční příjmy − Výdaje) × 0.55 / 12. Pokud vyjde méně než cca 15 000 Kč, zadejte minimum.
       </div>
+      <div id="inv_doba_pojisteni_warning" style="font-size:11px; color:var(--text3); background:var(--surface2); padding:10px 12px; border-radius:8px; margin-top:12px; border:1px solid var(--border); display:none; line-height:1.4;"></div>
     </div>
 
     <div>
@@ -5301,6 +5302,7 @@ function adjZivot(id, delta) {
   const el = document.getElementById(id);
   const s = document.getElementById(id + "_slider");
   if (!el) return;
+  if (el.disabled) return;
   let val = parseZivotVal(el.value);
   val += delta;
   if (val < 0) val = 0;
@@ -5404,6 +5406,21 @@ function calcZivot() {
   const h = parseZivotVal(document.getElementById("z_hypo")?.value) || 0;
   const r = parseZivotVal(document.getElementById("z_rezerva")?.value) || 0;
   const n = parseZivotVal(document.getElementById("z_naklady")?.value) || 0;
+
+  const elInvWarning = document.getElementById('inv_doba_pojisteni_warning');
+  if (elInvWarning) {
+    let textDoby = "";
+    if (v < 20) textDoby = "méně než 1 rok";
+    else if (v >= 20 && v < 22) textDoby = "min. 1 rok";
+    else if (v >= 22 && v < 24) textDoby = "min. 2 roky";
+    else if (v >= 24 && v < 26) textDoby = "min. 3 roky";
+    else if (v >= 26 && v < 28) textDoby = "min. 4 roky";
+    else if (v >= 28 && v <= 38) textDoby = "min. 5 let (v posledních 10 letech)";
+    else textDoby = "min. 5 let (v posl. 10 letech) nebo 10 let (v posl. 20 letech)";
+
+    elInvWarning.style.display = "block";
+    elInvWarning.innerHTML = `ℹ️ <strong style="color:var(--text2)">Podmínka státu:</strong> Pro přiznání invalidního důchodu v tomto věku musí mít klient odpracováno (doba pojištění) <strong style="color:var(--text)">${textDoby}</strong>. Pokud tuto podmínku nesplňuje, invalidní důchod od státu bude 0 Kč.`;
+  }
 
   const m = (v === 0) ? 0 : Math.max(0, (65 - v) * 12);
   const s = getStatniDuchod(p);
@@ -5559,6 +5576,31 @@ function kopirovatZadaniProAI() {
   });
 }
 
+function lockPrijemInput(prefix, locked) {
+  const inputEl = document.getElementById(prefix + '_prijem');
+  const sliderEl = document.getElementById(prefix + '_prijem_slider');
+  if (!inputEl) return;
+  const btnMinus = inputEl.previousElementSibling;
+  const btnPlus  = inputEl.nextElementSibling;
+  if (locked) {
+    inputEl.disabled = true;
+    inputEl.style.background = 'rgba(255,255,255,0.05)';
+    inputEl.style.color = 'var(--text3)';
+    inputEl.style.cursor = 'not-allowed';
+    if (sliderEl) { sliderEl.disabled = true; sliderEl.style.opacity = '0.35'; sliderEl.style.cursor = 'not-allowed'; }
+    if (btnMinus) { btnMinus.style.opacity = '0.3'; btnMinus.style.pointerEvents = 'none'; }
+    if (btnPlus)  { btnPlus.style.opacity  = '0.3'; btnPlus.style.pointerEvents  = 'none'; }
+  } else {
+    inputEl.disabled = false;
+    inputEl.style.background = 'transparent';
+    inputEl.style.color = 'var(--text)';
+    inputEl.style.cursor = '';
+    if (sliderEl) { sliderEl.disabled = false; sliderEl.style.opacity = ''; sliderEl.style.cursor = 'pointer'; }
+    if (btnMinus) { btnMinus.style.opacity = '1'; btnMinus.style.pointerEvents = 'auto'; }
+    if (btnPlus)  { btnPlus.style.opacity  = '1'; btnPlus.style.pointerEvents  = 'auto'; }
+  }
+}
+
 function setClientType(prefix, type) {
   const btnZam = document.getElementById(prefix + '_type_zam');
   const btnOsvc = document.getElementById(prefix + '_type_osvc');
@@ -5574,6 +5616,7 @@ function setClientType(prefix, type) {
     btnOsvc.style.color = 'var(--text2)';
     btnOsvc.style.fontWeight = '600';
     if (helperBox) helperBox.style.display = 'none';
+    lockPrijemInput(prefix, false);
   } else {
     btnOsvc.style.background = 'var(--surface3)';
     btnOsvc.style.borderColor = '#3B82F6';
@@ -5622,13 +5665,17 @@ function updateOsvcCalculation(prefix) {
   if (type === 'pd1') {
     finalBasis = 18700;
     if (fieldsDiv) fieldsDiv.style.display = 'none';
+    lockPrijemInput(prefix, true);
   } else if (type === 'pd2') {
     finalBasis = 28050;
     if (fieldsDiv) fieldsDiv.style.display = 'none';
+    lockPrijemInput(prefix, true);
   } else if (type === 'pd3') {
     finalBasis = 42900;
     if (fieldsDiv) fieldsDiv.style.display = 'none';
+    lockPrijemInput(prefix, true);
   } else if (type === 'skut') {
+    lockPrijemInput(prefix, false);
     if (fieldsDiv) fieldsDiv.style.display = 'block';
     const pausalSelect = document.getElementById(prefix + '_osvc_pausal').value;
     if (pausalSelect === 'custom') {
@@ -5736,7 +5783,7 @@ function calcRodina() {
       if (deti > 0) {
         elExplVdov.innerHTML = `Základ 4 400 Kč + 50 % z proc. výměry. <span style="color:#10B981; font-weight:700">Pokračuje i po 1. roce (péče o dítě).</span>`;
       } else {
-        elExplVdov.innerHTML = `Základ 4 400 Kč + 50 % z proc. výměry. <span style="background:#FEF2F2; color:#EF4444; border:1px solid #FECACA; padding:2px 4px; border-radius:4px; font-weight:800">POUZE NA 1 ROK! 🚨</span>`;
+        elExplVdov.innerHTML = `Základ 4 400 Kč + 50 % z proc. výměry. <span style="background:#FEF2F2; color:#EF4444; border:1px solid #FECACA; padding:2px 6px; border-radius:4px; font-weight:800; margin-left:8px; display:inline-block; white-space:nowrap">POUZE NA 1 ROK! 🚨</span>`;
       }
     } else {
       elExplVdov.innerHTML = `<span style="color:#EF4444; font-weight:600">Není nárok! Pár žije nesezdaný "na psí knížku".</span>`;
