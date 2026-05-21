@@ -1674,7 +1674,7 @@ input[type="range"]::-webkit-slider-runnable-track {
     <div class="grid2" style="margin-bottom:14px;align-items:start">
 
       <!-- PARAMETRY -->
-      <div class="card">
+      <div class="card" style="min-width:0">
         <div class="card-label">Parametry hypotéky</div>
 
         <!-- Cena nemovitosti -->
@@ -1737,52 +1737,75 @@ input[type="range"]::-webkit-slider-runnable-track {
         </div>
 
         <!-- Sazba -->
-        <div class="field">
+        <div class="field" style="margin-bottom:.5rem">
           <label>Úroková sazba (% ročně)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
             <button onclick="hAdjSazba(-0.01)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-            <input type="text" inputmode="decimal" id="h_sazba" value="4,79" step="0.01" min="0" oninput="hCalc()" style="flex:1;text-align:center">
+            <input type="text" inputmode="decimal" id="h_sazba" value="4,79" min="0" max="20" oninput="hCalc()" style="flex:1;text-align:center">
             <button onclick="hAdjSazba(0.01)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
-          <input type="range" id="h_sazba_sl" min="0" max="15" value="4.79" step="0.1" oninput="hSazbaSlider(this.value)" style="width:100%;accent-color:var(--accent);cursor:pointer">
+          <input type="range" id="h_sazba_sl" min="0" max="8" value="4.79" step="0.1" oninput="hSazbaSlider(this.value)" style="width:100%;accent-color:var(--accent);cursor:pointer">
+        </div>
+
+        <!-- Alternativní sazba pro srovnání -->
+        <div class="field" style="margin-bottom:.5rem">
+          <label>Alternativní úrok — Banka B (% p.a.)</label>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <button onclick="hAdjSazbaB(-0.01)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <input type="text" inputmode="decimal" id="h_sazba_b" value="0" min="0" max="20" oninput="hCalc()" style="flex:1;text-align:center">
+            <button onclick="hAdjSazbaB(0.01)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+          </div>
+          <input type="range" id="h_sazba_b_sl" min="0" max="8" value="0" step="0.1" oninput="hSazbaBSlider(this.value)" style="width:100%;accent-color:var(--green);cursor:pointer">
+          <div style="font-size:11px;color:var(--text3);margin-top:4px">Zadejte 0 pro skrytí srovnání</div>
         </div>
 
         <!-- Splatnost -->
-        <div class="field">
-          <label>Doba splatnosti</label>
-          <div style="display:flex;align-items:center;gap:10px">
-            <button onclick="hAdj('roky',-1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:300">−</button>
-            <div style="flex:1;text-align:center">
-              <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:700;color:var(--accent);line-height:1" id="h_roky_lbl">30</div>
-              <div style="font-size:12px;color:var(--text3);margin-top:2px">let</div>
-            </div>
-            <button onclick="hAdj('roky',1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:300">+</button>
+        <div class="field" style="margin-top:8px;margin-bottom:0">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <label style="margin:0">Doba splatnosti</label>
+            <span style="font-size:14px;font-weight:normal;color:var(--text)" id="h_roky_lbl">30</span><span style="font-size:12px;color:var(--text3);margin-left:3px">let</span>
           </div>
-          <input type="range" id="h_roky_sl" min="1" max="35" value="30" step="1" oninput="hRokySlider(this.value)" style="width:100%;margin-top:12px;accent-color:var(--accent);cursor:pointer">
+          <input type="range" id="h_roky_sl" min="1" max="35" value="30" step="1" oninput="hRokySlider(this.value)" style="width:100%;accent-color:var(--accent);cursor:pointer">
           <input type="number" id="h_roky" value="30" style="display:none">
-          <div style="font-size:12px;color:var(--red);margin-top:4px" id="h_roky_warn"></div>
+          <div style="font-size:12px;color:var(--red);margin-top:2px" id="h_roky_warn"></div>
         </div>
       </div>
 
       <!-- VÝSLEDKY -->
-      <div class="card">
+      <div class="card" style="min-width:0">
         <div class="card-label">Výsledek výpočtu</div>
-        <div style="background:var(--surface2);border-radius:10px;padding:1.25rem;margin-bottom:1.5rem;border:1px solid var(--border)">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:center">
-            <div class="premium-total-box" style="margin:0;padding:12px 16px">
-              <div class="premium-total-label" style="font-size:10px">MĚSÍČNÍ SPLÁTKA</div>
-              <div class="premium-total-value" id="h_res_splatka" style="font-size:20px;white-space:nowrap;letter-spacing:-0.03em">—</div>
+
+        <div style="background:var(--surface2);border-radius:10px;padding:1.25rem;margin-bottom:1rem;border:1px solid var(--border)">
+
+          <!-- Měsíční splátka -->
+          <div class="premium-total-box" style="margin:0 0 12px 0;padding:12px 16px">
+            <div class="premium-total-label" style="font-size:10px">MĚSÍČNÍ SPLÁTKA</div>
+            <div class="premium-total-value" id="h_res_splatka" style="font-size:20px;white-space:nowrap;letter-spacing:-0.03em">—</div>
+            <!-- Banka B subdetail -->
+            <div id="h_banka_b_box" style="display:none;border-top:1px dashed var(--border);margin-top:8px;padding-top:8px;font-size:12px;color:var(--text3);line-height:1.5">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <span>Alternativa Banka B:</span>
+                <span id="h_res_splatka_b" style="font-weight:700;color:var(--green)">—</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <span>Měsíční úspora:</span>
+                <span id="h_uspora_mes" style="font-weight:700;color:var(--green)">—</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <span>Úspora za 3 roky (fixace):</span>
+                <span id="h_uspora_fix" style="font-weight:700;color:var(--green)">—</span>
+              </div>
             </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
             <div><div style="font-size:11px;color:var(--text3)">Výše hypotéky</div><div style="font-size:17px;font-weight:700;color:var(--green)" id="h_res_hypo">—</div></div>
-            
             <div><div style="font-size:11px;color:var(--text3)">Vlastní zdroje / Zástava</div><div style="font-size:17px;font-weight:700;color:var(--text)" id="h_res_vlastni">—</div></div>
-            <div><div style="font-size:11px;color:var(--text3)">Max. splatnost dle věku</div><div style="font-size:17px;font-weight:700;color:var(--text)" id="h_res_maxroky">—</div></div>
-            
             <div style="grid-column:1/-1;height:1px;background:var(--border);margin:4px 0"></div>
-            
             <div><div style="font-size:11px;color:var(--text3)">Celkem zaplatíte</div><div style="font-size:17px;font-weight:700;color:var(--text)" id="h_res_celkem">—</div></div>
             <div><div style="font-size:11px;color:var(--text3)">Přeplatek (úroky)</div><div style="font-size:17px;font-weight:700;color:var(--red)" id="h_res_uroky">—</div></div>
           </div>
+
         </div>
 
         <div id="h_ltv_tbl" style="margin-top:1.25rem;display:none">
@@ -4843,9 +4866,23 @@ function hSazbaSlider(val) {
 }
 
 function hAdjSazba(delta) {
-  const v = Math.round(Math.max(0, Math.min(getCleanNum('h_sazba') + delta, 15)) * 100) / 100;
+  const v = Math.round(Math.max(0, Math.min(getCleanNum('h_sazba') + delta, 8)) * 100) / 100;
   setRateInputValue('h_sazba', v);
   const sl = document.getElementById('h_sazba_sl');
+  if (sl) sl.value = v;
+  hCalc();
+}
+
+function hSazbaBSlider(val) {
+  const v = Math.round(Math.min(Math.max(cleanNumValue(val), 0), 15) * 100) / 100;
+  setRateInputValue('h_sazba_b', v);
+  hCalc();
+}
+
+function hAdjSazbaB(delta) {
+  const v = Math.round(Math.max(0, Math.min(getCleanNum('h_sazba_b') + delta, 8)) * 100) / 100;
+  setRateInputValue('h_sazba_b', v);
+  const sl = document.getElementById('h_sazba_b_sl');
   if (sl) sl.value = v;
   hCalc();
 }
@@ -4997,10 +5034,29 @@ function hCalc() {
 
   setT('h_res_hypo', fmt(hypo));
   const mes = roky * 12;
+  const sazba_b = getCleanNum('h_sazba_b') || 0;
   const splatka = monthlyPayment(hypo, sazba, mes);
   setT('h_res_splatka', fmt(splatka) + ' / měs.');
   setT('h_res_celkem', fmt(splatka * mes));
   setT('h_res_uroky', fmt(splatka * mes - hypo));
+
+  // Srovnávací režim — Banka B
+  const compareActive = sazba_b > 0;
+  const bankaBBox = document.getElementById('h_banka_b_box');
+
+  if (compareActive) {
+    const splatka_b = monthlyPayment(hypo, sazba_b, mes);
+    const mesUsp = Math.abs(splatka - splatka_b);
+    const fixUsp = mesUsp * 36;
+
+    const splatkaB_el = document.getElementById('h_res_splatka_b');
+    if (splatkaB_el) splatkaB_el.textContent = fmt(Math.round(splatka_b)) + ' Kč / měsíčně';
+    setT('h_uspora_mes', fmt(Math.round(mesUsp)) + ' Kč');
+    setT('h_uspora_fix', fmt(Math.round(fixUsp)) + ' Kč');
+    if (bankaBBox) bankaBBox.style.display = 'block';
+  } else {
+    if (bankaBBox) bankaBBox.style.display = 'none';
+  }
 
   // LTV tabulka
   const tbl = document.getElementById('h_ltv_tbl');
