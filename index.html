@@ -1031,6 +1031,7 @@ input[type="range"]::-webkit-slider-runnable-track {
             <button onclick="dlAdj(50000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
           <input type="range" id="dl_slider" min="50000" max="5000000" value="50000" step="50000" oninput="dlSlider(this.value)" style="width:100%;accent-color:var(--accent);cursor:pointer">
+          <div style="font-size:11px;color:var(--text3);margin-top:6px">Počet dluhopisů: <span id="dl_pocet" style="color:var(--text2);font-weight:600">—</span> &nbsp;·&nbsp; á 50 000 Kč</div>
         </div>
         <div class="field">
           <label>Výběr emise</label>
@@ -1057,16 +1058,35 @@ input[type="range"]::-webkit-slider-runnable-track {
       </div>
       <div class="card">
         <div class="card-label">Výsledek výpočtu</div>
-        <div class="metrics">
-          <div class="metric"><div class="metric-label">Počet dluhopisů</div><div class="metric-value" id="dl_pocet">—</div></div>
-          <div class="metric"><div class="metric-label">Skutečná investice</div><div class="metric-value" id="dl_skutecna">—</div></div>
-          <div class="metric"><div class="metric-label">Kvartal. výnos (hrubý)</div><div class="metric-value green" id="dl_kvartal_hruby">—</div></div>
-          <div class="metric"><div class="metric-label">Kvartal. výnos (čistý)</div><div class="metric-value green" id="dl_kvartal_cisty">—</div></div>
-          <div class="metric"><div class="metric-label">Celkový výnos (hrubý)</div><div class="metric-value" id="dl_celkem_hruby">—</div></div>
-          <div class="metric"><div class="metric-label">Celkový výnos (čistý)</div><div class="metric-value green" id="dl_celkem_cisty">—</div></div>
+
+        <!-- Hero: celkový čistý výnos -->
+        <div style="padding:14px 16px;background:var(--surface);border-radius:12px;border:1px solid rgba(34,197,94,0.2);margin-bottom:8px">
+          <div style="font-size:10px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Celkový výnos (čistý)</div>
+          <div id="dl_celkem_cisty" style="font-size:24px;font-weight:700;color:var(--green);letter-spacing:-0.01em;font-family:'Inter',sans-serif;font-variant-numeric:tabular-nums">—</div>
+          <div id="dl_celkem_poznamka" style="font-size:10px;color:var(--text3);margin-top:4px;line-height:1.4"></div>
         </div>
-        <div style="margin-top:1.25rem">
-          <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:.5rem">Přehled výnosů po kvartalách</div>
+
+        <!-- Kvartální čistý výnos — hned pod celkovým -->
+        <div style="padding:10px 14px;background:var(--surface2);border-radius:10px;border:1px solid var(--border);margin-bottom:8px">
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px">Kvart. výnos (čistý)</div>
+          <div id="dl_kvartal_cisty" style="font-size:16px;font-weight:600;color:var(--green);font-variant-numeric:tabular-nums">—</div>
+        </div>
+
+        <!-- Roční zhodnocení -->
+        <div style="padding:10px 14px;background:var(--surface2);border-radius:10px;border:1px solid var(--border);margin-bottom:14px">
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px">Roční výnos (čistý)</div>
+          <div id="dl_rocni_cisty" style="font-size:16px;font-weight:600;color:var(--green);font-variant-numeric:tabular-nums">—</div>
+          <div id="dl_rocni_poznamka" style="font-size:10px;color:var(--text3);margin-top:2px"></div>
+        </div>
+
+        <!-- Skryté elementy pro JS výpočet -->
+        <span id="dl_skutecna" style="display:none"></span>
+        <span id="dl_kvartal_hruby" style="display:none"></span>
+        <span id="dl_celkem_hruby" style="display:none"></span>
+
+        <!-- Tabulka kvartalů -->
+        <div>
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:.5rem">Přehled výnosů po kvartalech</div>
           <table style="width:100%;border-collapse:collapse;font-size:12px">
             <thead>
               <tr style="border-bottom:1px solid var(--border)">
@@ -5222,7 +5242,8 @@ function dlCalc() {
   const setT = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
 
   if (castka <= 0) {
-    ['dl_pocet','dl_skutecna','dl_kvartal_hruby','dl_kvartal_cisty','dl_celkem_hruby','dl_celkem_cisty'].forEach(id => setT(id, '—'));
+    ['dl_pocet','dl_skutecna','dl_kvartal_hruby','dl_kvartal_cisty','dl_celkem_hruby','dl_celkem_cisty','dl_rocni_cisty'].forEach(id => setT(id, '—'));
+    const pozn = document.getElementById('dl_rocni_poznamka'); if (pozn) pozn.textContent = '';
     const tbody = document.getElementById('dl_tbody');
     if (tbody) tbody.innerHTML = '';
     return;
@@ -5237,12 +5258,25 @@ function dlCalc() {
   const celkHruby   = kvHruby * pocetKv;
   const celkCisty   = kvCisty * pocetKv;
 
+  const rocniCisty = kvCisty * 4;
+  const rocniPct   = skutecna > 0 ? (rocniCisty / skutecna * 100) : 0;
+
   setT('dl_pocet',         pocet + ' ks');
   setT('dl_skutecna',      fmt(skutecna));
   setT('dl_kvartal_hruby', fmt(Math.round(kvHruby)));
   setT('dl_kvartal_cisty', fmt(Math.round(kvCisty)));
   setT('dl_celkem_hruby',  fmt(Math.round(celkHruby)));
   setT('dl_celkem_cisty',  fmt(Math.round(celkCisty)));
+  setT('dl_rocni_cisty',   fmt(Math.round(rocniCisty)));
+
+  const rocniPozn = document.getElementById('dl_rocni_poznamka');
+  if (rocniPozn) rocniPozn.textContent = rocniPct.toFixed(2).replace('.', ',') + ' % p.a. po zdanění z vložené částky';
+
+  const pozn = document.getElementById('dl_celkem_poznamka');
+  if (pozn) {
+    const emiseLabel = dlEmise === 'xv' ? 'EAG XV. — 3letý dluhopis' : 'EAG XVI. — 5letý dluhopis';
+    pozn.textContent = emiseLabel + ' · ' + d.roky * 4 + ' kvartálních výplat · po zdanění 15 %';
+  }
 
   const tbody = document.getElementById('dl_tbody');
   if (!tbody) return;
