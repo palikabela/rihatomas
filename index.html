@@ -571,6 +571,7 @@ input[type="range"]::-webkit-slider-runnable-track {
             style="width:100%;accent-color:var(--accent);cursor:pointer">
         </div>
 
+
         <div style="display:grid; grid-template-columns: 1fr; gap:12px; margin-bottom:1rem">
           <div class="field" style="margin-bottom:0">
             <label style="display:flex; justify-content:space-between; align-items:baseline">
@@ -593,6 +594,25 @@ input[type="range"]::-webkit-slider-runnable-track {
             </div>
             <input type="range" id="k_mes_slider" min="0" max="11" value="0" step="1" oninput="document.getElementById('k_mes').value=this.value; syncKMes(0)" style="width:100%;accent-color:var(--accent);cursor:pointer">
           </div>
+        </div>
+
+        <!-- Alternativní úrok Banka B — volitelné -->
+        <div style="border-top:1px dashed var(--border);margin-top:4px;padding-top:12px">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+            <span style="font-size:11px;font-weight:600;color:var(--text2)">Alternativní úrok — Banka B</span>
+            <span style="font-size:9px;color:var(--text3);background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:1px 5px;letter-spacing:0.04em">volitelné</span>
+            <div style="display:flex;gap:4px;margin-left:auto">
+              <button onclick="setRateInputValue('k_sazba_b', getCleanNum('k_sazba')); const sl=document.getElementById('k_sazba_b_slider'); if(sl) sl.value=getCleanNum('k_sazba'); calcKalk();" style="font-size:10px;padding:2px 7px;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);color:var(--text2);cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap">↙ kopírovat A</button>
+              <button onclick="setRateInputValue('k_sazba_b', 0); const sl=document.getElementById('k_sazba_b_slider'); if(sl) sl.value=0; calcKalk();" style="font-size:10px;padding:2px 7px;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);color:var(--red);cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap">✕ smazat</button>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <button onclick="kAdjSazbaB(-0.01)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <input type="text" inputmode="decimal" id="k_sazba_b" value="0" min="0" oninput="calcKalk()" style="flex:1;text-align:center">
+            <button onclick="kAdjSazbaB(0.01)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+          </div>
+          <input type="range" id="k_sazba_b_slider" min="0" max="15" value="0" step="0.1" oninput="kSazbaBSlider(this.value)" style="width:100%;accent-color:var(--green);cursor:pointer">
+          <div style="font-size:10px;color:var(--text3);margin-top:5px">Zadejte 0 nebo klikněte ✕ pro skrytí srovnání</div>
         </div>
       </div>
       <div class="card">
@@ -620,6 +640,27 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div class="progress-wrap">
           <div class="progress-labels"><span>Jistina <strong id="k_pct_j">—</strong></span><span>Úroky <strong id="k_pct_u">—</strong></span></div>
           <div class="progress-track"><div class="progress-fill" id="k_bar" style="width:0%"></div></div>
+        </div>
+
+        <!-- Srovnání Banka B -->
+        <div id="k_banka_b_box" style="display:none;margin-top:14px;padding:12px 14px;background:var(--surface2);border-radius:12px;border:1px solid var(--border)">
+          <div style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">⚖️ Srovnání — Banka B</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+            <span style="font-size:12px;color:var(--text3)">Měsíční splátka B:</span>
+            <span id="k_splatka_b" style="font-size:14px;font-weight:700;color:var(--green)">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+            <span style="font-size:12px;color:var(--text3)">Celkem zaplatíte B:</span>
+            <span id="k_celkem_b" style="font-size:13px;font-weight:600;color:var(--text)">—</span>
+          </div>
+          <div style="border-top:1px dashed var(--border);margin:6px 0;padding-top:6px;display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:12px;color:var(--text3)">Měsíční úspora:</span>
+            <span id="k_uspora_mes" style="font-size:13px;font-weight:700;color:var(--green)">—</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:12px;color:var(--text3)">Úspora za celou dobu:</span>
+            <span id="k_uspora_celkem" style="font-size:13px;font-weight:700;color:var(--green)">—</span>
+          </div>
         </div>
       </div>
     </div>
@@ -2920,6 +2961,19 @@ function setMode(mode) {
   calcKalk();
 }
 
+function kAdjSazbaB(delta) {
+  const v = Math.round(Math.max(0, Math.min(getCleanNum('k_sazba_b') + delta, 15)) * 100) / 100;
+  setRateInputValue('k_sazba_b', v);
+  const sl = document.getElementById('k_sazba_b_slider');
+  if (sl) sl.value = v;
+  calcKalk();
+}
+function kSazbaBSlider(val) {
+  const v = Math.round(Math.max(0, Math.min(cleanNumValue(val), 15)) * 100) / 100;
+  setRateInputValue('k_sazba_b', v);
+  calcKalk();
+}
+
 function calcKalk() {
   const prev = document.getElementById("k_jistina_prev");
   const prevS = document.getElementById("k_splatka_prev");
@@ -3010,6 +3064,24 @@ function calcKalk() {
   document.getElementById("k_bar").style.width = Math.min(pctJ, 100).toFixed(1) + "%";
   document.getElementById("k_pct_j").textContent = pctJ.toFixed(0) + " %";
   document.getElementById("k_pct_u").textContent = (100-pctJ).toFixed(0) + " %";
+
+  // Banka B srovnání
+  const sB = getCleanNum('k_sazba_b');
+  const bankaBBox = document.getElementById('k_banka_b_box');
+  if (sB > 0 && j > 0) {
+    const splatkaB = monthlyPayment(j, sB, m);
+    const celkemB  = splatkaB * m;
+    const uspMes   = Math.abs(splatka - splatkaB);
+    const uspCelk  = Math.abs(celkem - celkemB);
+    const lepsi    = splatkaB < splatka ? 'B' : 'A';
+    document.getElementById('k_splatka_b').textContent   = fmt(Math.round(splatkaB)) + ' / měs.';
+    document.getElementById('k_celkem_b').textContent    = fmt(Math.round(celkemB));
+    document.getElementById('k_uspora_mes').textContent  = fmt(Math.round(uspMes)) + ' Kč';
+    document.getElementById('k_uspora_celkem').textContent = fmt(Math.round(uspCelk)) + ' Kč';
+    if (bankaBBox) bankaBBox.style.display = 'block';
+  } else {
+    if (bankaBBox) bankaBBox.style.display = 'none';
+  }
 }
 
 function syncRMes(delta) {
