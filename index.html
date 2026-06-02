@@ -2036,17 +2036,6 @@ input[type="range"]::-webkit-slider-runnable-track {
       </div>
 
       <div class="field">
-        <label>Průměrná hrubá mzda zaměstnance (Kč)</label>
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-          <button onclick="bAdjFmt('b_mzda',-1000,20000,200000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-          <input type="text" inputmode="numeric" id="b_mzda" value="" placeholder="40 000" oninput="bFmtInput('b_mzda','b_mzda_sl',20000,200000)" style="flex:1;text-align:center;padding:8px;border:1px solid var(--border2);border-radius:8px;background:var(--surface2);color:var(--text);font-size:15px;font-weight:500">
-          <button onclick="bAdjFmt('b_mzda',1000,20000,200000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
-        </div>
-        <input type="range" id="b_mzda_sl" min="20000" max="200000" value="0" step="1000" oninput="bSliderToFmt('b_mzda_sl','b_mzda'); calcBenefity()" style="width:100%;accent-color:var(--accent);cursor:pointer">
-        <div style="font-size:10px;color:var(--text3);margin-top:3px">Použito pro výpočet efektivity vs. mzdové navýšení</div>
-      </div>
-
-      <div class="field">
         <label style="display:flex;justify-content:space-between;align-items:center">
           <span>Příspěvek firmy / os. / měsíc</span>
           <span style="font-size:10px;color:var(--text3);font-weight:400">limit 50 000 Kč/rok (= 4 167 Kč/měs.)</span>
@@ -2079,190 +2068,173 @@ input[type="range"]::-webkit-slider-runnable-track {
         </div>
       </div>
 
-      <!-- Srovnávací box: Mzda vs. Benefit -->
-      <div style="margin-top:8px;background:var(--surface);border-radius:12px;border:1px solid var(--border);overflow:hidden">
-        <div style="padding:10px 14px;font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;border-bottom:1px solid var(--border)">⚖️ Srovnání: navýšení mzdy vs. benefit (na 1 os.)</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;font-size:11px">
-          <div style="padding:10px 14px;border-right:1px solid var(--border)">
-            <div style="color:var(--text3);margin-bottom:6px;font-weight:500">Navýšení mzdy</div>
-            <div style="margin-bottom:3px">Náklad firmy: <strong id="b_cmp_mzda_naklad" style="color:var(--red)">—</strong></div>
-            <div style="margin-bottom:3px">Zaměstnanec dostane čistého: <strong id="b_cmp_mzda_cista">—</strong></div>
-            <div style="margin-top:6px;font-size:10px;color:var(--text3)">SP+ZP firmy: +33,8 %<br>Daň + odvody zam.: −26,6 %</div>
-          </div>
-          <div style="padding:10px 14px;background:rgba(34,197,94,0.04)">
-            <div id="b_cmp_benefit_label" style="color:var(--green);margin-bottom:6px;font-weight:500">Příspěvek DIP</div>
-            <div style="margin-bottom:3px">Náklad firmy: <strong id="b_cmp_benefit_naklad" style="color:var(--green)">—</strong></div>
-            <div style="margin-bottom:3px">Zaměstnanec dostane: <strong id="b_cmp_benefit_cista" style="color:var(--green)">—</strong></div>
-            <div style="margin-top:6px;font-size:10px;color:var(--text3)">Žádné SP+ZP navíc<br>Osvobozeno od daně</div>
-          </div>
-        </div>
-      </div>
-
     </div>
 
     <!-- PRAVÝ SLOUPEC: Výsledky -->
     <div style="display:flex;flex-direction:column;gap:12px;min-width:0">
 
-      <!-- HERO: hlavní "wow" číslo -->
+      <!-- HLAVNÍ SROVNÁNÍ: 1 zaměstnanec -->
       <div style="background:var(--surface2);border-radius:16px;padding:1.25rem;border:1px solid var(--border)">
-        <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1rem">🏢 Celková výhoda pro firmu / rok</div>
+        <div style="font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1rem">Srovnání na 1 zaměstnance / měsíc</div>
 
-        <div style="padding:16px;background:var(--surface);border-radius:12px;border:1px solid rgba(34,197,94,0.3);margin-bottom:10px;text-align:center">
-          <div style="font-size:10px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Ušetříte oproti navýšení mzdy</div>
-          <div id="b_res_hero" style="font-size:32px;font-weight:700;color:var(--green);font-variant-numeric:tabular-nums;letter-spacing:-0.02em">—</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:4px">úspora na SP+ZP + daňový efekt za celý tým</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+
+          <!-- VARIANTA A: Mzda -->
+          <div style="padding:14px;background:var(--surface);border-radius:12px;border:1px solid var(--border)">
+            <div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">A — Navýšení mzdy</div>
+            <div style="margin-bottom:8px">
+              <div style="font-size:10px;color:var(--text3);margin-bottom:2px">Náklad firmy</div>
+              <div id="b_cmp1_naklad_firma" style="font-size:18px;font-weight:600;color:var(--red)">—</div>
+            </div>
+            <div style="margin-bottom:8px">
+              <div style="font-size:10px;color:var(--text3);margin-bottom:2px">Zaměstnanec dostane čistého</div>
+              <div id="b_cmp1_zam_ciste" style="font-size:18px;font-weight:600;color:var(--text)">—</div>
+            </div>
+            <div id="b_cmp1_note" style="font-size:10px;color:var(--red);line-height:1.4;border-top:1px solid var(--border);padding-top:8px">—</div>
+          </div>
+
+          <!-- VARIANTA B: DIP/DPS -->
+          <div style="padding:14px;background:var(--surface);border-radius:12px;border:1px solid rgba(34,197,94,0.25)">
+            <div id="b_cmp2_label" style="font-size:10px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">B — Příspěvek DIP</div>
+            <div style="margin-bottom:8px">
+              <div style="font-size:10px;color:var(--text3);margin-bottom:2px">Náklad firmy</div>
+              <div id="b_cmp2_naklad_firma" style="font-size:18px;font-weight:600;color:var(--green)">—</div>
+            </div>
+            <div style="margin-bottom:8px">
+              <div style="font-size:10px;color:var(--text3);margin-bottom:2px">Zaměstnanec dostane čistého</div>
+              <div id="b_cmp2_zam_ciste" style="font-size:18px;font-weight:600;color:var(--green)">—</div>
+            </div>
+            <div style="font-size:10px;color:var(--green);line-height:1.4;border-top:1px solid rgba(34,197,94,0.2);padding-top:8px">100 % efektivita peněz bez odvodů státu.</div>
+          </div>
+
         </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <div style="padding:10px 12px;background:var(--surface);border-radius:10px;border:1px solid var(--border)">
-            <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px">Roční náklad firmy</div>
-            <div id="b_res_naklad" style="font-size:15px;font-weight:600;color:var(--text)">—</div>
-          </div>
-          <div style="padding:10px 12px;background:var(--surface);border-radius:10px;border:1px solid var(--border)">
-            <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px">Reálný čistý náklad</div>
-            <div id="b_res_cisty_naklad" style="font-size:15px;font-weight:600;color:var(--accent)">—</div>
-            <div style="font-size:9px;color:var(--text3);margin-top:1px">po odečtení daně firmy</div>
-          </div>
-          <div style="padding:10px 12px;background:var(--surface);border-radius:10px;border:1px solid var(--border)">
-            <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px">Úspora SP+ZP firmy</div>
-            <div id="b_res_firma_odvody" style="font-size:15px;font-weight:600;color:var(--green)">—</div>
-            <div style="font-size:9px;color:var(--text3);margin-top:1px">vs. mzdové navýšení</div>
-          </div>
-          <div style="padding:10px 12px;background:var(--surface);border-radius:10px;border:1px solid var(--border)">
-            <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px">Úspora na dani firmy</div>
-            <div id="b_res_firma_dan" style="font-size:15px;font-weight:600;color:var(--green)">—</div>
-            <div style="font-size:9px;color:var(--text3);margin-top:1px">příspěvek = daň. náklad</div>
+        <!-- Nadlimit varování -->
+        <div id="b_eff_nadlimit_box" style="display:none;padding:8px 10px;background:rgba(239,68,68,0.07);border-radius:8px;border:1px solid rgba(239,68,68,0.2);font-size:11px;color:var(--text2);line-height:1.5;margin-bottom:10px">
+          <strong style="color:var(--red)">⚠️ Nadlimit</strong> — část příspěvku překračuje 4 167 Kč/měs. (50 000 Kč/rok).<br>
+          Nadlimitní část: firma platí navíc <strong id="b_eff_nadl_firma">—</strong> SP+ZP · zaměstnanec platí <strong id="b_eff_nadl_zam">—</strong> daň+odvody.
+        </div>
+
+        <!-- Souhrn pro celý tým -->
+        <div style="background:var(--surface);border-radius:10px;padding:12px 14px;border:1px solid var(--border)">
+          <div style="font-size:10px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">🔥 Výsledek: proč zvolit <span class="dyn-nazev-produktu">DIP</span> (souhrn pro <span id="b_sum_zam_count">—</span> zam.)</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div>
+              <div style="font-size:10px;color:var(--text3);margin-bottom:2px">Firma ušetří na odvodech (oproti mzdě)</div>
+              <div id="b_res_hero_mes" style="font-size:15px;font-weight:600;color:var(--green)">—</div>
+              <span style="font-size:11px;color:var(--text2);display:block;margin-top:4px;line-height:1.4;font-weight:normal">Ušetříte 33,8 % na sociálním a zdravotním, které byste jinak zaplatili státu.</span>
+            </div>
+            <div>
+              <div style="font-size:10px;color:var(--text3);margin-bottom:2px">Roční úspora firmy</div>
+              <div id="b_res_hero" style="font-size:15px;font-weight:700;color:var(--green)">—</div>
+            </div>
+            <div>
+              <div style="font-size:10px;color:var(--text3);margin-bottom:2px">Skutečný roční náklad firmy na <span class="dyn-nazev-produktu">DIP</span></div>
+              <div id="b_res_cisty_naklad" style="font-size:15px;font-weight:500;color:var(--text)">—</div>
+              <span style="font-size:11px;color:var(--text2);display:block;margin-top:4px;line-height:1.4;font-weight:normal">Po započtení daňové úspory (snížení základu daně s.r.o. o <span class="dyn-expl-dan">21</span> %).</span>
+            </div>
+            <div>
+              <div style="font-size:10px;color:var(--text3);margin-bottom:2px">Za 5 let ušetříte</div>
+              <div id="b_proj_5" style="font-size:15px;font-weight:700;color:var(--green)">—</div>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Projekce za 5 let -->
+      <!-- VÝHODY vs. NEVÝHODY -->
       <div style="background:var(--surface2);border-radius:16px;padding:1.25rem;border:1px solid var(--border)">
-        <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:.75rem">📈 Projekce úspory v čase</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
-          <div style="padding:10px 12px;background:var(--surface);border-radius:10px;border:1px solid var(--border);text-align:center">
-            <div style="font-size:10px;color:var(--text3);margin-bottom:3px">1 rok</div>
-            <div id="b_proj_1" style="font-size:14px;font-weight:700;color:var(--green)">—</div>
-          </div>
-          <div style="padding:10px 12px;background:var(--surface);border-radius:10px;border:1px solid rgba(34,197,94,0.3);text-align:center">
-            <div style="font-size:10px;color:var(--text3);margin-bottom:3px">3 roky</div>
-            <div id="b_proj_3" style="font-size:14px;font-weight:700;color:var(--green)">—</div>
-          </div>
-          <div style="padding:10px 12px;background:var(--surface);border-radius:10px;border:1px solid rgba(34,197,94,0.5);text-align:center">
-            <div style="font-size:10px;color:var(--text3);margin-bottom:3px">5 let</div>
-            <div id="b_proj_5" style="font-size:16px;font-weight:700;color:var(--green)">—</div>
-          </div>
-        </div>
-      </div>
+        <div style="font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1rem">Výhody vs. nevýhody</div>
 
-      <!-- 🔥 INDEX PROPÁLENÝCH PENĚZ -->
-      <div style="background:var(--surface2);border-radius:16px;padding:1.25rem;border:1px solid rgba(239,68,68,0.35)">
-        <div style="font-size:11px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:.85rem">🔥 Index propálených peněz</div>
-        <div style="font-size:12px;color:var(--text3);margin-bottom:12px">Z každých <strong style="color:var(--text)">1 000 Kč</strong> celkového nákladu firmy dostane zaměstnanec v čistém:</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
 
-        <!-- Klasická mzda -->
-        <div style="margin-bottom:10px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-            <span style="font-size:12px;color:var(--text2)">Navýšení mzdy</span>
-            <span id="b_eff_mzda_czk" style="font-size:18px;font-weight:700;color:var(--red)">548 Kč</span>
-          </div>
-          <div style="background:var(--surface);border-radius:6px;height:10px;overflow:hidden">
-            <div id="b_eff_mzda_bar" style="height:100%;background:var(--red);border-radius:6px;width:54.8%;transition:width .4s ease"></div>
-          </div>
-          <div style="font-size:10px;color:var(--text3);margin-top:3px">Firma platí 1 338 Kč → zaměstnanec dostane 734 Kč → stát vezme 604 Kč (SP+ZP+daň)</div>
-        </div>
+          <!-- Mzda — vlevo -->
+          <div>
+            <div style="font-size:12px;font-weight:600;color:var(--text3);margin-bottom:10px">Navýšení mzdy</div>
 
-        <!-- Benefit DIP/DPS -->
-        <div style="margin-bottom:12px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-            <span style="font-size:12px;color:var(--text2)">Benefit DIP/DPS (do limitu)</span>
-            <span style="font-size:18px;font-weight:700;color:var(--green)">1 000 Kč</span>
-          </div>
-          <div style="background:var(--surface);border-radius:6px;height:10px;overflow:hidden">
-            <div style="height:100%;background:var(--green);border-radius:6px;width:100%"></div>
-          </div>
-          <div style="font-size:10px;color:var(--text3);margin-top:3px">Firma platí 1 000 Kč → zaměstnanec dostane 1 000 Kč → stát nezobere nic</div>
-        </div>
+            <div style="margin-bottom:10px">
+              <div style="font-size:11px;color:var(--text3);font-weight:500;margin-bottom:6px">👍 Výhody</div>
+              <ul style="margin:0;padding-left:14px;font-size:12px;color:var(--text2);line-height:1.6;list-style:disc">
+                <li>Zaměstnanec má peníze ihned k dispozici na denní útraty</li>
+              </ul>
+            </div>
 
-        <!-- Nadlimit warning -->
-        <div id="b_eff_nadlimit_box" style="display:none;padding:8px 10px;background:rgba(239,68,68,0.08);border-radius:8px;border:1px solid rgba(239,68,68,0.25);font-size:11px;color:var(--text2);line-height:1.5">
-          <strong style="color:var(--red)">⚠️ Nadlimit!</strong> Část příspěvku překračuje 4 167 Kč/měs. (50 000 Kč/rok).<br>
-          Nadlimitní část: firma platí navíc <strong id="b_eff_nadl_firma">—</strong> SP+ZP · zaměstnanec platí <strong id="b_eff_nadl_zam">—</strong> daň+odvody.<br>
-          Reálná efektivita nadlimitní části: <strong id="b_eff_nadl_pct" style="color:var(--red)">—</strong> (jako u mzdy)
-        </div>
-
-        <div style="border-top:1px solid var(--border);margin-top:10px;padding-top:10px;font-size:11px;color:var(--text3)">
-          Efektivita benefitu oproti mzdě: <strong id="b_eff_ratio" style="color:var(--green);font-size:13px">+82,5 %</strong> více čistého pro zaměstnance ze stejného nákladu firmy
-        </div>
-      </div>
-
-      <!-- Výhoda pro zaměstnance -->
-      <div style="background:var(--surface2);border-radius:16px;padding:1.25rem;border:1px solid var(--accent)">
-        <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:.85rem">💡 Proč se to firmě vyplatí?</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-
-          <div style="display:flex;gap:10px;align-items:flex-start">
-            <div style="font-size:20px;flex-shrink:0;line-height:1">🛡️</div>
             <div>
-              <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px">Daňový štít</div>
-              <div style="font-size:11px;color:var(--text2);line-height:1.5">Příspěvek je 100% daňově uznatelný náklad. Snižujete si firemní zisk a tím i daň z příjmů (do 50 tisíc Kč/os).</div>
+              <div style="font-size:11px;color:var(--red);font-weight:600;margin-bottom:6px">👎 Nevýhody</div>
+              <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:8px">Obrovská odvodová penalizace od státu. Aby zaměstnanec dostal peníze na účet, stát si vezme brutální podíl:</div>
+              <ul style="margin:0;padding-left:14px;font-size:12px;color:var(--text2);line-height:1.7;list-style:disc">
+                <li>Firma platí navíc <strong style="color:var(--red);font-weight:600">33,8 %</strong> na sociálním a zdravotním pojištění</li>
+                <li>Zaměstnanci se strhne <strong style="color:var(--red);font-weight:600">11,6 %</strong> na odvodech a dalších <strong style="color:var(--red);font-weight:600">15 %</strong> na dani z příjmu</li>
+              </ul>
+              <div style="font-size:12px;color:var(--text3);margin-top:8px;padding:8px 10px;background:rgba(239,68,68,0.06);border-radius:8px;border:1px solid rgba(239,68,68,0.15);line-height:1.5">
+                Ve výsledku se <strong style="color:var(--red)">téměř polovina firemního rozpočtu</strong> spálí na poplatcích státu. Zaměstnanec si drobného navýšení na pásce brzy přestane vážit a peníze okamžitě rozpustí v běžné spotřebě.
+              </div>
             </div>
           </div>
 
-          <div style="display:flex;gap:10px;align-items:flex-start">
-            <div style="font-size:20px;flex-shrink:0;line-height:1">💸</div>
-            <div>
-              <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px">Nulové odvody státu</div>
-              <div style="font-size:11px;color:var(--text2);line-height:1.5">Z benefitu firma neplatí sociální ani zdravotní pojištění. Ušetříte 33,8 % oproti přidání peněz do mzdy.</div>
-            </div>
-          </div>
+          <!-- DIP/DPS — vpravo -->
+          <div style="border-left:1px solid var(--border);padding-left:16px">
+            <div id="b_vvn_dip_label" style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:10px">Příspěvek DIP</div>
 
-          <div style="display:flex;gap:10px;align-items:flex-start">
-            <div style="font-size:20px;flex-shrink:0;line-height:1">🤝</div>
-            <div>
-              <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px">Zlatá pouta na lidi</div>
-              <div style="font-size:11px;color:var(--text2);line-height:1.5">Skvělý nástroj pro retenci. Benefit můžete podmínit odpracovanou dobou a výrazně tak snížit fluktuaci zaměstnanců.</div>
+            <div style="margin-bottom:10px">
+              <div style="font-size:11px;color:var(--green);font-weight:600;margin-bottom:6px">👍 Výhody</div>
+              <ul style="margin:0;padding-left:14px;font-size:12px;color:var(--text2);line-height:1.6;list-style:disc">
+                <li><strong style="color:var(--text);font-weight:600">100 %</strong> peněz jde přímo do majetku zaměstnance bez jakýchkoliv odvodů (do limitu 50 000 Kč/rok)</li>
+                <li>Investice do globálních trhů (např. S&P 500) dlouhodobě poráží inflaci</li>
+                <li>Pro firmu <strong style="color:var(--text);font-weight:600">100 %</strong> daňově uznatelný náklad — snižuje firemní daň s.r.o. o <strong style="color:var(--text);font-weight:600">21 %</strong></li>
+                <li>Funguje jako „zlatá pouta" pro stabilizaci a retenci týmu</li>
+              </ul>
             </div>
-          </div>
 
-          <div style="display:flex;gap:10px;align-items:flex-start">
-            <div style="font-size:20px;flex-shrink:0;line-height:1">🎯</div>
             <div>
-              <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px">100% efektivita peněz</div>
-              <div style="font-size:11px;color:var(--text2);line-height:1.5">Vašich 1 000 Kč znamená čistých 1 000 Kč pro zaměstnance. Při přidání do mzdy mu stát přes čtvrtinu sebere.</div>
+              <div style="font-size:11px;color:var(--text3);font-weight:500;margin-bottom:6px">👎 Nevýhody</div>
+              <ul style="margin:0;padding-left:14px;font-size:12px;color:var(--text2);line-height:1.6;list-style:disc">
+                <li>Peníze jsou legislativně vázané do 60 let věku — nelze je čerpat na běžnou spotřebu ihned</li>
+              </ul>
             </div>
           </div>
 
         </div>
       </div>
 
-      <!-- Výhoda pro zaměstnance -->
+      <!-- Shrnutí -->
       <div style="background:var(--surface2);border-radius:16px;padding:1.25rem;border:1px solid var(--border)">
-        <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:.75rem">👤 Co z toho má zaměstnanec</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <div style="padding:10px 12px;background:var(--surface);border-radius:10px;border:1px solid rgba(34,197,94,0.2)">
-            <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px">Dostane měsíčně</div>
-            <div id="b_res_zam_prispevek" style="font-size:15px;font-weight:600;color:var(--green)">—</div>
-            <div style="font-size:9px;color:var(--text3);margin-top:1px">čistého, bez daně a odvodů</div>
-          </div>
-          <div style="padding:10px 12px;background:var(--surface);border-radius:10px;border:1px solid var(--border)">
-            <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px">Ekvivalent hrubé mzdy</div>
-            <div id="b_res_zam_ekvivalent" style="font-size:15px;font-weight:600;color:var(--accent)">—</div>
-            <div style="font-size:9px;color:var(--text3);margin-top:1px">kolik by musel dostat hrubého</div>
-          </div>
-          <div style="padding:10px 12px;background:var(--surface);border-radius:10px;border:1px solid var(--border);grid-column:1/-1">
-            <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px">Roční výhoda zaměstnance (celý tým)</div>
-            <div id="b_res_zam_uspora" style="font-size:15px;font-weight:600;color:var(--green)">—</div>
-            <div style="font-size:9px;color:var(--text3);margin-top:1px">ušetří vs. stejná částka přes mzdu</div>
-          </div>
-        </div>
+        <div style="font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:.75rem">💬 Shrnutí pro majitele firmy</div>
+        <div id="b_shrnuti" style="font-size:12px;color:var(--text2);line-height:1.75">Zadejte parametry vlevo pro výpočet.</div>
       </div>
 
-      <!-- Shrnutí pro prezentaci -->
-      <div style="background:var(--surface2);border-radius:16px;padding:1.25rem;border:1px solid var(--border)">
-        <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:.75rem">💬 Shrnutí pro majitele firmy</div>
-        <div id="b_shrnuti" style="font-size:12px;color:var(--text2);line-height:1.75">—</div>
-      </div>
+      <!-- Tahák na námitky — dynamický -->
+      <details style="margin-top:24px;border:1px solid rgba(255,255,255,0.1);border-radius:12px;overflow:hidden;background:var(--surface2)">
+        <summary style="padding:14px 16px;font-size:13px;font-weight:600;color:var(--text);cursor:pointer;list-style:none;user-select:none;-webkit-user-select:none">💡 Námitky</summary>
+        <div style="padding:16px;font-size:13px;color:var(--text2);line-height:1.6;display:flex;flex-direction:column;gap:16px;border-top:1px solid rgba(255,255,255,0.05)">
+
+          <div><strong style="color:var(--text);font-size:14px">📌 Vytáhnu ty peníze ze svého? Stát mi nic nedá?</strong><br>
+          Pane majiteli, představte si, že vám ve firmě leží zisk. Když si tu částku necháte, přijde stát a vezme si <span id="dyn_n_dan">21</span> % na dani z příjmu PO. Pokud ale pošlete zaměstnanci <strong style="color:var(--text)"><span id="dyn_n_prispevek1">1 000</span> Kč</strong> do DIPu, je to 100% daňově uznatelný náklad. Zisk firmy se sníží a státu nezaplatíte na dani nic. Takže ano, posíláte peníze, ale reálně vás to nestojí <span id="dyn_n_prispevek1_2">1 000</span> Kč, ale jen <strong style="color:var(--green)"><span id="dyn_n_real">790</span> Kč</strong>. Zbytek je to, co vám stát „přispěl" tím, že vás neokradl.</div>
+
+          <div><strong style="color:var(--text);font-size:14px">📌 Nemám na to peníze. Proč bych měl lidem něco přidávat?</strong><br>
+          Já po vás nechci, abyste teď hned všem plošně rozdal peníze navíc. Ale za chvíli za vámi přijdou lidi, že se zdražuje a chtějí přidat. Pokud zaměstnancům přidáte <strong style="color:var(--text)"><span id="dyn_n_prispevek2">1 000</span> Kč</strong> do hrubé mzdy, stálo by vás to na firemních odvodech přesně <strong style="color:var(--red)"><span id="dyn_n_naklad">1 338</span> Kč</strong>. Nebo mu řeknete: <em>„Peníze do platu ti teď nedám, stát by nás sedřel z kůže. Ale zřídím ti firemní DIP a pošlu ti tam celou částku."</em> Vy ušetříte okamžitě <strong style="color:var(--green)"><span id="dyn_n_uspora">338</span> Kč</strong> měsíčně na jednom člověku, a přitom mu přidáte to, co chtěl.</div>
+
+          <div><strong style="color:var(--text);font-size:14px">📌 Stejně mi pak utečou ke konkurenci.</strong><br>
+          Peníze do mzdy lidé berou jako samozřejmost. Za dva měsíce si toho na pásce ani nevšimnou. DIP je benefit, který vidí každý měsíc růst ve své aplikaci (tzv. zlatá pouta). Navíc to můžete podmínit interní směrnicí: příspěvek dostane jen ten, kdo nemá absenci a je tu déle než rok. Nábor nového člověka vás stojí desítky tisíc. Pokud díky DIPu udržíte dobrého člověka, benefit se vám zaplatí padesátkrát.</div>
+
+          <div><strong style="color:var(--text);font-size:14px">📌 Co to bude stát účetní? Bude s tím mít papírování navíc.</strong><br>
+          Účetní to nebude stát vůbec nic a nezabere jí to víc než 5 minut měsíčně. Dneska to umí každý moderní mzdový systém (Pohoda, Money, Vema). Účetní tam jen zadá instituci a systém automaticky při výplatách vygeneruje 1 hromadný příkaz k úhradě z firemního účtu a rozpis se nahraje do platformy. Je to proces doslova na tři kliknutí.</div>
+
+        </div>
+      </details>
+
+      <!-- Skryté elementy pro zpětnou kompatibilitu JS -->
+      <span id="b_res_naklad" style="display:none"></span>
+      <span id="b_res_firma_odvody" style="display:none"></span>
+      <span id="b_res_firma_dan" style="display:none"></span>
+      <span id="b_proj_1" style="display:none"></span>
+      <span id="b_proj_3" style="display:none"></span>
+      <span id="b_res_zam_prispevek" style="display:none"></span>
+      <span id="b_res_zam_ekvivalent" style="display:none"></span>
+      <span id="b_res_zam_uspora" style="display:none"></span>
+      <span id="b_eff_mzda_czk" style="display:none"></span>
+      <span id="b_eff_mzda_bar" style="display:none"></span>
+      <span id="b_eff_ratio" style="display:none"></span>
+      <span id="b_eff_nadl_pct" style="display:none"></span>
 
     </div>
   </div>
@@ -3422,106 +3394,124 @@ function bSetDan(sazba) {
 function calcBenefity() {
   const zam      = Math.max(1, bGetNum('b_zam') || 1);
   const prispMes = bGetNum('b_prispevek');
-  const mzda     = bGetNum('b_mzda') || 40000;
   const prispRok = prispMes * 12;
 
+  // ── FIXNÍ KOEFICIENTY (legislativa 2024+) ──
   const SP_ZP_FIRMA = 0.338;
   const SP_ZP_ZAM   = 0.116;
   const DAN_ZAM     = 0.15;
-  const LIMIT_ROK   = 50000;
+  const LIMIT_MES   = 50000 / 12; // 4 166,67 Kč/měs
 
-  const osvobozenoRok = Math.min(prispRok, LIMIT_ROK);
-  const nadlimitRok   = Math.max(0, prispRok - LIMIT_ROK);
+  // ── VARIANTA A: Navýšení mzdy ──
+  // prispMes = nominální hrubý benefit; firma zaplatí * 1.338, zaměstnanec dostane * 0.734
+  const nakladMzda  = prispMes * 1.338;
+  const cisteMzda   = prispMes * 0.734;
+  const statVezme   = nakladMzda - cisteMzda;
 
-  // Část v limitu
-  const nakladLimitRok    = osvobozenoRok * zam;
-  const danUsporaLimitRok = nakladLimitRok * (bDan / 100);
-  const spZpUsporaLimit   = osvobozenoRok * SP_ZP_FIRMA * zam;
+  // ── VARIANTA B: DIP/DPS ──
+  const limitMes    = Math.min(prispMes, LIMIT_MES);
+  const nadlimitMes = Math.max(0, prispMes - LIMIT_MES);
+  const nakladDip   = prispMes;
+  const cisteDip    = limitMes + nadlimitMes * 0.734; // limit čistě, nadlimit jako mzda
 
-  // Část nad limit (jako mzda)
-  const nakladNadlimitRok    = nadlimitRok * (1 + SP_ZP_FIRMA) * zam;
-  const danUsporaNadlimitRok = nakladNadlimitRok * (bDan / 100);
+  // ── ČÁST NAD LIMIT (pro varování) ──
+  const nadlimitRok = nadlimitMes * 12;
 
-  // Celkové
-  const nakladCelkemRok   = nakladLimitRok + nakladNadlimitRok;
-  const danUsporaFirma    = danUsporaLimitRok + danUsporaNadlimitRok;
-  const cistyNakladCelkem = nakladCelkemRok - danUsporaFirma;
+  // ── ÚSPORA FIRMY ──
+  const usporaFirmaMesic = (nakladMzda - nakladDip) * zam;   // rozdíl nákladů za tým / měsíc
+  const usporaFirmaRok   = usporaFirmaMesic * 12;
 
-  // Hero
-  const nakladMzdaLimit = osvobozenoRok * (1 + SP_ZP_FIRMA) * zam;
-  const heroUspora      = (nakladMzdaLimit - nakladLimitRok) + danUsporaLimitRok;
+  // ── REÁLNÝ ČISTÝ NÁKLAD (po daňové úspoře z příspěvku jako nákladu) ──
+  const cistyNakladRok = (nakladDip * zam * 12) * (1 - bDan / 100);
 
-  // Zaměstnanec
-  const cistaMzdaZam = osvobozenoRok * (1 - SP_ZP_ZAM - DAN_ZAM);
-  const ekvHrubaMes  = (osvobozenoRok / (1 - SP_ZP_ZAM - DAN_ZAM)) / 12;
-  const zamVyhodaRok = (osvobozenoRok - cistaMzdaZam) * zam;
-
-  // Efektivita
-  const effMzda    = (1 - SP_ZP_ZAM - DAN_ZAM) / (1 + SP_ZP_FIRMA);
-  const effMzdaCzk = Math.round(effMzda * 1000);
-  const effRatio   = ((1 / effMzda - 1) * 100).toFixed(1);
-
-  // Limit varování
+  // ── LIMIT VAROVÁNÍ ──
   const limitWarn = document.getElementById('b_limit_warn');
-  if (limitWarn) limitWarn.style.display = prispRok > LIMIT_ROK ? 'block' : 'none';
+  if (limitWarn) limitWarn.style.display = prispRok > 50000 ? 'block' : 'none';
 
   const setEl = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
   const f = (n) => fmt(Math.round(n));
 
   // Typ label
   const typLabel = bTyp === 'dip' ? 'DIP' : bTyp === 'dps' ? 'DPS' : 'DIP + DPS';
-  const cmpLabel = document.getElementById('b_cmp_benefit_label');
-  if (cmpLabel) cmpLabel.textContent = 'Příspěvek ' + typLabel;
+  const cmpLabel = document.getElementById('b_cmp2_label');
+  if (cmpLabel) cmpLabel.textContent = 'B — Příspěvek ' + typLabel;
+  const vvnLabel = document.getElementById('b_vvn_dip_label');
+  if (vvnLabel) vvnLabel.textContent = 'Příspěvek ' + typLabel;
 
-  setEl('b_res_hero',          f(heroUspora) + ' Kč');
-  setEl('b_res_naklad',        f(nakladCelkemRok) + ' Kč/rok');
-  setEl('b_res_cisty_naklad',  f(cistyNakladCelkem) + ' Kč/rok');
-  setEl('b_res_firma_odvody',  f(spZpUsporaLimit) + ' Kč/rok');
-  setEl('b_res_firma_dan',     f(danUsporaFirma) + ' Kč/rok');
-  setEl('b_proj_1', f(heroUspora) + ' Kč');
-  setEl('b_proj_3', f(heroUspora * 3) + ' Kč');
-  setEl('b_proj_5', f(heroUspora * 5) + ' Kč');
-  setEl('b_res_zam_prispevek',  f(prispMes) + ' Kč/měs.');
-  setEl('b_res_zam_ekvivalent', f(ekvHrubaMes) + ' Kč hrubého');
-  setEl('b_res_zam_uspora',     f(zamVyhodaRok) + ' Kč/rok');
-  setEl('b_cmp_mzda_naklad',    f(osvobozenoRok * (1 + SP_ZP_FIRMA)) + ' Kč');
-  setEl('b_cmp_mzda_cista',     f(cistaMzdaZam) + ' Kč');
-  setEl('b_cmp_benefit_naklad', f(osvobozenoRok) + ' Kč');
-  setEl('b_cmp_benefit_cista',  f(osvobozenoRok) + ' Kč');
+  // Srovnání 1 zaměstnanec — Varianta A
+  setEl('b_cmp1_naklad_firma', f(nakladMzda));
+  setEl('b_cmp1_zam_ciste',    f(cisteMzda));
+  const note1 = document.getElementById('b_cmp1_note');
+  if (note1) note1.textContent = 'Stát spolkne ' + f(statVezme) + ' na daních a odvodech.';
 
-  const effMzdaCzkEl = document.getElementById('b_eff_mzda_czk');
-  const effMzdaBar   = document.getElementById('b_eff_mzda_bar');
-  const effRatioEl   = document.getElementById('b_eff_ratio');
-  if (effMzdaCzkEl) effMzdaCzkEl.textContent = effMzdaCzk + ' Kč';
-  if (effMzdaBar)   effMzdaBar.style.width = (effMzda * 100).toFixed(1) + '%';
-  if (effRatioEl)   effRatioEl.textContent = '+' + effRatio + ' %';
+  // Srovnání 1 zaměstnanec — Varianta B
+  setEl('b_cmp2_naklad_firma', f(nakladDip));
+  setEl('b_cmp2_zam_ciste',    f(cisteDip));
 
+  // Souhrn celý tým
+  setEl('b_sum_zam_count',    zam);
+  setEl('b_res_hero_mes',     f(usporaFirmaMesic) + '/měs.');
+  setEl('b_res_hero',         f(usporaFirmaRok) + '/rok');
+  setEl('b_res_cisty_naklad', f(cistyNakladRok) + '/rok');
+  setEl('b_proj_5',           f(usporaFirmaRok * 5));
+
+  // Nadlimit box
   const nadlimitBox = document.getElementById('b_eff_nadlimit_box');
   if (nadlimitBox) {
     if (nadlimitRok > 0) {
       nadlimitBox.style.display = 'block';
-      setEl('b_eff_nadl_firma', f(nadlimitRok * SP_ZP_FIRMA * zam) + ' Kč/rok');
-      setEl('b_eff_nadl_zam',   f(nadlimitRok * (SP_ZP_ZAM + DAN_ZAM) * zam) + ' Kč/rok');
-      setEl('b_eff_nadl_pct',   Math.round(effMzda * 100) + ' % (' + effMzdaCzk + ' Kč z 1 000 Kč)');
+      setEl('b_eff_nadl_firma', f(nadlimitRok * SP_ZP_FIRMA * zam) + '/rok');
+      setEl('b_eff_nadl_zam',   f(nadlimitRok * (SP_ZP_ZAM + DAN_ZAM) * zam) + '/rok');
     } else {
       nadlimitBox.style.display = 'none';
     }
   }
 
+  // Shrnutí
   const shrnuti = document.getElementById('b_shrnuti');
   if (shrnuti && prispMes > 0) {
     const nadlimitText = nadlimitRok > 0
-      ? ` <strong style="color:var(--red)">Pozor: ${f(nadlimitRok)} Kč/rok překračuje limit — tato část se zdaňuje jako mzda.</strong>` : '';
+      ? ` <strong style="color:var(--red)">Pozor: část ${f(nadlimitMes)} Kč/měs. překračuje limit — zdaňuje se jako mzda.</strong>` : '';
     shrnuti.innerHTML =
       `Firma přispívá <strong>${f(prispMes)} Kč/měsíc</strong> na ${typLabel} pro <strong>${zam} zaměstnanců</strong>.${nadlimitText} ` +
-      `Roční náklad <strong>${f(nakladCelkemRok)} Kč</strong>, po daňové úspoře (${bDan} %) reálně jen <strong>${f(cistyNakladCelkem)} Kč</strong>. ` +
-      `<br><br>Při mzdovém navýšení by firma zaplatila <strong>${f(nakladMzdaLimit)} Kč</strong> ` +
-      `a zaměstnanec by dostal čistého jen <strong>${f(cistaMzdaZam)} Kč</strong> místo <strong>${f(osvobozenoRok)} Kč</strong>. ` +
-      `<br><br>Za 5 let firma ušetří <strong style="color:var(--green)">${f(heroUspora * 5)} Kč</strong> oproti mzdovému navýšení.`;
+      `Pokud by se stejná částka přidala do hrubé mzdy, zaměstnanec by dostal jen <strong>${f(cisteMzda)} Kč čistého</strong>, ale firmu by to na odvodech stálo <strong>${f(nakladMzda)} Kč</strong>. ` +
+      `Přes ${typLabel} dostane zaměstnanec celých <strong>${f(cisteDip)} Kč</strong> a firma okamžitě ušetří <strong style="color:var(--green)">${f(usporaFirmaMesic)} Kč měsíčně</strong>. ` +
+      `<br><br>Reálný čistý náklad firmy po daňové úspoře (${bDan} %): <strong>${f(cistyNakladRok)} Kč/rok</strong>. ` +
+      `Za 5 let ušetříte oproti mzdovému navýšení celkem <strong style="color:var(--green)">${f(usporaFirmaRok * 5)}</strong>.`;
   } else if (shrnuti) {
     shrnuti.innerHTML = 'Zadejte parametry vlevo pro výpočet.';
   }
+
+  // Aktualizace sazby daně v vysvětlujících textech souhrnu
+  document.querySelectorAll('.dyn-expl-dan').forEach(el => { el.textContent = bDan; });
+  // Aktualizace názvu produktu všude v pravém sloupci
+  document.querySelectorAll('.dyn-nazev-produktu').forEach(el => { el.textContent = typLabel; });
+
+  // Aktualizace dynamického taháku s námitkami
+  const elDynPrispevek1 = document.getElementById('dyn_n_prispevek1');
+  if (elDynPrispevek1) {
+    const sazbaDane   = bDan;
+    const prispevek   = prispMes;
+    const dynReal     = prispevek * (1 - sazbaDane / 100);
+    const dynNakladMzda = prispevek * 1.338;
+    const dynUspora   = dynNakladMzda - prispevek;
+
+    elDynPrispevek1.textContent = fmt(Math.round(prispevek));
+    const el12 = document.getElementById('dyn_n_prispevek1_2');
+    if (el12) el12.textContent = fmt(Math.round(prispevek));
+    const elDan = document.getElementById('dyn_n_dan');
+    if (elDan) elDan.textContent = sazbaDane;
+    const elReal = document.getElementById('dyn_n_real');
+    if (elReal) elReal.textContent = fmt(Math.round(dynReal));
+    const elP2 = document.getElementById('dyn_n_prispevek2');
+    if (elP2) elP2.textContent = fmt(Math.round(prispevek));
+    const elNaklad = document.getElementById('dyn_n_naklad');
+    if (elNaklad) elNaklad.textContent = fmt(Math.round(dynNakladMzda));
+    const elUspora = document.getElementById('dyn_n_uspora');
+    if (elUspora) elUspora.textContent = fmt(Math.round(dynUspora));
+  }
 }
+
 // ── PŘEDDŮCHOD ───────────────────────────────────────────────
 function pdAdj(id, delta) {
   const el = document.getElementById(id);
