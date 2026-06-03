@@ -1722,78 +1722,58 @@ input[type="range"]::-webkit-slider-runnable-track {
 
       <!-- KALKULAČKA PŘEDDŮCHODU -->
       <div class="card" style="margin-bottom:14px;border:1px solid rgba(96,165,250,0.35)">
-        <div class="card-label" style="color:#60A5FA">🏖️ Kalkulačka předdůchodu</div>
+        <div class="card-label" style="color:#60A5FA">🏖️ Plánovač předdůchodu</div>
 
         <div class="grid2" style="gap:16px;align-items:start">
 
           <!-- Vstupy -->
           <div>
             <div class="field">
-              <label>Naspořená částka v DPS (Kč)</label>
+              <label>Plánovaná délka předdůchodu (roky)</label>
               <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-                <button onclick="pdAdj('pd_nasporeno',-50000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-                <input type="number" id="pd_nasporeno" value="1000000" min="0" step="50000" oninput="calcPredduchod()" style="flex:1;text-align:center;padding:8px;border:1px solid var(--border2);border-radius:8px;background:var(--surface2);color:var(--text);font-size:14px;font-weight:600">
-                <button onclick="pdAdj('pd_nasporeno',50000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+                <button onclick="pdAdjDelka(-1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+                <input type="number" id="pd_delka" value="3" min="2" max="5" step="1" oninput="this.value=Math.min(5,Math.max(2,parseInt(this.value)||2)); document.getElementById('pd_delka_sl').value=this.value; calcPredduchod()" style="flex:1;text-align:center;padding:8px;border:1px solid var(--border2);border-radius:8px;background:var(--surface2);color:var(--text);font-size:14px;font-weight:600">
+                <button onclick="pdAdjDelka(1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
               </div>
-              <input type="range" id="pd_nasporeno_sl" min="100000" max="5000000" value="1000000" step="50000" oninput="document.getElementById('pd_nasporeno').value=this.value; calcPredduchod()" style="width:100%;accent-color:#60A5FA;cursor:pointer">
-            </div>
-
-            <div class="field">
-              <label style="display:flex;justify-content:space-between">
-                <span>Požadovaná měsíční dávka (Kč)</span>
-                <span style="font-size:10px;color:var(--text3);font-weight:400">min. 14 452 Kč (2026)</span>
-              </label>
-              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-                <button onclick="pdAdj('pd_davka',-500)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-                <input type="number" id="pd_davka" value="14452" min="14452" step="500" oninput="calcPredduchod()" style="flex:1;text-align:center;padding:8px;border:1px solid var(--border2);border-radius:8px;background:var(--surface2);color:var(--text);font-size:14px;font-weight:600">
-                <button onclick="pdAdj('pd_davka',500)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
-              </div>
-              <input type="range" id="pd_davka_sl" min="14452" max="50000" value="14452" step="500" oninput="document.getElementById('pd_davka').value=this.value; calcPredduchod()" style="width:100%;accent-color:#60A5FA;cursor:pointer">
-              <div id="pd_min_warn" style="display:none;font-size:11px;color:var(--red);margin-top:4px">⚠️ Dávka je pod zákonným minimem 14 452 Kč/měs.</div>
+              <input type="range" id="pd_delka_sl" min="2" max="5" value="3" step="1" oninput="document.getElementById('pd_delka').value=this.value; calcPredduchod()" style="width:100%;accent-color:#60A5FA;cursor:pointer">
             </div>
 
             <div class="field" style="margin-bottom:0">
-              <label>Délka spoření v DPS (roky)</label>
+              <label>Očekávaná měsíční dávka (Kč)</label>
               <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-                <button onclick="pdAdj('pd_sporeni',-1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-                <input type="number" id="pd_sporeni" value="20" min="1" max="45" step="1" oninput="calcPredduchod()" style="flex:1;text-align:center;padding:8px;border:1px solid var(--border2);border-radius:8px;background:var(--surface2);color:var(--text);font-size:14px;font-weight:600">
-                <button onclick="pdAdj('pd_sporeni',1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+                <button onclick="pdAdjDavka(-500)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+                <input type="text" inputmode="numeric" id="pd_davka" value="15 000" oninput="pdFmtDavka(this)" style="flex:1;text-align:center;padding:8px;border:1px solid var(--border2);border-radius:8px;background:var(--surface2);color:var(--text);font-size:14px;font-weight:600">
+                <button onclick="pdAdjDavka(500)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
               </div>
-              <div style="font-size:10px;color:var(--text3);margin-top:2px">Spoření + čerpání musí dát dohromady 10 let pro 0% daň</div>
+              <input type="range" id="pd_davka_sl" min="14452" max="50000" value="15000" step="500" oninput="pdSliderDavka(this.value)" style="width:100%;accent-color:#60A5FA;cursor:pointer">
+              <div style="font-size:10px;color:var(--text3);margin-top:4px">Zákonné minimum pro rok 2026 je cca 14 452 Kč/měs.</div>
             </div>
           </div>
 
           <!-- Výsledky -->
-          <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;flex-direction:column;gap:10px">
 
-            <!-- Hlavní výsledek: jak dlouho vydrží -->
-            <div style="padding:14px 16px;background:var(--surface);border-radius:12px;border:1px solid rgba(96,165,250,0.3);text-align:center">
-              <div style="font-size:10px;font-weight:600;color:#60A5FA;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Předdůchod vydrží</div>
-              <div id="pd_res_doba" style="font-size:26px;font-weight:700;color:#60A5FA;font-variant-numeric:tabular-nums">—</div>
-              <div id="pd_res_do_kdy" style="font-size:11px;color:var(--text3);margin-top:3px">—</div>
+            <!-- Hero: cílová částka -->
+            <div style="padding:16px;background:var(--surface);border-radius:12px;border:1px solid rgba(96,165,250,0.35);text-align:center">
+              <div style="font-size:10px;font-weight:600;color:#60A5FA;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px">Cílová částka, kterou MUSÍTE mít v DPS</div>
+              <div id="pd_res_cilova" style="font-size:28px;font-weight:700;color:#60A5FA;font-variant-numeric:tabular-nums;letter-spacing:-0.02em">—</div>
+              <div id="pd_res_vypocet" style="font-size:11px;color:var(--text3);margin-top:4px">—</div>
             </div>
 
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-              <div style="padding:10px 12px;background:var(--surface);border-radius:10px;border:1px solid var(--border)">
-                <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px">Měsíční dávka</div>
-                <div id="pd_res_davka" style="font-size:14px;font-weight:600;color:var(--text)">—</div>
-              </div>
-              <div style="padding:10px 12px;background:var(--surface);border-radius:10px;border:1px solid var(--border)">
-                <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px">Celkem vyplaceno</div>
-                <div id="pd_res_celkem" style="font-size:14px;font-weight:600;color:var(--text)">—</div>
-              </div>
-              <div style="padding:10px 12px;background:var(--surface);border-radius:10px;border:1px solid var(--border)">
-                <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px">Zbytek po předdůch.</div>
-                <div id="pd_res_zbytek" style="font-size:14px;font-weight:600;color:var(--text)">—</div>
-              </div>
-              <div style="padding:10px 12px;background:var(--surface);border-radius:10px;border:1px solid var(--border)">
-                <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px">Daň z výnosů</div>
-                <div id="pd_res_dan" style="font-size:14px;font-weight:600">—</div>
-              </div>
+            <!-- Legislativní varování -->
+            <div style="padding:10px 14px;background:rgba(239,68,68,0.07);border:1px solid rgba(239,68,68,0.3);border-radius:10px;font-size:12px;color:var(--text2);line-height:1.5">
+              ⚠️ <strong style="color:var(--red)">Legislativa neumožňuje čerpat oficiální předdůchod z DIPu.</strong> Tuto částku musíte mít připravenou výhradně v DPS.
             </div>
 
-            <!-- Upozornění / doporučení -->
-            <div id="pd_info_box" style="padding:10px 12px;background:var(--surface2);border-radius:10px;border:1px solid var(--border);font-size:11px;color:var(--text2);line-height:1.6">—</div>
+            <!-- Doporučení pro rozdělení -->
+            <div style="padding:10px 14px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.25);border-radius:10px;font-size:12px;color:var(--text2);line-height:1.5">
+              💡 <strong style="color:var(--green)">Jak peníze rozdělit:</strong> Do DPS směřujte jen tolik, abyste dosáhli této cílové částky. Vaše vyšší vklady (např. 4 000 Kč kvůli daním) a příspěvky zaměstnavatele posílejte do DIPu — zhodnotí se tam mnohem lépe.
+            </div>
+
+            <!-- Práce v předdůchodu -->
+            <div style="padding:10px 14px;background:var(--surface);border-radius:10px;border:1px solid var(--border);font-size:11px;color:var(--text3);line-height:1.5">
+              ℹ️ <strong style="color:var(--text2)">Práce v předdůchodu:</strong> Během předdůchodu můžete neomezeně pracovat i podnikat. Stát za vás bude hradit zdravotní pojištění.
+            </div>
 
           </div>
         </div>
@@ -3513,76 +3493,64 @@ function calcBenefity() {
 }
 
 // ── PŘEDDŮCHOD ───────────────────────────────────────────────
-function pdAdj(id, delta) {
-  const el = document.getElementById(id);
+function pdAdjDelka(delta) {
+  const el = document.getElementById('pd_delka');
+  const sl = document.getElementById('pd_delka_sl');
   if (!el) return;
-  const min = parseFloat(el.min) || 0;
-  const v = Math.max(min, (parseFloat(el.value) || 0) + delta);
+  const v = Math.min(5, Math.max(2, (parseInt(el.value) || 3) + delta));
   el.value = v;
-  const sl = document.getElementById(id + '_sl');
   if (sl) sl.value = v;
   calcPredduchod();
 }
 
+function pdFmtDavka(el) {
+  const raw = el.value.replace(/\s/g, '');
+  const n = parseInt(raw) || 0;
+  const clamped = Math.min(50000, Math.max(14452, n));
+  // Formátování s mezerami jako oddělovač tisíců
+  el.value = clamped.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  const sl = document.getElementById('pd_davka_sl');
+  if (sl) sl.value = clamped;
+  calcPredduchod();
+}
+
+function pdAdjDavka(delta) {
+  const el = document.getElementById('pd_davka');
+  if (!el) return;
+  const cur = parseInt((el.value || '0').replace(/\s/g, '')) || 15000;
+  const v = Math.min(50000, Math.max(14452, cur + delta));
+  el.value = v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  const sl = document.getElementById('pd_davka_sl');
+  if (sl) sl.value = v;
+  calcPredduchod();
+}
+
+function pdSliderDavka(val) {
+  const el = document.getElementById('pd_davka');
+  const v = Math.round(parseInt(val) / 500) * 500;
+  if (el) el.value = v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  calcPredduchod();
+}
+
 function calcPredduchod() {
-  const nasporeno = parseFloat(document.getElementById('pd_nasporeno')?.value) || 0;
-  const davka     = parseFloat(document.getElementById('pd_davka')?.value) || 14452;
-  const vek       = parseFloat(document.getElementById('pd_vek')?.value) || 61;
-  const sporeniRoky = parseFloat(document.getElementById('pd_sporeni')?.value) || 20;
-  const MIN_DAVKA = 14452;
+  const delka = Math.min(5, Math.max(2, parseInt(document.getElementById('pd_delka')?.value) || 3));
+  const davkaRaw = (document.getElementById('pd_davka')?.value || '15000').replace(/\s/g, '');
+  const davka = Math.min(50000, Math.max(14452, parseInt(davkaRaw) || 15000));
 
-  const minWarn = document.getElementById('pd_min_warn');
-  if (minWarn) minWarn.style.display = davka < MIN_DAVKA ? 'block' : 'none';
+  // Synchronizace sliderů
+  const slDelka = document.getElementById('pd_delka_sl');
+  const slDavka = document.getElementById('pd_davka_sl');
+  if (slDelka) slDelka.value = delka;
+  if (slDavka) slDavka.value = davka;
 
-  const davkaReal = Math.max(davka, MIN_DAVKA);
-  const mesicu    = Math.floor(nasporeno / davkaReal);
-  const roky      = Math.floor(mesicu / 12);
-  const zbMes     = mesicu % 12;
-  const celkemVyplaceno = davkaReal * mesicu;
-  const zbytek    = nasporeno - celkemVyplaceno;
-  const vekKonec  = vek + roky + (zbMes / 12);
+  // Cílová částka = délka × 12 měsíců × měsíční dávka
+  const cilova = delka * 12 * davka;
 
-  // SPRÁVNÁ logika daně: spoření + čerpání dohromady musí být 10+ let
-  const celkemLet = sporeniRoky + (mesicu / 12);
-  const danOk     = celkemLet >= 10;
+  const cilovaEl = document.getElementById('pd_res_cilova');
+  const vypocetEl = document.getElementById('pd_res_vypocet');
 
-  const setEl = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
-
-  if (mesicu < 24) {
-    setEl('pd_res_doba',   'Nestačí');
-    setEl('pd_res_do_kdy', 'Min. 2 roky = ' + fmt(MIN_DAVKA * 24) + ' Kč');
-    setEl('pd_res_davka',  '—'); setEl('pd_res_celkem', '—'); setEl('pd_res_zbytek', '—');
-    const danEl = document.getElementById('pd_res_dan');
-    if (danEl) { danEl.textContent = '—'; danEl.style.color = 'var(--text)'; }
-    const info = document.getElementById('pd_info_box');
-    if (info) info.innerHTML = '⚠️ <strong>Nedostatečná naspořená částka.</strong> Pro minimální 2letý předdůchod je potřeba alespoň <strong>' + fmt(MIN_DAVKA * 24) + ' Kč</strong>.';
-    return;
-  }
-
-  const dobaText = roky + ' let' + (zbMes > 0 ? ' a ' + zbMes + ' měs.' : '');
-  setEl('pd_res_doba',   dobaText);
-  setEl('pd_res_do_kdy', 'Do věku přibližně ' + Math.floor(vekKonec) + ' let → pak řádný st. důchod');
-  setEl('pd_res_davka',  fmt(Math.round(davkaReal)) + ' Kč/měs.');
-  setEl('pd_res_celkem', fmt(Math.round(celkemVyplaceno)) + ' Kč');
-  setEl('pd_res_zbytek', zbytek > 0 ? fmt(Math.round(zbytek)) + ' Kč' : '0 Kč (vše vyčerpáno)');
-
-  const danEl = document.getElementById('pd_res_dan');
-  if (danEl) {
-    danEl.textContent = danOk ? '0 % ✓' : '15 % ✗';
-    danEl.style.color = danOk ? 'var(--green)' : 'var(--red)';
-  }
-
-  const info = document.getElementById('pd_info_box');
-  if (info) {
-    const celkemLetText = celkemLet.toFixed(1).replace('.', ',');
-    let text = danOk
-      ? '✅ <strong>Daňová výhoda:</strong> Celková doba spoření + čerpání = <strong>' + celkemLetText + ' let</strong> (10+ let) → výnosy <strong style="color:var(--green)">osvobozeny od 15% daně</strong>.'
-      : '⚠️ <strong>Pozor na daň 15 %:</strong> Celková doba spoření + čerpání = jen <strong>' + celkemLetText + ' let</strong>. ' +
-        'Pro nulovou daň musí spoření + čerpání dát dohromady <strong>min. 10 let</strong>. ' +
-        'Řešení: <strong>pokračujte v čerpání i po dosažení důchodu</strong> (5 let předdůchod + 5 let renta po důchodu = 0% daň).';
-    if (zbytek > 0) text += '<br>💡 Zbývajících <strong>' + fmt(Math.round(zbytek)) + ' Kč</strong> lze vybrat jednorázově nebo ponechat jako rentu po dosažení důchodu.';
-    info.innerHTML = text;
-  }
+  if (cilovaEl) cilovaEl.textContent = fmt(Math.round(cilova));
+  if (vypocetEl) vypocetEl.textContent = delka + ' roky × 12 měs. × ' + fmt(Math.round(davka)) + '/měs.';
 }
 // ── /PŘEDDŮCHOD ──────────────────────────────────────────────
 
