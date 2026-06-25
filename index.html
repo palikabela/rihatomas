@@ -13,7 +13,7 @@
 </script>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>TRfin — Finanční kalkulačky</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
@@ -68,6 +68,7 @@ nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:b
 .tab{padding:10px 26px;border:none;background:transparent;border-radius:50px;font-family:'Inter',sans-serif;font-size:15px;color:var(--text2);cursor:pointer;transition:all 0.2s}
 .tab:hover{color:var(--text)}
 .tab.active{background:var(--accent);color:#0E0F11;font-weight:600}
+button,.tab,input[type="range"],summary{touch-action:manipulation;}
 
 .container{max-width:920px;margin:0 auto;padding:0 1.5rem 6rem}
 .section{display:none}
@@ -3167,14 +3168,15 @@ function syncRRoky(val, fromSlider) {
 function syncRSazba(val, fromSlider) {
   const slider = document.getElementById("r_sazba_sou_slider");
   const input = document.getElementById("r_sazba_sou");
-  const parsed = cleanNumValue(val);
-  if (val === "" || val === null || !isFinite(parsed)) {
+  if (val === "" || val === null || String(val).trim() === "" || String(val).trim() === ",") {
     if (slider) slider.value = 0;
     calcRefi(); return;
   }
+  const parsed = cleanNumValue(val);
+  if (!isFinite(parsed)) { calcRefi(); return; }
   const v = Math.min(Math.max(parsed, 0), 15);
   if (slider) slider.value = v;
-  if (input) input.value = formatRateValue(v);
+  if (fromSlider && input) input.value = formatRateValue(v);
   calcRefi();
 }
 
