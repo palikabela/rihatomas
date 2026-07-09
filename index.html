@@ -490,6 +490,9 @@ input[type="range"]::-webkit-slider-runnable-track {
     overflow-y: visible !important;
   }
 }
+/* Hover efekt pro tabulku Vývoj po letech — ETF */
+#i_rocni_tbody tr { transition: background 0.15s ease; }
+#i_rocni_tbody tr:hover { background: var(--surface3) !important; }
 </style>
 </head>
 <body>
@@ -4390,16 +4393,43 @@ function calcInvest() {
       plugins: {
         legend: {display: false},
         tooltip: {
-          backgroundColor:tooltipBg, borderColor:gridColor, borderWidth:1,
-          titleColor:tooltipText, titleFont:{size:13,weight:'bold'}, titleMarginBottom:8,
-          bodyColor:textColor, bodyFont:{size:12}, bodySpacing:6,
-          padding:12, usePointStyle:true, boxPadding:6,
-          itemSort: (a, b) => b.raw - a.raw,
-          callbacks: {
-            label: ctx => {
-              const val = new Intl.NumberFormat("cs-CZ",{style:"currency",currency:"CZK",maximumFractionDigits:0}).format(ctx.raw);
-              return ctx.dataset.label + ": " + val;
+          enabled: false,
+          external: function(context) {
+            let tooltipEl = document.getElementById('invest-tooltip');
+            if (!tooltipEl) {
+              tooltipEl = document.createElement('div');
+              tooltipEl.id = 'invest-tooltip';
+              tooltipEl.style.cssText = 'position:absolute;pointer-events:none;transition:opacity .15s;z-index:100;border-radius:10px;padding:12px 16px;min-width:260px;box-shadow:0 4px 24px rgba(0,0,0,0.18);border:1px solid ' + gridColor + ';background:' + tooltipBg + ';font-family:Inter,sans-serif;';
+              document.body.appendChild(tooltipEl);
             }
+            const tooltip = context.tooltip;
+            if (tooltip.opacity === 0) { tooltipEl.style.opacity = '0'; return; }
+            tooltipEl.style.opacity = '1';
+
+            // Titulek (rok)
+            let html = '<div style="font-size:13px;font-weight:700;color:' + tooltipText + ';margin-bottom:10px;border-bottom:1px solid ' + gridColor + ';padding-bottom:6px">' + (tooltip.title[0] || '') + '</div>';
+
+            // Seřazené položky
+            const items = [...(tooltip.dataPoints || [])].sort((a,b) => b.raw - a.raw);
+            items.forEach(dp => {
+              const val = new Intl.NumberFormat("cs-CZ",{style:"currency",currency:"CZK",maximumFractionDigits:0}).format(dp.raw);
+              const color = dp.dataset.borderColor || '#888';
+              html += '<div style="display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:4px">' +
+                '<span style="display:flex;align-items:center;gap:6px;font-size:12px;color:' + textColor + '">' +
+                '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' + color + ';flex-shrink:0"></span>' +
+                dp.dataset.label + '</span>' +
+                '<span style="font-size:12px;font-weight:600;color:' + tooltipText + ';white-space:nowrap">' + val + '</span>' +
+                '</div>';
+            });
+            tooltipEl.innerHTML = html;
+
+            // Pozice
+            const canvas = context.chart.canvas;
+            const rect = canvas.getBoundingClientRect();
+            const posX = rect.left + window.scrollX + tooltip.caretX;
+            const posY = rect.top + window.scrollY + tooltip.caretY;
+            tooltipEl.style.left = (posX + 12) + 'px';
+            tooltipEl.style.top  = (posY - 20) + 'px';
           }
         }
       },
