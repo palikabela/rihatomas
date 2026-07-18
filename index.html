@@ -568,9 +568,9 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div class="field">
           <label>Úroková sazba (% ročně)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <button onclick="syncKSazba(getCleanNum('k_sazba')-0.01, false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-            <input type="text" inputmode="decimal" id="k_sazba" value="4,99" step="0.01" min="0" oninput="syncKSazba(this.value)" style="flex:1;text-align:center">
-            <button onclick="syncKSazba(getCleanNum('k_sazba')+0.01, false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+            <button onclick="syncKSazba(getCleanNum('k_sazba')-0.01, true)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <input type="text" inputmode="decimal" id="k_sazba" value="4,99" step="0.01" min="0" oninput="syncKSazba(this.value)" onblur="this.value = formatRateValue(cleanNumValue(this.value))" style="flex:1;text-align:center">
+            <button onclick="syncKSazba(getCleanNum('k_sazba')+0.01, true)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
           <input type="range" id="k_sazba_slider" min="0" max="15" value="4.99" step="0.1"
             oninput="syncKSazba(this.value, true)"
@@ -694,9 +694,9 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div class="field">
           <label>Stávající sazba (% ročně)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <button onclick="syncRSazba(getCleanNum('r_sazba_sou')-0.01, false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-            <input type="text" inputmode="decimal" id="r_sazba_sou" value="6,50" step="0.01" min="0" oninput="syncRSazba(this.value)" style="flex:1;text-align:center">
-            <button onclick="syncRSazba(getCleanNum('r_sazba_sou')+0.01, false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+            <button onclick="syncRSazba(getCleanNum('r_sazba_sou')-0.01, true)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <input type="text" inputmode="decimal" id="r_sazba_sou" value="6,50" step="0.01" min="0" oninput="syncRSazba(this.value)" onblur="this.value = formatRateValue(cleanNumValue(this.value))" style="flex:1;text-align:center">
+            <button onclick="syncRSazba(getCleanNum('r_sazba_sou')+0.01, true)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
           <input type="range" id="r_sazba_sou_slider" min="0" max="15" value="6.5" step="0.1"
             oninput="syncRSazba(this.value, true)"
@@ -767,9 +767,9 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div class="field">
           <label>Nová úroková sazba (% ročně)</label>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <button onclick="syncRSazbaNova(getCleanNum('r_sazba_nova')-0.01, false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-            <input type="text" inputmode="decimal" id="r_sazba_nova" value="4,99" step="0.01" min="0" oninput="syncRSazbaNova(this.value, false)" style="flex:1;text-align:center">
-            <button onclick="syncRSazbaNova(getCleanNum('r_sazba_nova')+0.01, false)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+            <button onclick="syncRSazbaNova(getCleanNum('r_sazba_nova')-0.01, true)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <input type="text" inputmode="decimal" id="r_sazba_nova" value="4,99" step="0.01" min="0" oninput="syncRSazbaNova(this.value, false)" onblur="this.value = formatRateValue(cleanNumValue(this.value))" style="flex:1;text-align:center">
+            <button onclick="syncRSazbaNova(getCleanNum('r_sazba_nova')+0.01, true)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
           <input type="range" id="r_sazba_nova_slider" min="0" max="15" value="4.99" step="0.1"
             oninput="syncRSazbaNova(this.value, true)"
@@ -3190,7 +3190,7 @@ function syncRSazbaNova(val, fromSlider) {
   const v = Math.round(Math.max(0, Math.min(parsed, 15)) * 100) / 100;
   const el = document.getElementById('r_sazba_nova');
   const sl = document.getElementById('r_sazba_nova_slider');
-  if (el) el.value = v.toFixed(2).replace('.', ',');
+  if (fromSlider && el) el.value = v.toFixed(2).replace('.', ',');
   if (sl) sl.value = v;
   calcRefi();
 }
@@ -3206,7 +3206,7 @@ function syncKSazba(val, fromSlider) {
   }
   const v = Math.min(Math.max(parsed, 0), 15);
   if (slider) slider.value = v;
-  if (input) input.value = formatRateValue(v);
+  if (fromSlider && input) input.value = formatRateValue(v);
   calcKalk();
 }
 
