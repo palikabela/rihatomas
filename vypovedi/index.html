@@ -49,7 +49,10 @@ nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:b
 .hero h1 em{color:var(--accent);font-style:normal}
 .hero p{font-size:14px;color:var(--text2);max-width:480px;margin:0 auto 1.5rem}
 
-.container{max-width:1200px;margin:0 auto;padding:0 1.5rem 6rem}
+.container{max-width:1400px;margin:0 auto;padding:0 1.5rem 6rem}
+
+.vyp-layout{display:grid;grid-template-columns:400px 1fr;gap:20px;align-items:start}
+@media(max-width:900px){.vyp-layout{grid-template-columns:1fr}}
 
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 @media(max-width:640px){.grid2{grid-template-columns:1fr}}
@@ -64,6 +67,8 @@ nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:b
 .field input:focus,.field select:focus{outline:none;border-color:var(--accent);background:var(--surface3)}
 
 .note{font-size:13px;color:var(--text3);margin-top:1.5rem;line-height:1.7}
+.field input.v-error{border-color:var(--red) !important;background:var(--red-dim) !important}
+.v-error-msg{font-size:12px;color:var(--red);margin-top:8px;text-align:center;font-weight:500}
 
 </style>
 </head>
@@ -84,7 +89,7 @@ nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:b
 </div>
 
 <div class="container">
-  <div class="grid2">
+  <div class="vyp-layout">
     <div class="card">
       <div class="card-label">Údaje k výpovědi</div>
 
@@ -162,24 +167,14 @@ nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:b
         <input type="text" id="v_ucet" placeholder="123456789/0800" oninput="updateVypovedPreview()">
       </div>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <div class="field">
-          <label>Místo podpisu</label>
-          <input type="text" id="v_misto" oninput="updateVypovedPreview()">
-        </div>
-        <div class="field">
-          <label>Datum</label>
-          <input type="date" id="v_datum" oninput="updateVypovedPreview()">
-        </div>
-      </div>
-
       <button onclick="generateVypovedPDF()" style="width:100%;margin-top:1rem;padding:12px;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;border-radius:10px;border:none;background:var(--accent);color:#0E0F11;cursor:pointer">📄 Generovat PDF</button>
       <div id="v_pdf_status" style="font-size:12px;color:var(--text3);margin-top:8px;text-align:center"></div>
+      <div id="v_pdf_error" class="v-error-msg" style="display:none"></div>
     </div>
 
     <div class="card">
       <div class="card-label">Náhled dopisu</div>
-      <div id="v_preview" style="background:#fff;color:#111;border-radius:8px;padding:28px 26px;font-size:13px;line-height:1.65;white-space:pre-wrap;font-family:Georgia,'Times New Roman',serif;min-height:520px;box-shadow:0 4px 20px rgba(0,0,0,0.25)"></div>
+      <div id="v_preview" style="background:#fff;color:#111;border-radius:8px;padding:60px 70px;font-size:14.5px;line-height:2;white-space:pre-wrap;font-family:Georgia,'Times New Roman',serif;min-height:640px;box-shadow:0 4px 20px rgba(0,0,0,0.25)"></div>
       <p class="note" style="margin-top:10px">PDF se generuje přímo v prohlížeči (pdf-lib), nikde se neodesílá. Zkontrolujte prosím údaje před podpisem a odesláním.</p>
     </div>
   </div>
@@ -286,8 +281,6 @@ function initVypovedi() {
       selT.appendChild(o);
     });
   }
-  const dEl = document.getElementById('v_datum');
-  if (dEl && !dEl.value) dEl.value = new Date().toISOString().slice(0, 10);
   setVypovedKlientTyp('fo');
   onVypovedTypChange();
 }
@@ -378,6 +371,26 @@ function fmtDateCZ(iso) {
   return parseInt(parts[2]) + '.' + parseInt(parts[1]) + '.' + parts[0];
 }
 
+function validateVypovedForm() {
+  const errors = [];
+  const fieldsToClear = ['v_cislo', 'v_adresa_search', 'v_jmeno', 'v_nazev_firmy'];
+  fieldsToClear.forEach(id => document.getElementById(id).classList.remove('v-error'));
+
+  const cislo = document.getElementById('v_cislo').value.trim();
+  if (!cislo) { errors.push('Číslo pojistné smlouvy'); document.getElementById('v_cislo').classList.add('v-error'); }
+
+  const adresa = document.getElementById('v_adresa_search').value.trim();
+  if (!adresa) { errors.push('Adresa'); document.getElementById('v_adresa_search').classList.add('v-error'); }
+
+  const isFO = vypovedKlientTyp === 'fo';
+  const jmenoField = isFO ? 'v_jmeno' : 'v_nazev_firmy';
+  const jmenoLabel = isFO ? 'Jméno a příjmení' : 'Název společnosti';
+  const jmeno = document.getElementById(jmenoField).value.trim();
+  if (!jmeno) { errors.push(jmenoLabel); document.getElementById(jmenoField).classList.add('v-error'); }
+
+  return errors;
+}
+
 function buildVypovedContext() {
   const pojistovna = POJISTOVNY.find(p => p.id === document.getElementById('v_pojistovna').value) || POJISTOVNY[0];
   const typ = VYPOVED_TYPY.find(t => t.id === document.getElementById('v_typ').value) || VYPOVED_TYPY[0];
@@ -391,47 +404,52 @@ function buildVypovedContext() {
   const obec = document.getElementById('v_obec').value.trim();
   const psc = document.getElementById('v_psc').value.trim();
   const ucet = document.getElementById('v_ucet').value.trim();
-  const misto = document.getElementById('v_misto').value.trim() || obec;
-  const datum = document.getElementById('v_datum').value;
+  const misto = obec;
   const datumUkonceni = document.getElementById('v_datum_ukonceni').value;
   const duvodDohody = document.getElementById('v_duvod_dohody').value.trim();
   return {
     pojistovna, typ, cislo, isFO, jmeno, jednatel, rc, ico, adresa, obec, psc, ucet, misto,
-    datumCZ: fmtDateCZ(datum), datumUkonceniCZ: fmtDateCZ(datumUkonceni), duvodDohody
+    datumUkonceniCZ: fmtDateCZ(datumUkonceni), duvodDohody
   };
 }
 
 function buildVypovedLines(ctx) {
+  // Každý řádek: { text, bold } — bold řádky se zvýrazní v náhledu i v PDF
+  const blank = () => ({ text: '', bold: false });
   const lines = [];
-  lines.push(ctx.pojistovna.nazev);
-  ctx.pojistovna.adresa.forEach(l => lines.push(l));
-  lines.push('');
-  lines.push('Věc: ' + ctx.typ.vec(ctx));
-  lines.push('');
-  lines.push(ctx.typ.body(ctx));
-  if (ctx.ucet) { lines.push(''); lines.push('Případný přeplatek pojistného prosím zašlete na účet č.: ' + ctx.ucet + '.'); }
-  lines.push('');
-  lines.push('Děkuji za vyřízení.');
-  lines.push('');
-  lines.push('S pozdravem');
-  lines.push('');
-  if (ctx.isFO) {
-    lines.push(ctx.jmeno || '……………………………');
-    if (ctx.rc) lines.push('r.č.: ' + ctx.rc);
-  } else {
-    lines.push(ctx.jmeno || '……………………………');
-    if (ctx.jednatel) lines.push(ctx.jednatel);
-    if (ctx.ico) lines.push('IČO: ' + ctx.ico);
+  lines.push({ text: ctx.pojistovna.nazev, bold: true });
+  ctx.pojistovna.adresa.forEach(l => lines.push({ text: l, bold: false }));
+  lines.push(blank(), blank(), blank());
+  lines.push({ text: 'Věc: ' + ctx.typ.vec(ctx), bold: true });
+  lines.push(blank());
+  lines.push({ text: ctx.typ.body(ctx), bold: false });
+  if (ctx.ucet) {
+    lines.push(blank());
+    lines.push({ text: 'Případný přeplatek pojistného prosím zašlete na účet č.: ' + ctx.ucet + '.', bold: false });
   }
-  lines.push(ctx.adresa || '……………………………');
+  lines.push(blank());
+  lines.push({ text: 'Děkuji', bold: false });
+  lines.push(blank());
+  lines.push({ text: 'S pozdravem', bold: false });
+  lines.push(blank(), blank());
+  if (ctx.isFO) {
+    lines.push({ text: ctx.jmeno || '……………………………', bold: false });
+    if (ctx.rc) lines.push({ text: 'r.č.: ' + ctx.rc, bold: false });
+  } else {
+    lines.push({ text: ctx.jmeno || '……………………………', bold: false });
+    if (ctx.jednatel) lines.push({ text: ctx.jednatel, bold: false });
+    if (ctx.ico) lines.push({ text: 'IČO: ' + ctx.ico, bold: false });
+  }
+  lines.push({ text: ctx.adresa || '……………………………', bold: false });
   const obecPsc = [ctx.psc, ctx.obec].filter(Boolean).join(' ');
-  if (obecPsc) lines.push(obecPsc);
-  lines.push('');
-  lines.push('V ' + (ctx.misto || '……………') + ' dne ' + (ctx.datumCZ || '……………'));
-  lines.push('');
-  lines.push('.......................................');
-  lines.push('podpis');
+  if (obecPsc) lines.push({ text: obecPsc, bold: false });
+  lines.push(blank(), blank(), blank());
+  lines.push({ text: '.......................................', bold: false });
   return lines;
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
 function updateVypovedPreview() {
@@ -439,7 +457,11 @@ function updateVypovedPreview() {
   if (!previewEl) return;
   const ctx = buildVypovedContext();
   const lines = buildVypovedLines(ctx);
-  previewEl.textContent = lines.join('\n');
+  const html = lines.map(l => {
+    const safe = escapeHtml(l.text) || '&nbsp;';
+    return l.bold ? '<b style="font-size:1.05em">' + safe + '</b>' : safe;
+  }).join('<br>');
+  previewEl.innerHTML = html;
 }
 
 // ── Generování PDF (pdf-lib + fontkit kvůli české diakritice) ──
@@ -451,8 +473,27 @@ async function loadNotoFont() {
   return vNotoFontBytes;
 }
 
+let vNotoFontBoldBytes = null;
+async function loadNotoFontBold() {
+  if (vNotoFontBoldBytes) return vNotoFontBoldBytes;
+  const res = await fetch('https://raw.githubusercontent.com/openmaptiles/fonts/master/noto-sans/NotoSans-Bold.ttf');
+  vNotoFontBoldBytes = await res.arrayBuffer();
+  return vNotoFontBoldBytes;
+}
+
 async function generateVypovedPDF() {
   const statusEl = document.getElementById('v_pdf_status');
+  const errorEl = document.getElementById('v_pdf_error');
+  errorEl.style.display = 'none';
+
+  const errors = validateVypovedForm();
+  if (errors.length) {
+    statusEl.textContent = '';
+    errorEl.textContent = '⚠️ Chybí povinné údaje: ' + errors.join(', ') + '.';
+    errorEl.style.display = 'block';
+    return;
+  }
+
   statusEl.textContent = 'Generuji PDF…';
   try {
     const ctx = buildVypovedContext();
@@ -460,22 +501,23 @@ async function generateVypovedPDF() {
     const { PDFDocument, rgb } = PDFLib;
     const pdfDoc = await PDFDocument.create();
     pdfDoc.registerFontkit(fontkit);
-    const fontBytes = await loadNotoFont();
+    const [fontBytes, fontBoldBytes] = await Promise.all([loadNotoFont(), loadNotoFontBold()]);
     const font = await pdfDoc.embedFont(fontBytes);
+    const fontBold = await pdfDoc.embedFont(fontBoldBytes);
 
     const pageWidth = 595.28, pageHeight = 841.89;
     const marginX = 56.7, marginTop = 85, marginBottom = 60;
-    const fontSize = 11, lineHeight = 15.5;
+    const fontSize = 11, lineHeight = 17;
     const maxWidth = pageWidth - marginX * 2;
 
-    function wrapLine(text) {
+    function wrapLine(text, useFont) {
       if (!text) return [''];
       const words = text.split(' ');
       const out = [];
       let cur = '';
       words.forEach(w => {
         const test = cur ? cur + ' ' + w : w;
-        if (font.widthOfTextAtSize(test, fontSize) > maxWidth) {
+        if (useFont.widthOfTextAtSize(test, fontSize) > maxWidth) {
           if (cur) out.push(cur);
           cur = w;
         } else {
@@ -490,12 +532,13 @@ async function generateVypovedPDF() {
     let y = pageHeight - marginTop;
 
     lines.forEach(line => {
-      wrapLine(line).forEach(w => {
+      const useFont = line.bold ? fontBold : font;
+      wrapLine(line.text, useFont).forEach(w => {
         if (y < marginBottom) {
           page = pdfDoc.addPage([pageWidth, pageHeight]);
           y = pageHeight - marginTop;
         }
-        page.drawText(w, { x: marginX, y, size: fontSize, font, color: rgb(0.07, 0.07, 0.07) });
+        page.drawText(w, { x: marginX, y, size: fontSize, font: useFont, color: rgb(0.07, 0.07, 0.07) });
         y -= lineHeight;
       });
     });
@@ -504,7 +547,7 @@ async function generateVypovedPDF() {
     const blob = new Blob([pdfBytes], { type: 'application/pdf' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    const safeCislo = ctx.cislo !== '……………………' ? ctx.cislo.replace(/[^\w-]/g, '') : 'smlouva';
+    const safeCislo = ctx.cislo.replace(/[^\w-]/g, '') || 'smlouva';
     a.href = url;
     a.download = 'Vypoved_' + ctx.pojistovna.id + '_' + safeCislo + '.pdf';
     document.body.appendChild(a);
