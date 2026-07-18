@@ -603,9 +603,9 @@ input[type="range"]::-webkit-slider-runnable-track {
         </div>
 
         <!-- Alternativní úrok Banka B — volitelné -->
-        <div style="border-top:1px dashed var(--border);margin-top:4px;padding-top:12px">
+        <div style="border-top:1px dashed rgba(59,130,246,0.35);margin-top:4px;padding-top:12px">
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
-            <span style="font-size:11px;font-weight:600;color:var(--text2)">Alternativní úrok — Banka B</span>
+            <span style="font-size:11px;font-weight:700;color:#3B82F6">⚖️ Alternativní úrok — Banka B</span>
             <span style="font-size:9px;color:var(--text3);background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:1px 5px;letter-spacing:0.04em">volitelné</span>
             <div style="display:flex;gap:4px;margin-left:auto">
               <button onclick="setRateInputValue('k_sazba_b', getCleanNum('k_sazba')); const sl=document.getElementById('k_sazba_b_slider'); if(sl) sl.value=getCleanNum('k_sazba'); calcKalk();" style="font-size:10px;padding:2px 7px;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);color:var(--text2);cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap">↙ kopírovat A</button>
@@ -613,11 +613,11 @@ input[type="range"]::-webkit-slider-runnable-track {
             </div>
           </div>
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-            <button onclick="kAdjSazbaB(-0.01)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-            <input type="text" inputmode="decimal" id="k_sazba_b" value="0" min="0" oninput="calcKalk()" style="flex:1;text-align:center">
-            <button onclick="kAdjSazbaB(0.01)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
+            <button onclick="kAdjSazbaB(-0.01)" style="width:32px;height:32px;border-radius:8px;border:1px solid rgba(59,130,246,0.3);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <input type="text" inputmode="decimal" id="k_sazba_b" value="0" min="0" oninput="calcKalk()" onblur="this.value = formatRateValue(cleanNumValue(this.value))" style="flex:1;text-align:center;border-color:rgba(59,130,246,0.3)">
+            <button onclick="kAdjSazbaB(0.01)" style="width:32px;height:32px;border-radius:8px;border:1px solid rgba(59,130,246,0.3);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
-          <input type="range" id="k_sazba_b_slider" min="0" max="15" value="0" step="0.1" oninput="kSazbaBSlider(this.value)" style="width:100%;accent-color:var(--green);cursor:pointer">
+          <input type="range" id="k_sazba_b_slider" min="0" max="15" value="0" step="0.1" oninput="kSazbaBSlider(this.value)" style="width:100%;accent-color:#3B82F6;cursor:pointer">
           <div style="font-size:10px;color:var(--text3);margin-top:5px">Zadejte 0 nebo klikněte ✕ pro skrytí srovnání</div>
         </div>
       </div>
@@ -628,6 +628,11 @@ input[type="range"]::-webkit-slider-runnable-track {
             <div class="premium-total-box" style="margin:0;padding:12px 14px;background:var(--surface);border-color:var(--green)">
               <div class="premium-total-label" style="color:var(--green)">Měsíční splátka</div>
               <div class="premium-total-value" id="k_splatka" style="color:var(--green);font-size:20px">—</div>
+              <div id="k_splatka_b_inline" style="display:none;margin-top:7px;padding-top:7px;border-top:1px dashed rgba(59,130,246,0.35)">
+                <div style="font-size:9px;font-weight:700;color:#3B82F6;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:2px">⚖️ Banka B</div>
+                <div style="font-size:15px;font-weight:700;color:#3B82F6" id="k_splatka_b_inline_val">—</div>
+                <div style="font-size:11px;font-weight:600" id="k_splatka_b_inline_delta"></div>
+              </div>
             </div>
             <div><div style="font-size:11px;color:var(--text3)" id="k_celkem_label">Celkem zaplatíte</div><div style="font-size:17px;font-weight:700;color:var(--text)" id="k_celkem">—</div></div>
             <div style="grid-column:1/-1;height:1px;background:var(--border);margin:4px 0"></div>
@@ -646,27 +651,6 @@ input[type="range"]::-webkit-slider-runnable-track {
         <div class="progress-wrap">
           <div class="progress-labels"><span>Jistina <strong id="k_pct_j">—</strong></span><span>Úroky <strong id="k_pct_u">—</strong></span></div>
           <div class="progress-track"><div class="progress-fill" id="k_bar" style="width:0%"></div></div>
-        </div>
-
-        <!-- Srovnání Banka B -->
-        <div id="k_banka_b_box" style="display:none;margin-top:14px;padding:12px 14px;background:var(--surface2);border-radius:12px;border:1px solid var(--border)">
-          <div style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">⚖️ Srovnání — Banka B</div>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
-            <span style="font-size:12px;color:var(--text3)">Měsíční splátka B:</span>
-            <span id="k_splatka_b" style="font-size:14px;font-weight:700;color:var(--green)">—</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
-            <span style="font-size:12px;color:var(--text3)">Celkem zaplatíte B:</span>
-            <span id="k_celkem_b" style="font-size:13px;font-weight:600;color:var(--text)">—</span>
-          </div>
-          <div style="border-top:1px dashed var(--border);margin:6px 0;padding-top:6px;display:flex;justify-content:space-between;align-items:center">
-            <span style="font-size:12px;color:var(--text3)">Měsíční úspora:</span>
-            <span id="k_uspora_mes" style="font-size:13px;font-weight:700;color:var(--green)">—</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <span style="font-size:12px;color:var(--text3)">Úspora za celou dobu:</span>
-            <span id="k_uspora_celkem" style="font-size:13px;font-weight:700;color:var(--green)">—</span>
-          </div>
         </div>
       </div>
     </div>
@@ -3665,20 +3649,21 @@ function calcKalk() {
 
   // Banka B srovnání
   const sB = getCleanNum('k_sazba_b');
-  const bankaBBox = document.getElementById('k_banka_b_box');
+  const inlineBadge = document.getElementById('k_splatka_b_inline');
+  const inlineVal = document.getElementById('k_splatka_b_inline_val');
+  const inlineDelta = document.getElementById('k_splatka_b_inline_delta');
   if (sB > 0 && j > 0) {
     const splatkaB = monthlyPayment(j, sB, m);
-    const celkemB  = splatkaB * m;
     const uspMes   = Math.abs(splatka - splatkaB);
-    const uspCelk  = Math.abs(celkem - celkemB);
     const lepsi    = splatkaB < splatka ? 'B' : 'A';
-    document.getElementById('k_splatka_b').textContent   = fmt(Math.round(splatkaB)) + ' / měs.';
-    document.getElementById('k_celkem_b').textContent    = fmt(Math.round(celkemB));
-    document.getElementById('k_uspora_mes').textContent  = fmt(Math.round(uspMes)) + ' Kč';
-    document.getElementById('k_uspora_celkem').textContent = fmt(Math.round(uspCelk)) + ' Kč';
-    if (bankaBBox) bankaBBox.style.display = 'block';
+    if (inlineVal) inlineVal.textContent = fmt(Math.round(splatkaB)) + ' / měs.';
+    if (inlineDelta) {
+      inlineDelta.textContent = (lepsi === 'B' ? '↓ levnější o ' : '↑ dražší o ') + fmt(Math.round(uspMes)) + ' Kč';
+      inlineDelta.style.color = lepsi === 'B' ? 'var(--green)' : 'var(--red)';
+    }
+    if (inlineBadge) inlineBadge.style.display = 'block';
   } else {
-    if (bankaBBox) bankaBBox.style.display = 'none';
+    if (inlineBadge) inlineBadge.style.display = 'none';
   }
 }
 
