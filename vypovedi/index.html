@@ -82,11 +82,6 @@ nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:b
   </div>
 </nav>
 
-<div class="hero">
-  <div class="hero-tag">Výpovědi smluv</div>
-  <h1>Generátor <em>výpovědí</em></h1>
-  <p>Vyplňte údaje a stáhněte hotovou výpověď pojistné smlouvy jako PDF, připravenou k podpisu.</p>
-</div>
 
 <div class="container">
   <div class="vyp-layout">
@@ -128,7 +123,7 @@ nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:b
         <input type="text" id="v_jmeno" placeholder="Jan Novák" oninput="updateVypovedPreview()">
       </div>
       <div class="field" id="v_field_rc">
-        <label>Rodné číslo</label>
+        <label>Rodné číslo (nepovinné)</label>
         <input type="text" id="v_rc" placeholder="900101/1234" oninput="updateVypovedPreview()">
       </div>
 
@@ -151,19 +146,8 @@ nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:b
           oninput="onAddressInput(this.value)" onblur="setTimeout(hideAddressSuggestions, 200)">
         <div id="v_adresa_suggestions" style="display:none;position:absolute;left:0;right:0;top:100%;margin-top:4px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;max-height:220px;overflow-y:auto;z-index:50;box-shadow:0 8px 24px rgba(0,0,0,0.35)"></div>
       </div>
-      <div style="display:grid;grid-template-columns:2fr 1fr;gap:10px">
-        <div class="field">
-          <label>Obec</label>
-          <input type="text" id="v_obec" oninput="updateVypovedPreview()">
-        </div>
-        <div class="field">
-          <label>PSČ</label>
-          <input type="text" id="v_psc" oninput="updateVypovedPreview()">
-        </div>
-      </div>
-
       <div class="field">
-        <label>Číslo účtu pro vrácení přeplatku (nepovinné)</label>
+        <label id="v_ucet_label">Číslo účtu pro vrácení přeplatku (nepovinné)</label>
         <input type="text" id="v_ucet" placeholder="123456789/0800" oninput="updateVypovedPreview()">
       </div>
 
@@ -187,7 +171,6 @@ nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:b
       <!-- Akční tlačítka -->
       <button onclick="generateVypovedPDF()" style="width:100%;margin-top:.5rem;padding:12px;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;border-radius:10px;border:none;background:var(--accent);color:#0E0F11;cursor:pointer">📄 Stáhnout PDF</button>
       <button onclick="generateVypovedDOCX()" style="width:100%;margin-top:8px;padding:12px;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;border-radius:10px;border:1px solid var(--border2);background:transparent;color:var(--text);cursor:pointer">📝 Stáhnout Word (.docx)</button>
-      <button onclick="openEmailClient()" style="width:100%;margin-top:8px;padding:12px;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;border-radius:10px;border:1px solid var(--border2);background:transparent;color:var(--text);cursor:pointer">✉️ Odeslat e-mailem</button>
       <div id="v_pdf_status" style="font-size:12px;color:var(--text3);margin-top:8px;text-align:center"></div>
       <div id="v_pdf_error" class="v-error-msg" style="display:none"></div>
     </div>
@@ -315,6 +298,10 @@ function onVypovedTypChange() {
     terminBox.style.display = t === 'vyroci' ? '' : 'none';
     if (t === 'vyroci') calcTerminOdDnes();
   }
+  const ucetLabel = document.getElementById('v_ucet_label');
+  if (ucetLabel) ucetLabel.textContent = t === 'dva_mesice'
+    ? 'Číslo účtu pro vrácení přeplatku (povinné)'
+    : 'Číslo účtu pro vrácení přeplatku (nepovinné)';
   updateVypovedPreview();
 }
 
@@ -378,7 +365,7 @@ function selectAddressSuggestion(i) {
   if (!c) return;
   document.getElementById('v_adresa_search').value = c.address;
   const attrs = c.attributes || {};
-  if (attrs.City) document.getElementById('v_obec').value = attrs.City;
+  if (attrs.City) { /* obec je součástí adresy */ }
   hideAddressSuggestions();
   updateVypovedPreview();
 }
@@ -413,6 +400,12 @@ function validateVypovedForm() {
   const jmeno = document.getElementById(jmenoField).value.trim();
   if (!jmeno) { errors.push(jmenoLabel); document.getElementById(jmenoField).classList.add('v-error'); }
 
+  const typ = document.getElementById('v_typ').value;
+  if (typ === 'dva_mesice') {
+    const ucet = document.getElementById('v_ucet').value.trim();
+    if (!ucet) { errors.push('Číslo účtu pro vrácení přeplatku'); document.getElementById('v_ucet').classList.add('v-error'); }
+  }
+
   return errors;
 }
 
@@ -426,14 +419,12 @@ function buildVypovedContext() {
   const rc = document.getElementById('v_rc').value.trim();
   const ico = document.getElementById('v_ico').value.trim();
   const adresa = document.getElementById('v_adresa_search').value.trim();
-  const obec = document.getElementById('v_obec').value.trim();
-  const psc = document.getElementById('v_psc').value.trim();
   const ucet = document.getElementById('v_ucet').value.trim();
-  const misto = obec;
+  const misto = '';
   const datumUkonceni = document.getElementById('v_datum_ukonceni').value;
   const duvodDohody = document.getElementById('v_duvod_dohody').value.trim();
   return {
-    pojistovna, typ, cislo, isFO, jmeno, jednatel, rc, ico, adresa, obec, psc, ucet, misto,
+    pojistovna, typ, cislo, isFO, jmeno, jednatel, rc, ico, adresa, ucet, misto,
     datumUkonceniCZ: fmtDateCZ(datumUkonceni), duvodDohody
   };
 }
