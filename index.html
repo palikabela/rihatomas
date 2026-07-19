@@ -1233,7 +1233,7 @@ input[type="range"]::-webkit-slider-runnable-track {
             <button id="tf-mode-renta"  onclick="setTfDpsMode('renta')"  style="padding:3px 8px;border-radius:6px;border:1px solid var(--border2);background:transparent;color:var(--text3);font-size:10px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s">Renta 10+ let (0%)</button>
           </div>
         </div>
-        <div style="font-size:11px;color:var(--text3);margin-bottom:.75rem;line-height:1.4" id="tf_mode_info">1,5% hrubý − 0,8% správa − 10% success fee = cca 0,6% · + stát. příspěvek · <span style="color:var(--red)">15% daň ze zisku</span></div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:.75rem;line-height:1.4;min-height:3em" id="tf_mode_info">1,5% hrubý − 0,8% správa − 10% success fee = cca 0,6% · + stát. příspěvek · <span style="color:var(--red)">15% daň ze zisku</span></div>
         <div id="tf_prevod_info" style="display:none;font-size:12px;color:#60A5FA;background:rgba(96,165,250,0.08);border:1px solid rgba(96,165,250,0.25);border-radius:7px;padding:7px 10px;margin-bottom:.75rem;line-height:1.5">TF generuje minimální výnos. Převodem do DPS získáte vyšší zhodnocení při zachování nároku na státní příspěvky i daňové testy.</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
           <div class="premium-total-box"><div class="premium-total-label">CELKEM NASPOŘENO</div><div class="premium-total-value" id="tf_celkem">—</div></div>
@@ -1243,7 +1243,7 @@ input[type="range"]::-webkit-slider-runnable-track {
           <div><div style="font-size:11px;color:var(--text3)">Vložil klient (celkem)</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="tf_klient_celkem">—</div></div>
           <div><div style="font-size:11px;color:var(--text3)">Vložil zaměstnavatel (celkem)</div><div id="tf_zamest_celkem" style="font-size:14px;font-weight:600;color:var(--text2)">—</div><div class="sankce-zamest-box" style="font-size:10px;font-weight:700;color:var(--red);margin-top:2px;display:none"></div></div>
           <div><div style="font-size:11px;color:var(--text3)">Stát. příspěvek / měs.</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="tf_stat_mes">—</div></div>
-          <div><div style="font-size:11px;color:var(--text3)">Státní příspěvky celkem <span style="display:block;color:var(--red);font-size:9px;font-weight:600;margin-top:2px;line-height:1.2">⚠️ Při dřívějším zrušení vracíte</span></div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="tf_stat_celkem">—</div></div>
+          <div><div style="font-size:11px;color:var(--text3)">Státní příspěvky celkem <span id="tf_stat_warning" style="display:block;color:var(--red);font-size:9px;font-weight:600;margin-top:2px;line-height:1.2;min-height:2.4em">⚠️ Při dřívějším zrušení vracíte</span></div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="tf_stat_celkem">—</div></div>
           <div style="grid-column:1/-1;margin-top:4px;padding:7px 10px;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.25);border-radius:7px;display:flex;justify-content:space-between;align-items:center">
             <div style="font-size:11px;color:var(--red);font-weight:600">Ztráta nízkým výnosem vs. DPS</div>
           </div>
@@ -1258,7 +1258,7 @@ input[type="range"]::-webkit-slider-runnable-track {
             <button id="tfdps-dpsmode-renta"  onclick="setTfDpsMode('renta')"  style="padding:3px 8px;border-radius:6px;border:1px solid var(--border2);background:transparent;color:var(--text3);font-size:10px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s">Renta 10+ let (0%)</button>
           </div>
         </div>
-        <div style="font-size:11px;color:var(--text3);margin-bottom:.75rem;line-height:1.4" id="p_dps_mode_info">8% hrubý − 1% správa − 15% success fee = <span style="color:#000;font-weight:700">5,95 %</span> · + stát. příspěvek · <span style="color:var(--red)">15% daň ze zisku</span></div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:.75rem;line-height:1.4;min-height:3em" id="p_dps_mode_info">8% hrubý − 1% správa − 15% success fee = <span style="color:#000;font-weight:700">5,95 %</span> · + stát. příspěvek · <span style="color:var(--red)">15% daň ze zisku</span></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
           <div style="grid-column:1/-1;font-size:11px;color:var(--red);font-weight:600" id="p_dps_fee_loss">Ztráta na poplatcích: —</div>
           <div class="premium-total-box"><div class="premium-total-label">CELKEM NASPOŘENO</div><div class="premium-total-value" id="p_dps_celkem">—</div></div>
@@ -1268,7 +1268,7 @@ input[type="range"]::-webkit-slider-runnable-track {
           <div><div style="font-size:11px;color:var(--text3)">Vložil klient (celkem)</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="p_dps_klient_celkem">—</div></div>
           <div><div style="font-size:11px;color:var(--text3)">Vložil zaměstnavatel (celkem)</div><div id="p_dps_zamest_celkem" style="font-size:14px;font-weight:600;color:var(--text2)">—</div><div class="sankce-zamest-box" style="font-size:10px;font-weight:700;color:var(--red);margin-top:2px;display:none"></div></div>
           <div><div style="font-size:11px;color:var(--text3)">Stát. příspěvek / měs.</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="p_dps_stat_mes">—</div></div>
-          <div><div style="font-size:11px;color:var(--text3)">Státní příspěvky celkem <span style="display:block;color:var(--red);font-size:9px;font-weight:600;margin-top:2px;line-height:1.2">⚠️ Při dřívějším zrušení vracíte</span></div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="p_dps_stat_celkem">—</div></div>
+          <div><div style="font-size:11px;color:var(--text3)">Státní příspěvky celkem <span id="p_dps_stat_warning" style="display:block;color:var(--red);font-size:9px;font-weight:600;margin-top:2px;line-height:1.2;min-height:2.4em">⚠️ Při dřívějším zrušení vracíte</span></div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="p_dps_stat_celkem">—</div></div>
           <div style="grid-column:1/-1;border-top:1px solid rgba(255,255,255,0.05);padding-top:6px;margin-top:2px;display:flex;justify-content:space-between;align-items:center">
             <div style="font-size:11px;color:var(--text3)">Roční úspora na daních</div>
             <div style="font-size:14px;font-weight:600;color:var(--text2)" id="p_dan_uspora_grid">—</div>
@@ -1598,7 +1598,7 @@ input[type="range"]::-webkit-slider-runnable-track {
                 <button id="dps-mode-renta"  onclick="setDpsMode('renta')"  style="padding:3px 8px;border-radius:6px;border:1px solid var(--border2);background:transparent;color:var(--text3);font-size:10px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s">Renta 10+ let (0%)</button>
               </div>
             </div>
-            <div style="font-size:11px;color:var(--text3);margin-bottom:.75rem;line-height:1.4" id="d_dps_mode_info">8% hrubý − 1% správa − 15% success fee = <span style="color:#000;font-weight:700">5,95 %</span> · + stát. příspěvek · <span style="color:var(--red)">15% daň ze zisku</span></div>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:.75rem;line-height:1.4;min-height:3em" id="d_dps_mode_info">8% hrubý − 1% správa − 15% success fee = <span style="color:#000;font-weight:700">5,95 %</span> · + stát. příspěvek · <span style="color:var(--red)">15% daň ze zisku</span></div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
               <div style="grid-column:1/-1;font-size:11px;color:var(--red);font-weight:600" id="d_dps_fee_loss">Ztráta na poplatcích: —</div>
               <div class="premium-total-box"><div class="premium-total-label">CELKEM NASPOŘENO</div><div class="premium-total-value" id="d_dps_celkem">—</div></div>
@@ -1608,7 +1608,7 @@ input[type="range"]::-webkit-slider-runnable-track {
               <div><div style="font-size:11px;color:var(--text3)">Vložil klient (celkem)</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="d_dps_klient_celkem">—</div></div>
               <div><div style="font-size:11px;color:var(--text3)">Vložil zaměstnavatel (celkem)</div><div id="d_dps_zamest_celkem" style="font-size:14px;font-weight:600;color:var(--text2)">—</div><div class="sankce-zamest-box" style="font-size:10px;font-weight:700;color:var(--red);margin-top:2px;display:none"></div></div>
               <div><div style="font-size:11px;color:var(--text3)">Stát. příspěvek / měs.</div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="d_dps_stat_mes">—</div></div>
-              <div><div style="font-size:11px;color:var(--text3)">Státní příspěvky celkem <span style="display:block;color:var(--red);font-size:9px;font-weight:600;margin-top:2px;line-height:1.2">⚠️ Při dřívějším zrušení vracíte</span></div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="d_dps_stat_celkem">—</div></div>
+              <div><div style="font-size:11px;color:var(--text3)">Státní příspěvky celkem <span id="d_dps_stat_warning" style="display:block;color:var(--red);font-size:9px;font-weight:600;margin-top:2px;line-height:1.2;min-height:2.4em">⚠️ Při dřívějším zrušení vracíte</span></div><div style="font-size:14px;font-weight:600;color:var(--text2)" id="d_dps_stat_celkem">—</div></div>
               <div id="d_dps_dan_uspora_row" style="grid-column:1/-1;border-top:1px solid rgba(255,255,255,0.05);padding-top:6px;margin-top:2px;display:flex;justify-content:space-between;align-items:center;transition:all 0.3s">
                 <div style="font-size:11px;color:var(--text3);transition:color 0.3s" id="d_dps_dan_uspora_label">Roční úspora na daních</div>
                 <div style="font-size:14px;font-weight:600;color:var(--text2);transition:color 0.3s" id="d_dps_dan_uspora_grid">—</div>
