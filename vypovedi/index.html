@@ -167,7 +167,27 @@ nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:b
         <input type="text" id="v_ucet" placeholder="123456789/0800" oninput="updateVypovedPreview()">
       </div>
 
-      <button onclick="generateVypovedPDF()" style="width:100%;margin-top:1rem;padding:12px;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;border-radius:10px;border:none;background:var(--accent);color:#0E0F11;cursor:pointer">📄 Generovat PDF</button>
+      <!-- Kalkulačka termínu -->
+      <div id="v_termin_box" style="background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:12px 14px;margin-bottom:12px;display:none">
+        <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">⏰ Kalkulačka termínu odeslání</div>
+
+        <!-- Varianta A: Znám výročí, kdy nejpozději odeslat? -->
+        <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px">📌 Znám výročí — kdy nejpozději doručit?</div>
+        <div class="field" style="margin-bottom:6px">
+          <label>Datum výročí smlouvy</label>
+          <input type="text" id="v_vyroci" placeholder="např. 1.1.2026 nebo 2026-01-01" oninput="calcTerminOdVyroci()" style="font-size:13px">
+        </div>
+        <div id="v_termin_result_a" style="font-size:12px;line-height:1.7;padding:8px 10px;background:var(--surface);border-radius:7px;display:none;margin-bottom:12px"></div>
+
+        <!-- Varianta B: Chci odeslat dnes, jaké nejpozdější výročí stihnu? -->
+        <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px">📌 Odesílám dnes — jaké nejpozdější výročí stihnu?</div>
+        <div id="v_termin_result_b" style="font-size:12px;line-height:1.7;padding:8px 10px;background:var(--surface);border-radius:7px"></div>
+      </div>
+
+      <!-- Akční tlačítka -->
+      <button onclick="generateVypovedPDF()" style="width:100%;margin-top:.5rem;padding:12px;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;border-radius:10px;border:none;background:var(--accent);color:#0E0F11;cursor:pointer">📄 Stáhnout PDF</button>
+      <button onclick="generateVypovedDOCX()" style="width:100%;margin-top:8px;padding:12px;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;border-radius:10px;border:1px solid var(--border2);background:transparent;color:var(--text);cursor:pointer">📝 Stáhnout Word (.docx)</button>
+      <button onclick="openEmailClient()" style="width:100%;margin-top:8px;padding:12px;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;border-radius:10px;border:1px solid var(--border2);background:transparent;color:var(--text);cursor:pointer">✉️ Odeslat e-mailem</button>
       <div id="v_pdf_status" style="font-size:12px;color:var(--text3);margin-top:8px;text-align:center"></div>
       <div id="v_pdf_error" class="v-error-msg" style="display:none"></div>
     </div>
@@ -202,34 +222,34 @@ if (savedTheme === "light") {
 // ═══════════════ VÝPOVĚDI — DATA A LOGIKA ═══════════════
 
 const POJISTOVNY = [
-  {id:'generali', nazev:'Generali Česká pojišťovna a.s.', adresa:['P. O. Box 305','659 05 Brno']},
-  {id:'kooperativa', nazev:'Kooperativa pojišťovna, a.s., Vienna Insurance Group', adresa:['Brněnská 634','664 42 Modřice']},
-  {id:'cpp', nazev:'ČPP – Česká podnikatelská pojišťovna, a.s.', adresa:['Pobřežní 665/23','186 00 Praha 8']},
-  {id:'allianz', nazev:'Allianz pojišťovna, a.s.', adresa:['Ke Štvanici 656/3','186 00 Praha 8']},
-  {id:'uniqa', nazev:'UNIQA pojišťovna, a.s.', adresa:['Evropská 810/136','160 00 Praha 6']},
-  {id:'csob_poj', nazev:'ČSOB Pojišťovna, a.s.', adresa:['Masarykovo náměstí 1458','530 02 Pardubice']},
-  {id:'csob_ss', nazev:'ČSOB Stavební spořitelna, a.s.', adresa:['Radlická 333/150','150 57 Praha 5']},
-  {id:'direct', nazev:'DIRECT pojišťovna, a.s.', adresa:['Nové sady 996/25','602 00 Brno']},
-  {id:'slavia', nazev:'Slavia pojišťovna a.s.', adresa:['Táborská 940/31','140 00 Praha 4']},
-  {id:'wustenrot', nazev:'Wüstenrot pojišťovna a.s.', adresa:['Na Hřebenech II 1718/8','140 23 Praha 4']},
-  {id:'triglav', nazev:'Triglav pojišťovna a.s.', adresa:['Novobranská 544/1','602 00 Brno']},
-  {id:'vzp', nazev:'Pojišťovna VZP, a.s.', adresa:['Lazarská 1718/3','110 00 Praha 1']},
-  {id:'hasicska', nazev:'Hasičská vzájemná pojišťovna, a.s.', adresa:['Římská 2135/45','120 00 Praha 2']},
-  {id:'colonnade', nazev:'Colonnade Insurance S.A., pobočka pro ČR', adresa:['Na Pankráci 1683/127','140 00 Praha 4']},
-  {id:'aig', nazev:'AIG Europe S.A., pobočka pro ČR', adresa:['V Celnici 1031/4','110 00 Praha 1']},
-  {id:'nn', nazev:'NN pojišťovna / NN penzijní společnost, a.s.', adresa:['Nádražní 344/25','150 00 Praha 5']},
-  {id:'kb_poj', nazev:'Komerční pojišťovna, a.s.', adresa:['Na Příkopě 33 čp. 969','114 07 Praha 1']},
-  {id:'pillow', nazev:'Pillow pojišťovna', adresa:['Líbalova 2348/1','149 00 Praha 4']},
-  {id:'raiffeisen_ss', nazev:'Raiffeisen stavební spořitelna a.s.', adresa:['Koněvova 2747/99','130 45 Praha 3']},
-  {id:'cs_ss', nazev:'Stavební spořitelna České spořitelny, a.s.', adresa:['Vinohradská 180/1632','130 11 Praha 3']},
-  {id:'cs_pf', nazev:'Česká spořitelna – penzijní společnost, a.s.', adresa:['Poláčkova 1976/2','140 21 Praha 4']},
-  {id:'moneta', nazev:'MONETA Money Bank, a.s.', adresa:['Na Rovince 871','720 00 Ostrava-Hrabová']},
-  {id:'conseq', nazev:'Conseq Investment Management, a.s.', adresa:['Rybná 682/14, Burzovní palác','110 00 Praha 1']},
-  {id:'efekta', nazev:'EFEKTA obchodník s cennými papíry a.s.', adresa:['Vinařská 460/3','603 00 Brno']},
-  {id:'atlantik', nazev:'ATLANTIK finanční trhy, a.s.', adresa:['Pobřežní 14','186 00 Praha 8']},
-  {id:'penzijni_cp', nazev:'Penzijní společnost České pojišťovny, a.s.', adresa:['Na Pankráci 1720/123','140 21 Praha 4']},
-  {id:'metlife', nazev:'MetLife Europe d.a.c., pobočka pro ČR', adresa:['Purkyňova 2121/3','110 00 Praha 1']},
-  {id:'axa_pf', nazev:'AXA penzijní společnost a.s.', adresa:['Úzká 8/488','602 00 Brno']}
+  {id:'generali',     nazev:'Generali Česká pojišťovna a.s.',                              adresa:['P. O. Box 305','659 05 Brno'],                                    email:'info@generaliceska.cz'},
+  {id:'kooperativa',  nazev:'Kooperativa pojišťovna, a.s., Vienna Insurance Group',        adresa:['Brněnská 634','664 42 Modřice'],                                  email:'kooperativa@kooperativa.cz'},
+  {id:'cpp',          nazev:'ČPP – Česká podnikatelská pojišťovna, a.s.',                  adresa:['Pobřežní 665/23','186 00 Praha 8'],                               email:'info@cpp.cz'},
+  {id:'allianz',      nazev:'Allianz pojišťovna, a.s.',                                    adresa:['Ke Štvanici 656/3','186 00 Praha 8'],                             email:'allianz@allianz.cz'},
+  {id:'uniqa',        nazev:'UNIQA pojišťovna, a.s.',                                      adresa:['Evropská 810/136','160 00 Praha 6'],                              email:'info@uniqa.cz'},
+  {id:'csob_poj',     nazev:'ČSOB Pojišťovna, a.s.',                                       adresa:['Masarykovo náměstí 1458','530 02 Pardubice'],                     email:'info@csobpoj.cz'},
+  {id:'csob_ss',      nazev:'ČSOB Stavební spořitelna, a.s.',                              adresa:['Radlická 333/150','150 57 Praha 5'],                              email:'info@csobss.cz'},
+  {id:'direct',       nazev:'DIRECT pojišťovna, a.s.',                                     adresa:['Nové sady 996/25','602 00 Brno'],                                 email:'info@direct.cz'},
+  {id:'slavia',       nazev:'Slavia pojišťovna a.s.',                                      adresa:['Táborská 940/31','140 00 Praha 4'],                               email:'slavia@slavia-pojistovna.cz'},
+  {id:'wustenrot',    nazev:'Wüstenrot pojišťovna a.s.',                                   adresa:['Na Hřebenech II 1718/8','140 23 Praha 4'],                        email:'info@wustenrot.cz'},
+  {id:'triglav',      nazev:'Triglav pojišťovna a.s.',                                     adresa:['Novobranská 544/1','602 00 Brno'],                                email:'info@triglav.cz'},
+  {id:'vzp',          nazev:'Pojišťovna VZP, a.s.',                                        adresa:['Lazarská 1718/3','110 00 Praha 1'],                               email:'pojistovna@vzp.cz'},
+  {id:'hasicska',     nazev:'Hasičská vzájemná pojišťovna, a.s.',                          adresa:['Římská 2135/45','120 00 Praha 2'],                                email:'info@hvp.cz'},
+  {id:'colonnade',    nazev:'Colonnade Insurance S.A., pobočka pro ČR',                    adresa:['Na Pankráci 1683/127','140 00 Praha 4'],                          email:'info@colonnade.cz'},
+  {id:'aig',          nazev:'AIG Europe S.A., pobočka pro ČR',                             adresa:['V Celnici 1031/4','110 00 Praha 1'],                              email:'aig.czech@aig.com'},
+  {id:'nn',           nazev:'NN pojišťovna / NN penzijní společnost, a.s.',                adresa:['Nádražní 344/25','150 00 Praha 5'],                               email:'info@nn.cz'},
+  {id:'kb_poj',       nazev:'Komerční pojišťovna, a.s.',                                   adresa:['Na Příkopě 33 čp. 969','114 07 Praha 1'],                         email:'info@kb-pojistovna.cz'},
+  {id:'pillow',       nazev:'Pillow pojišťovna',                                            adresa:['Líbalova 2348/1','149 00 Praha 4'],                               email:'info@pillow.cz'},
+  {id:'raiffeisen_ss',nazev:'Raiffeisen stavební spořitelna a.s.',                         adresa:['Koněvova 2747/99','130 45 Praha 3'],                              email:'info@rsts.cz'},
+  {id:'cs_ss',        nazev:'Stavební spořitelna České spořitelny, a.s.',                  adresa:['Vinohradská 180/1632','130 11 Praha 3'],                          email:'info@burinka.cz'},
+  {id:'cs_pf',        nazev:'Česká spořitelna – penzijní společnost, a.s.',                adresa:['Poláčkova 1976/2','140 21 Praha 4'],                              email:'ps@cs.cz'},
+  {id:'moneta',       nazev:'MONETA Money Bank, a.s.',                                     adresa:['Na Rovince 871','720 00 Ostrava-Hrabová'],                        email:'info@moneta.cz'},
+  {id:'conseq',       nazev:'Conseq Investment Management, a.s.',                          adresa:['Rybná 682/14, Burzovní palác','110 00 Praha 1'],                  email:'conseq@conseq.cz'},
+  {id:'efekta',       nazev:'EFEKTA obchodník s cennými papíry a.s.',                      adresa:['Vinařská 460/3','603 00 Brno'],                                   email:'efekta@efekta.cz'},
+  {id:'atlantik',     nazev:'ATLANTIK finanční trhy, a.s.',                                adresa:['Pobřežní 14','186 00 Praha 8'],                                   email:'info@atlantik.cz'},
+  {id:'penzijni_cp',  nazev:'Penzijní společnost České pojišťovny, a.s.',                 adresa:['Na Pankráci 1720/123','140 21 Praha 4'],                          email:'penzijni@generaliceska.cz'},
+  {id:'metlife',      nazev:'MetLife Europe d.a.c., pobočka pro ČR',                       adresa:['Purkyňova 2121/3','110 00 Praha 1'],                              email:'info@metlife.cz'},
+  {id:'axa_pf',       nazev:'AXA penzijní společnost a.s.',                                adresa:['Úzká 8/488','602 00 Brno'],                                       email:'info@axa.cz'}
 ];
 
 const VYPOVED_TYPY = [
@@ -290,6 +310,11 @@ function onVypovedTypChange() {
   const showDohoda = t === 'dohodou';
   document.getElementById('v_field_datum_ukonceni').style.display = showDohoda ? 'block' : 'none';
   document.getElementById('v_field_duvod_dohody').style.display = showDohoda ? 'block' : 'none';
+  const terminBox = document.getElementById('v_termin_box');
+  if (terminBox) {
+    terminBox.style.display = t === 'vyroci' ? '' : 'none';
+    if (t === 'vyroci') calcTerminOdDnes();
+  }
   updateVypovedPreview();
 }
 
@@ -559,6 +584,249 @@ async function generateVypovedPDF() {
     console.error(e);
     statusEl.textContent = '❌ Chyba při generování PDF: ' + e.message;
   }
+}
+
+// ── Kalkulačka termínu — parsování flexibilního data ──
+function parseFlexDate(str) {
+  if (!str) return null;
+  str = str.trim();
+  // Formáty: D.M.YYYY, DD.MM.YYYY, YYYY-MM-DD, D/M/YYYY
+  let m;
+  m = str.match(/^(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{4})$/);
+  if (m) return new Date(+m[3], +m[2]-1, +m[1]);
+  m = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  if (m) return new Date(+m[1], +m[2]-1, +m[3]);
+  return null;
+}
+
+function fmtDateCZfull(d) {
+  return d.getDate() + '. ' + (d.getMonth()+1) + '. ' + d.getFullYear();
+}
+
+// Varianta A: zadám výročí → kdy nejpozději doručit?
+function calcTerminOdVyroci() {
+  const str = document.getElementById('v_vyroci').value;
+  const el  = document.getElementById('v_termin_result_a');
+  const vyroci = parseFlexDate(str);
+  if (!vyroci || isNaN(vyroci)) { el.style.display = 'none'; return; }
+
+  // Přepis do čitelného formátu
+  document.getElementById('v_vyroci').placeholder = fmtDateCZfull(vyroci);
+
+  const nejpozdeji = new Date(vyroci);
+  nejpozdeji.setDate(nejpozdeji.getDate() - 42); // 6 týdnů = 42 dní
+  const dnes = new Date(); dnes.setHours(0,0,0,0);
+  const zbyvaDni = Math.ceil((nejpozdeji - dnes) / 86400000);
+
+  let html = '📅 Výročí: <strong>' + fmtDateCZfull(vyroci) + '</strong><br>';
+  html += '📬 Nejpozději <strong>doručit</strong> pojišťovně: <strong>' + fmtDateCZfull(nejpozdeji) + '</strong><br>';
+
+  if (zbyvaDni < 0) {
+    html += '<span style="color:var(--red)">❌ Termín uplynul před ' + Math.abs(zbyvaDni) + ' dny — smlouva se automaticky prodlouží o rok.</span>';
+  } else if (zbyvaDni === 0) {
+    html += '<span style="color:var(--red)">❌ Dnes je poslední den! Odešlete ihned doporučeně.</span>';
+  } else if (zbyvaDni <= 7) {
+    html += '<span style="color:var(--red)">⚠️ Zbývá pouze <strong>' + zbyvaDni + ' dní</strong> — odešlete ihned doporučeně!</span>';
+  } else if (zbyvaDni <= 14) {
+    html += '<span style="color:orange">⚠️ Zbývá <strong>' + zbyvaDni + ' dní</strong> — rozhoduje datum doručení, ne odeslání.</span>';
+  } else {
+    html += '<span style="color:var(--accent)">✅ Zbývá <strong>' + zbyvaDni + ' dní</strong> — máte čas.</span>';
+  }
+
+  el.innerHTML = html;
+  el.style.display = 'block';
+}
+
+// Varianta B: odesílám dnes → jaké nejpozdější výročí stihnu?
+function calcTerminOdDnes() {
+  const el   = document.getElementById('v_termin_result_b');
+  const dnes = new Date(); dnes.setHours(0,0,0,0);
+  // Nejpozdější výročí = dnes + 42 dní
+  const nejpozVyroci = new Date(dnes);
+  nejpozVyroci.setDate(nejpozVyroci.getDate() + 42);
+  el.innerHTML =
+    '📅 Dnes: <strong>' + fmtDateCZfull(dnes) + '</strong><br>' +
+    '📬 Stihnu výročí nejpozději <strong>' + fmtDateCZfull(nejpozVyroci) + '</strong><br>' +
+    '<span style="color:var(--text3);font-size:11px">Výročí po tomto datu již nestihnete — smlouva se prodlouží o rok.</span>';
+}
+
+// ── Word (.docx) export — čistý JS, bez knihoven ──
+function generateVypovedDOCX() {
+  const errors = validateVypovedForm();
+  const statusEl = document.getElementById('v_pdf_status');
+  const errorEl  = document.getElementById('v_pdf_error');
+  errorEl.style.display = 'none';
+  if (errors.length) {
+    errorEl.textContent = '⚠️ Chybí povinné údaje: ' + errors.join(', ') + '.';
+    errorEl.style.display = 'block';
+    return;
+  }
+  const ctx   = buildVypovedContext();
+  const lines = buildVypovedLines(ctx);
+
+  // Sestavíme XML pro .docx (Office Open XML — WordprocessingML)
+  const xmlLines = lines.map(l => {
+    const text = l.text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const rPr  = l.bold ? '<w:rPr><w:b/></w:rPr>' : '';
+    return `<w:p><w:r>${rPr}<w:t xml:space="preserve">${text}</w:t></w:r></w:p>`;
+  }).join('\n');
+
+  const docXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+<w:body>
+<w:sectPr>
+  <w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134"/>
+</w:sectPr>
+${xmlLines}
+</w:body>
+</w:document>`;
+
+  const relsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+</Relationships>`;
+
+  const wordRelsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+</Relationships>`;
+
+  const contentTypesXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml" ContentType="application/xml"/>
+  <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+</Types>`;
+
+  // Jednoduchý ZIP builder (bez knihovny — metoda stored, bez komprese)
+  function toUTF8(str) {
+    return new TextEncoder().encode(str);
+  }
+  function u16le(n) { return [n & 0xff, (n >> 8) & 0xff]; }
+  function u32le(n) { return [n & 0xff, (n >> 8) & 0xff, (n >> 16) & 0xff, (n >> 24) & 0xff]; }
+  function dosDateTime() {
+    const d = new Date();
+    const date = ((d.getFullYear()-1980)<<9)|((d.getMonth()+1)<<5)|d.getDate();
+    const time = (d.getHours()<<11)|(d.getMinutes()<<5)|(d.getSeconds()>>1);
+    return { date, time };
+  }
+  function crc32(data) {
+    const table = [];
+    for (let i=0;i<256;i++){let c=i;for(let j=0;j<8;j++)c=c&1?(0xEDB88320^(c>>>1)):(c>>>1);table[i]=c;}
+    let crc=0xFFFFFFFF;
+    for (let i=0;i<data.length;i++) crc=table[(crc^data[i])&0xff]^(crc>>>8);
+    return (crc^0xFFFFFFFF)>>>0;
+  }
+
+  const files = [
+    { name: '[Content_Types].xml', data: toUTF8(contentTypesXml) },
+    { name: '_rels/.rels',         data: toUTF8(relsXml) },
+    { name: 'word/document.xml',   data: toUTF8(docXml) },
+    { name: 'word/_rels/document.xml.rels', data: toUTF8(wordRelsXml) },
+  ];
+
+  const parts = [];
+  const centralDir = [];
+  let offset = 0;
+  const { date, time } = dosDateTime();
+
+  files.forEach(f => {
+    const nameBytes = new TextEncoder().encode(f.name);
+    const crc = crc32(f.data);
+    const size = f.data.length;
+    // Local file header
+    const local = [
+      0x50,0x4B,0x03,0x04,       // signature
+      ...u16le(20),               // version needed
+      ...u16le(0),                // flags
+      ...u16le(0),                // compression (stored)
+      ...u16le(time),
+      ...u16le(date),
+      ...u32le(crc),
+      ...u32le(size),
+      ...u32le(size),
+      ...u16le(nameBytes.length),
+      ...u16le(0),                // extra field length
+      ...nameBytes,
+    ];
+    parts.push(new Uint8Array(local));
+    parts.push(f.data);
+    // Central directory entry
+    centralDir.push({ nameBytes, crc, size, offset });
+    offset += local.length + size;
+  });
+
+  // Central directory
+  const cdParts = [];
+  let cdSize = 0;
+  centralDir.forEach(e => {
+    const cd = [
+      0x50,0x4B,0x01,0x02,
+      ...u16le(20),...u16le(20),
+      ...u16le(0),...u16le(0),
+      ...u16le(time),...u16le(date),
+      ...u32le(e.crc),
+      ...u32le(e.size),...u32le(e.size),
+      ...u16le(e.nameBytes.length),
+      ...u16le(0),...u16le(0),...u16le(0),...u16le(0),
+      ...u32le(0),
+      ...u32le(e.offset),
+      ...e.nameBytes,
+    ];
+    cdParts.push(new Uint8Array(cd));
+    cdSize += cd.length;
+  });
+
+  const eocd = [
+    0x50,0x4B,0x05,0x06,
+    ...u16le(0),...u16le(0),
+    ...u16le(files.length),...u16le(files.length),
+    ...u32le(cdSize),
+    ...u32le(offset),
+    ...u16le(0),
+  ];
+
+  const allParts = [...parts, ...cdParts, new Uint8Array(eocd)];
+  const totalLen = allParts.reduce((s,p) => s+p.length, 0);
+  const result = new Uint8Array(totalLen);
+  let pos = 0;
+  allParts.forEach(p => { result.set(p, pos); pos += p.length; });
+
+  const blob = new Blob([result], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  const safeCislo = ctx.cislo.replace(/[^\w-]/g,'') || 'smlouva';
+  a.href = url;
+  a.download = 'Vypoved_' + ctx.pojistovna.id + '_' + safeCislo + '.docx';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  statusEl.textContent = '✅ Word dokument stažen.';
+}
+
+// ── Otevřít e-mailového klienta ──
+function openEmailClient() {
+  const errors = validateVypovedForm();
+  const statusEl = document.getElementById('v_pdf_status');
+  const errorEl  = document.getElementById('v_pdf_error');
+  errorEl.style.display = 'none';
+  if (errors.length) {
+    errorEl.textContent = '⚠️ Chybí povinné údaje: ' + errors.join(', ') + '.';
+    errorEl.style.display = 'block';
+    return;
+  }
+  const ctx = buildVypovedContext();
+  const email = ctx.pojistovna.email || '';
+  const subject = encodeURIComponent(ctx.typ.vec(ctx));
+  const body = encodeURIComponent(
+    buildVypovedLines(ctx).map(l => l.text).join('\n') +
+    '\n\n---\nVygenerováno na rihatomas.com/vypovedi'
+  );
+  const mailto = `mailto:${email}?subject=${subject}&body=${body}`;
+  window.location.href = mailto;
+  statusEl.textContent = email
+    ? '✅ Otevírám e-mailového klienta (' + email + ')…'
+    : '⚠️ E-mail pro tuto instituci není znám — vyplňte adresáta ručně.';
 }
 
 // Spuštění po načtení stránky
