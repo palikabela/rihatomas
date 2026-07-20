@@ -168,7 +168,12 @@ nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:b
         <div id="v_termin_result_b" style="font-size:12px;line-height:1.7;padding:8px 10px;background:var(--surface);border-radius:7px"></div>
       </div>
 
-      <!-- Akční tlačítka -->
+      <!-- Kalkulačka výpovědní doby (životní pojištění) -->
+      <div id="v_vypdoba_box" style="background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:12px 14px;margin-bottom:12px;display:none">
+        <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">⏰ Kdy smlouva skončí?</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:8px">Výpovědní doba je <strong>6 týdnů</strong>. Smlouva skončí ke konci měsíce, ve kterém výpovědní doba uplyne.</div>
+        <div id="v_vypdoba_result" style="font-size:12px;line-height:1.7;padding:8px 10px;background:var(--surface);border-radius:7px"></div>
+      </div>
       <button onclick="generateVypovedPDF()" style="width:100%;margin-top:.5rem;padding:12px;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;border-radius:10px;border:none;background:var(--accent);color:#0E0F11;cursor:pointer">📄 Stáhnout PDF</button>
       <button onclick="generateVypovedDOCX()" style="width:100%;margin-top:8px;padding:12px;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;border-radius:10px;border:1px solid var(--border2);background:transparent;color:var(--text);cursor:pointer">📝 Stáhnout Word (.docx)</button>
       <div id="v_pdf_status" style="font-size:12px;color:var(--text3);margin-top:8px;text-align:center"></div>
@@ -236,6 +241,9 @@ const POJISTOVNY = [
 ];
 
 const VYPOVED_TYPY = [
+  { id:'vypovedni_doba', label:'S výpovědní dobou (životní, 6 týdnů)',
+    vec: c => 'Výpověď smlouvy č.: ' + c.cislo,
+    body: () => 'Vypovídám výše uvedenou smlouvu a to v nejkratší možné době.' },
   { id:'vyroci', label:'K výročí pojištění',
     vec: c => 'Výpověď pojistné smlouvy č. ' + c.cislo,
     body: () => 'Vypovídám výše uvedenou pojistnou smlouvu, a to k datu výročí pojištění.' },
@@ -297,6 +305,11 @@ function onVypovedTypChange() {
   if (terminBox) {
     terminBox.style.display = t === 'vyroci' ? '' : 'none';
     if (t === 'vyroci') calcTerminOdDnes();
+  }
+  const vypdobaBox = document.getElementById('v_vypdoba_box');
+  if (vypdobaBox) {
+    vypdobaBox.style.display = t === 'vypovedni_doba' ? '' : 'none';
+    if (t === 'vypovedni_doba') calcVypovednaDoba();
   }
   const ucetLabel = document.getElementById('v_ucet_label');
   if (ucetLabel) ucetLabel.textContent = t === 'dva_mesice'
@@ -641,7 +654,25 @@ function calcTerminOdDnes() {
     '<span style="color:var(--text3);font-size:11px">Výročí po tomto datu již nestihnete — smlouva se prodlouží o rok.</span>';
 }
 
-// ── Word (.docx) export — čistý JS, bez knihoven ──
+// Kalkulačka výpovědní doby — 6 týdnů, konec měsíce
+function calcVypovednaDoba() {
+  const el = document.getElementById('v_vypdoba_result');
+  const dnes = new Date(); dnes.setHours(0,0,0,0);
+
+  // Po 6 týdnech (42 dnech) od doručení
+  const po6tydnech = new Date(dnes);
+  po6tydnech.setDate(po6tydnech.getDate() + 42);
+
+  // Konec měsíce ve kterém uplyne výpovědní doba
+  const konecMesice = new Date(po6tydnech.getFullYear(), po6tydnech.getMonth() + 1, 0);
+
+  el.innerHTML =
+    '📅 Odeslání: <strong>' + fmtDateCZfull(dnes) + '</strong><br>' +
+    '⏳ Uplynutí 6 týdnů: <strong>' + fmtDateCZfull(po6tydnech) + '</strong><br>' +
+    '✅ Smlouva skončí: <strong style="color:var(--accent)">' + fmtDateCZfull(konecMesice) + '</strong>';
+}
+
+// ── Word export — čistý JS, bez knihoven ──
 function generateVypovedDOCX() {
   const errors = validateVypovedForm();
   const statusEl = document.getElementById('v_pdf_status');
