@@ -241,12 +241,12 @@ const POJISTOVNY = [
 ];
 
 const VYPOVED_TYPY = [
-  { id:'vypovedni_doba', label:'S výpovědní dobou (životní, 6 týdnů)',
-    vec: c => 'Výpověď smlouvy č.: ' + c.cislo,
-    body: () => 'Vypovídám výše uvedenou smlouvu a to v nejkratší možné době.' },
   { id:'vyroci', label:'K výročí pojištění',
     vec: c => 'Výpověď pojistné smlouvy č. ' + c.cislo,
     body: () => 'Vypovídám výše uvedenou pojistnou smlouvu, a to k datu výročí pojištění.' },
+  { id:'vypovedni_doba', label:'S výpovědní dobou (životní, 6 týdnů)',
+    vec: c => 'Výpověď smlouvy č.: ' + c.cislo,
+    body: () => 'Vypovídám výše uvedenou smlouvu a to v nejkratší možné době.' },
   { id:'nesouhlas', label:'Nesouhlas se změnou pojistného',
     vec: c => 'Nesouhlas se změnou pojistného u smlouvy č. ' + c.cislo,
     body: () => 'V souladu s ustanoveními zákona a všeobecnými pojistnými podmínkami vyjadřuji tímto, v jednoměsíční zákonné lhůtě, svůj nesouhlas s navrhovanou změnou pojistného na následující pojistné období, a žádám o ukončení pojištění ke konci pojistného období.' },
