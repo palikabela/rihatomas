@@ -154,6 +154,10 @@ nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:b
         <label id="v_ucet_label">Číslo účtu pro vrácení přeplatku (nepovinné)</label>
         <input type="text" id="v_ucet" placeholder="123456789/0800" oninput="updateVypovedPreview()">
       </div>
+      <div class="field">
+        <label>Datum podpisu výpovědi (nepovinné)</label>
+        <input type="text" id="v_datum_podpisu" placeholder="21.7.2026" oninput="updateVypovedPreview()">
+      </div>
 
       <!-- Kalkulačka termínu -->
       <div id="v_termin_box" style="background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:12px 14px;margin-bottom:12px;display:none">
@@ -526,11 +530,12 @@ function buildVypovedContext() {
   const adresa = document.getElementById('v_adresa_search').value.trim();
   const ucet = document.getElementById('v_ucet').value.trim();
   const misto = '';
+  const datumPodpisu = document.getElementById('v_datum_podpisu').value.trim();
   const datumUkonceni = document.getElementById('v_datum_ukonceni').value;
   const duvodDohody = document.getElementById('v_duvod_dohody').value.trim();
   return {
     pojistovna, typ, cislo, isFO, jmeno, jednatel, rc, ico, adresa, ucet, misto,
-    datumUkonceniCZ: fmtDateCZ(datumUkonceni), duvodDohody
+    datumPodpisuCZ: datumPodpisu, datumUkonceniCZ: fmtDateCZ(datumUkonceni), duvodDohody
   };
 }
 
@@ -564,7 +569,11 @@ function buildVypovedLines(ctx) {
   lines.push({ text: ctx.adresa || '……………………………', bold: false });
   const obecPsc = [ctx.psc, ctx.obec].filter(Boolean).join(' ');
   if (obecPsc) lines.push({ text: obecPsc, bold: false });
-  lines.push(blank(), blank(), blank());
+  if (ctx.datumPodpisuCZ) {
+    lines.push(blank());
+    lines.push({ text: 'Dne ' + ctx.datumPodpisuCZ, bold: false });
+  }
+  lines.push(blank(), blank(), blank(), blank(), blank(), blank());
   lines.push({ text: '.......................................', bold: false });
   return lines;
 }
