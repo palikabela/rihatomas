@@ -70,6 +70,13 @@ nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:b
 .field input.v-error{border-color:var(--red) !important;background:var(--red-dim) !important}
 .v-error-msg{font-size:12px;color:var(--red);margin-top:8px;text-align:center;font-weight:500}
 
+@keyframes v-pulse-search { 0%,100%{ border-color:var(--border2); background:var(--surface2); } 50%{ border-color:var(--accent); background:var(--accent-dim2); } }
+.v-searching{animation:v-pulse-search 1.1s ease-in-out infinite}
+@keyframes v-pulse-found { 0%{ background:var(--accent-dim); border-color:var(--accent); } 100%{ background:var(--surface2); border-color:var(--border2); } }
+.v-found{animation:v-pulse-found 1.4s ease-out}
+@keyframes v-pulse-text { 0%,100%{ opacity:1; } 50%{ opacity:0.35; } }
+.v-pulse-text{animation:v-pulse-text 1s ease-in-out infinite;font-weight:700}
+
 </style>
 </head>
 <body>
@@ -350,6 +357,7 @@ let vRuianTimer = null;
 let vRuianCandidates = [];
 
 function onAddressInput(value) {
+  updateVypovedPreview();
   clearTimeout(vRuianTimer);
   if (!value || value.trim().length < 3) { hideAddressSuggestions(); return; }
   vRuianTimer = setTimeout(() => fetchRuianSuggestions(value), 350);
@@ -462,23 +470,41 @@ async function loadFromAresVypovedi() {
     if (data.obchodniJmeno) document.getElementById('v_nazev_firmy').value = data.obchodniJmeno;
     const adresa = parseAresAddress(data.sidlo);
     if (adresa) document.getElementById('v_adresa_search').value = adresa;
-    statusEl.textContent = '✅ Načteno: ' + (data.obchodniJmeno || ico);
+    statusEl.innerHTML = '✅ Načteno: ' + (data.obchodniJmeno || ico) + ' <span class="v-pulse-text">(dohledávám jednatele…)</span>';
     statusEl.style.color = 'var(--green)';
-
-    // Jednatel — zkusíme rejstříkový výpis (VR), best-effort, nesmí shodit hlavní načtení
-    try {
-      const vrData = await fetchAresJson('https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty-vr/' + ico);
-      const person = findStatutoryPerson(vrData.statutarniOrgan || vrData, 0);
-      if (person) document.getElementById('v_jednatel').value = person;
-    } catch (e) {
-      // Jednatele se nepodařilo dohledat — nevadí, doplní se ručně
-    }
     updateVypovedPreview();
+    btn.disabled = false;
+    btn.textContent = 'ARES ↗';
+
+    // Jednatel — dohledá se na pozadí (rejstříkový výpis bývá pomalejší),
+    // nic dalšího na to nečeká
+    const jednatelInput = document.getElementById('v_jednatel');
+    if (jednatelInput) jednatelInput.classList.add('v-searching');
+    fetchAresJson('https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty-vr/' + ico)
+      .then(vrData => {
+        const person = findStatutoryPerson(vrData.statutarniOrgan || vrData, 0);
+        if (jednatelInput) {
+          jednatelInput.classList.remove('v-searching');
+          if (person) {
+            jednatelInput.classList.add('v-found');
+            setTimeout(() => jednatelInput.classList.remove('v-found'), 1400);
+          }
+        }
+        if (person) {
+          document.getElementById('v_jednatel').value = person;
+          updateVypovedPreview();
+        }
+        statusEl.textContent = '✅ Načteno: ' + (data.obchodniJmeno || ico);
+      })
+      .catch(() => {
+        // Jednatele se nepodařilo dohledat — nevadí, doplní se ručně
+        if (jednatelInput) jednatelInput.classList.remove('v-searching');
+        statusEl.textContent = '✅ Načteno: ' + (data.obchodniJmeno || ico) + ' (jednatele doplňte ručně)';
+      });
   } catch (err) {
     console.error('ARES chyba:', err);
     statusEl.textContent = '❌ Nepodařilo se načíst. Zadejte údaje ručně.';
     statusEl.style.color = 'var(--red)';
-  } finally {
     btn.disabled = false;
     btn.textContent = 'ARES ↗';
   }
