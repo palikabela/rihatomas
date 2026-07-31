@@ -198,12 +198,19 @@ nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:b
     <div class="card">
       <div class="card-label">Náhled dopisu</div>
       <div id="v_preview" style="background:#fff;color:#111;border-radius:8px;padding:60px 70px;font-size:14.5px;line-height:2;white-space:pre-wrap;font-family:Georgia,'Times New Roman',serif;min-height:640px;box-shadow:0 4px 20px rgba(0,0,0,0.25)"></div>
-      <p class="note" style="margin-top:10px">PDF se generuje přímo v prohlížeči (pdf-lib), nikde se neodesílá. Zkontrolujte prosím údaje před podpisem a odesláním.</p>
+      <p class="note" style="margin-top:10px">PDF se generuje přímo v prohlížeči (pdf-lib). Zkontrolujte prosím údaje před podpisem a odesláním.</p>
     </div>
   </div>
 </div>
 
 <script>
+// ═══════════════ ARCHIV DO CLOUDU (volitelné) ═══════════════
+// Po nasazení Google Apps Scriptu (soubor vypovedi_apps_script.gs) sem vlož
+// URL nasazení Web Appky (končí na /exec) a stejný SECRET jako ve skriptu.
+// Necháš-li CLOUD_ARCHIVE_URL prázdné, archivace se prostě přeskočí.
+const CLOUD_ARCHIVE_URL = 'https://script.google.com/macros/s/AKfycbzDRe2Y1t3DWI1AI4I-wDGu8znX9DnDsVC0TypItaUdXFH_RuXiq3InvD-dOUFXz5g/exec';
+const CLOUD_ARCHIVE_SECRET = 'ZMEN_SI_NA_VLASTNI_TAJNY_RETEZEC_123';
+
 // ═══════════════ THEME TOGGLE ═══════════════
 function toggleTheme() {
   const root = document.documentElement;
@@ -637,6 +644,47 @@ async function loadNotoFontBold() {
   return vNotoFontBoldBytes;
 }
 
+// ── Archiv do cloudu (volitelné, viz CLOUD_ARCHIVE_URL nahoře) ──
+function sanitizeFilenamePart(s) {
+  return (s || '')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-zA-Z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '') || 'klient';
+}
+
+function arrayBufferToBase64(bytes) {
+  let binary = '';
+  const chunkSize = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
+  }
+  return btoa(binary);
+}
+
+function uploadToCloudArchive(pdfBytes, filename, ctx, statusEl) {
+  const base64 = arrayBufferToBase64(pdfBytes);
+  fetch(CLOUD_ARCHIVE_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      secret: CLOUD_ARCHIVE_SECRET,
+      filename: filename,
+      pdfBase64: base64,
+      pojistovna: ctx.pojistovna.nazev,
+      klient: ctx.jmeno,
+      typ: ctx.typ.label,
+      cislo: ctx.cislo
+    })
+  })
+    .then(r => r.json())
+    .then(res => {
+      if (res.ok) statusEl.textContent = '✅ PDF staženo a uloženo do archivu.';
+      else statusEl.textContent = '✅ PDF staženo. ⚠️ Archivace selhala: ' + (res.error || 'neznámá chyba');
+    })
+    .catch(() => {
+      statusEl.textContent = '✅ PDF staženo. ⚠️ Archivace se nezdařila (zkontrolujte připojení).';
+    });
+}
+
 async function generateVypovedPDF() {
   const statusEl = document.getElementById('v_pdf_status');
   const errorEl = document.getElementById('v_pdf_error');
@@ -704,13 +752,20 @@ async function generateVypovedPDF() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     const safeCislo = ctx.cislo.replace(/[^\w-]/g, '') || 'smlouva';
+    const safeJmeno = sanitizeFilenamePart(ctx.jmeno);
+    const filename = 'Vypoved_' + ctx.pojistovna.id + '_' + safeCislo + '_' + safeJmeno + '.pdf';
     a.href = url;
-    a.download = 'Vypoved_' + ctx.pojistovna.id + '_' + safeCislo + '.pdf';
+    a.download = filename;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     statusEl.textContent = '✅ PDF staženo.';
+
+    if (CLOUD_ARCHIVE_URL) {
+      statusEl.textContent = '✅ PDF staženo. ☁️ Ukládám do archivu…';
+      uploadToCloudArchive(pdfBytes, filename, ctx, statusEl);
+    }
   } catch (e) {
     console.error(e);
     statusEl.textContent = '❌ Chyba při generování PDF: ' + e.message;
