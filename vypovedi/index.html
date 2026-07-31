@@ -677,11 +677,10 @@ function uploadToCloudArchive(pdfBytes, filename, ctx, statusEl) {
   })
     .then(r => r.json())
     .then(res => {
-      if (res.ok) statusEl.textContent = '✅ PDF staženo a uloženo do archivu.';
-      else statusEl.textContent = '✅ PDF staženo. ⚠️ Archivace selhala: ' + (res.error || 'neznámá chyba');
+      if (!res.ok) console.error('Archivace selhala:', res.error);
     })
-    .catch(() => {
-      statusEl.textContent = '✅ PDF staženo. ⚠️ Archivace se nezdařila (zkontrolujte připojení).';
+    .catch(err => {
+      console.error('Archivace se nezdařila:', err);
     });
 }
 
@@ -763,7 +762,6 @@ async function generateVypovedPDF() {
     statusEl.textContent = '✅ PDF staženo.';
 
     if (CLOUD_ARCHIVE_URL) {
-      statusEl.textContent = '✅ PDF staženo. ☁️ Ukládám do archivu…';
       uploadToCloudArchive(pdfBytes, filename, ctx, statusEl);
     }
   } catch (e) {
