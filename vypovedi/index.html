@@ -661,14 +661,15 @@ function arrayBufferToBase64(bytes) {
   return btoa(binary);
 }
 
-function uploadToCloudArchive(pdfBytes, filename, ctx, statusEl) {
-  const base64 = arrayBufferToBase64(pdfBytes);
+function uploadToCloudArchive(fileBytes, filename, ctx, statusEl, mimetype) {
+  const base64 = arrayBufferToBase64(fileBytes);
   fetch(CLOUD_ARCHIVE_URL, {
     method: 'POST',
     body: JSON.stringify({
       secret: CLOUD_ARCHIVE_SECRET,
       filename: filename,
       pdfBase64: base64,
+      mimetype: mimetype || 'application/pdf',
       pojistovna: ctx.pojistovna.nazev,
       klient: ctx.jmeno,
       typ: ctx.typ.label,
@@ -997,12 +998,18 @@ ${xmlLines}
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
   const safeCislo = ctx.cislo.replace(/[^\w-]/g,'') || 'smlouva';
+  const safeJmeno = sanitizeFilenamePart(ctx.jmeno);
+  const docxFilename = 'Vypoved_' + ctx.pojistovna.id + '_' + safeCislo + '_' + safeJmeno + '.docx';
   a.href = url;
-  a.download = 'Vypoved_' + ctx.pojistovna.id + '_' + safeCislo + '.docx';
+  a.download = docxFilename;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+
+  if (CLOUD_ARCHIVE_URL) {
+    uploadToCloudArchive(result, docxFilename, ctx, statusEl, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+  }
   statusEl.textContent = '✅ Word dokument stažen.';
 }
 
