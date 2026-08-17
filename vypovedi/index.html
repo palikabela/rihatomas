@@ -162,7 +162,7 @@ nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:b
         <input type="text" id="v_ucet" placeholder="123456789/0800" oninput="updateVypovedPreview()">
       </div>
       <div class="field">
-        <label>Datum podpisu výpovědi (nepovinné)</label>
+        <label>Datum podpisu výpovědi (nepovinné) <a href="#" onclick="fillDnesniDatum(event)" style="color:var(--accent);font-weight:600;text-decoration:none;font-size:11px">— dnes</a></label>
         <input type="text" id="v_datum_podpisu" placeholder="21.7.2026" oninput="updateVypovedPreview()">
       </div>
 
@@ -518,6 +518,16 @@ async function loadFromAresVypovedi() {
 }
 
 // ── Sestavení textu dopisu ──
+function fillDnesniDatum(evt) {
+  if (evt) evt.preventDefault();
+  const d = new Date();
+  const el = document.getElementById('v_datum_podpisu');
+  if (el) {
+    el.value = d.getDate() + '.' + (d.getMonth() + 1) + '.' + d.getFullYear();
+    updateVypovedPreview();
+  }
+}
+
 function fmtDateCZ(iso) {
   if (!iso) return '';
   const parts = iso.split('-');
