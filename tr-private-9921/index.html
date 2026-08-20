@@ -2915,7 +2915,7 @@ function calcDip() {
       html += `<strong>⚠️ Horizont pod 10 let:</strong> U nové smlouvy DPS i DIP počítáme státní a daňové výhody jako <strong>0 Kč</strong>, protože se při předčasném výběru ztrácí nebo vrací.`;
       if(dpsVkl>0 || dipVkl>0) html += " ";
     }
-    if(dpsVkl>0) html+=`<strong>DPS:</strong> Vlastní ${fmt(dpsVkl)} Kč + stát ${fmt(statDPSEfektivni)} Kč = <strong>${fmt(dpsVkl+statDPSEfektivni)} Kč/měs.</strong> k úročení při ${DPS_SAZBA} % p.a. (po poplatcích). Daň ze zisku při výběru: <strong>15 %</strong>.`;
+    if(dpsVkl>0) html+=`<strong>DPS:</strong> Vlastní ${fmt(dpsVkl)} Kč + stát ${fmt(statDPSEfektivni)} Kč = <strong>${fmt(dpsVkl+statDPSEfektivni)} Kč/měs.</strong> k úročení při ${DPS_SAZBA} % p.a. (po poplatcích). Daň z výnosu (15 %) při výběru.`;
     if(dpsVkl>0 && dipVkl>0) html+=" ";
     if(dipVkl>0) { const odp=Math.min((dipVkl+zamest)*12,50000); html+=`<strong>DIP:</strong> ${fmt(dipVkl+zamest)} Kč/měs. při ${DIP_SAZBA} % p.a. (po 0,2% TER). Odpočet ${fmt(odp)} Kč/rok → úspora <strong>${fmt(danUsporaDIP)} Kč/rok</strong>. Daň ze zisku: <strong>0 %</strong>.`; }
     danInfo.style.display="block"; danInfo.innerHTML=html;

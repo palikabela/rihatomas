@@ -163,7 +163,11 @@ nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:b
       </div>
       <div class="field">
         <label>Datum podpisu výpovědi (nepovinné) <a href="#" onclick="fillDnesniDatum(event)" style="color:var(--accent);font-weight:600;text-decoration:none;font-size:11px">— dnes</a></label>
-        <input type="text" id="v_datum_podpisu" placeholder="21.7.2026" oninput="updateVypovedPreview()">
+        <div style="display:flex;gap:6px;position:relative">
+          <input type="text" id="v_datum_podpisu" placeholder="21.7.2026" oninput="updateVypovedPreview()" style="flex:1">
+          <button type="button" onclick="openDatumPodpisuKalendar(event)" title="Vybrat z kalendáře" style="padding:0 12px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center">📅</button>
+          <input type="date" id="v_datum_podpisu_picker" oninput="onDatumPodpisuPicked()" style="position:absolute;right:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none;border:0;padding:0">
+        </div>
       </div>
 
       <!-- Kalkulačka termínu -->
@@ -518,6 +522,35 @@ async function loadFromAresVypovedi() {
 }
 
 // ── Sestavení textu dopisu ──
+function openDatumPodpisuKalendar(evt) {
+  if (evt) evt.preventDefault();
+  const picker = document.getElementById('v_datum_podpisu_picker');
+  if (!picker) return;
+  const textEl = document.getElementById('v_datum_podpisu');
+  if (textEl && textEl.value) {
+    const m = textEl.value.trim().match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+    if (m) {
+      const [, d, mo, y] = m;
+      picker.value = y + '-' + mo.padStart(2, '0') + '-' + d.padStart(2, '0');
+    }
+  }
+  if (typeof picker.showPicker === 'function') {
+    picker.showPicker();
+  } else {
+    picker.focus();
+    picker.click();
+  }
+}
+
+function onDatumPodpisuPicked() {
+  const picker = document.getElementById('v_datum_podpisu_picker');
+  const el = document.getElementById('v_datum_podpisu');
+  if (!picker || !picker.value || !el) return;
+  const [y, mo, d] = picker.value.split('-');
+  el.value = parseInt(d, 10) + '.' + parseInt(mo, 10) + '.' + y;
+  updateVypovedPreview();
+}
+
 function fillDnesniDatum(evt) {
   if (evt) evt.preventDefault();
   const d = new Date();
