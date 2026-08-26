@@ -628,16 +628,37 @@ input[type="range"]::-webkit-slider-runnable-track {
             <div class="premium-total-box" style="margin:0;padding:12px 14px;background:var(--surface);border-color:var(--green)">
               <div class="premium-total-label" style="color:var(--green)">Měsíční splátka</div>
               <div class="premium-total-value" id="k_splatka" style="color:var(--green);font-size:20px">—</div>
-              <div id="k_splatka_b_inline" style="display:none;margin-top:7px;padding-top:7px;border-top:1px dashed rgba(59,130,246,0.35)">
-                <div style="font-size:9px;font-weight:700;color:#3B82F6;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:2px">⚖️ Banka B</div>
-                <div style="font-size:15px;font-weight:700;color:#3B82F6" id="k_splatka_b_inline_val">—</div>
-                <div style="font-size:11px;font-weight:600" id="k_splatka_b_inline_delta"></div>
-              </div>
             </div>
             <div><div style="font-size:11px;color:var(--text3)" id="k_celkem_label">Celkem zaplatíte</div><div style="font-size:17px;font-weight:700;color:var(--text)" id="k_celkem">—</div></div>
             <div style="grid-column:1/-1;height:1px;background:var(--border);margin:4px 0"></div>
             <div><div style="font-size:11px;color:var(--text3)">Přeplatek úroky</div><div style="font-size:17px;font-weight:700;color:var(--red)" id="k_uroky">—</div></div>
             <div><div style="font-size:11px;color:var(--text3)">Počet splátek</div><div style="font-size:17px;font-weight:700;color:var(--text)" id="k_pocet">—</div></div>
+          </div>
+        </div>
+        <div id="k_splatka_b_inline" style="display:none;margin-bottom:1.5rem;background:rgba(59,130,246,0.07);border:1px solid rgba(59,130,246,0.4);border-radius:10px;padding:14px 16px">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px">
+            <span style="font-size:11px;font-weight:700;color:#3B82F6;text-transform:uppercase;letter-spacing:0.05em">⚖️ Banka B — srovnání</span>
+          </div>
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:12px">
+            <div>
+              <div style="font-size:10px;color:var(--text3);margin-bottom:2px">Měsíční splátka</div>
+              <div style="font-size:19px;font-weight:700;color:#3B82F6" id="k_splatka_b_inline_val">—</div>
+            </div>
+            <div style="font-size:13px;font-weight:700;text-align:right" id="k_splatka_b_inline_delta"></div>
+          </div>
+          <div id="k_uspora_breakdown" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding-top:12px;border-top:1px dashed rgba(59,130,246,0.3)">
+            <div style="text-align:center;background:var(--surface);border-radius:8px;padding:6px 4px">
+              <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.04em">Za 1 rok</div>
+              <div style="font-size:13px;font-weight:700" id="k_uspora_1r">—</div>
+            </div>
+            <div style="text-align:center;background:var(--surface);border-radius:8px;padding:6px 4px">
+              <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.04em">Za 3 roky</div>
+              <div style="font-size:13px;font-weight:700" id="k_uspora_3r">—</div>
+            </div>
+            <div style="text-align:center;background:var(--surface);border-radius:8px;padding:6px 4px">
+              <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.04em">Za 5 let</div>
+              <div style="font-size:13px;font-weight:700" id="k_uspora_5r">—</div>
+            </div>
           </div>
         </div>
         <div id="result-uver-vypocten" style="display:none;margin-top:1rem;border-radius:8px;overflow:hidden">
@@ -3677,10 +3698,23 @@ function calcKalk() {
     const lepsi    = splatkaB < splatka ? 'B' : 'A';
     if (inlineVal) inlineVal.textContent = fmt(Math.round(splatkaB)) + ' / měs.';
     if (inlineDelta) {
-      inlineDelta.textContent = (lepsi === 'B' ? '↓ levnější o ' : '↑ dražší o ') + fmt(Math.round(uspMes)) + ' Kč';
+      inlineDelta.textContent = (lepsi === 'B' ? '↓ levnější o ' : '↑ dražší o ') + fmt(Math.round(uspMes));
       inlineDelta.style.color = lepsi === 'B' ? 'var(--green)' : 'var(--red)';
     }
     if (inlineBadge) inlineBadge.style.display = 'block';
+
+    const znamenko = lepsi === 'B' ? '↓ ' : '↑ ';
+    const barva = lepsi === 'B' ? 'var(--green)' : 'var(--red)';
+    const setUspora = (id, mesicu) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const pocetMesicu = Math.min(mesicu, m);
+      el.textContent = znamenko + fmt(Math.round(uspMes * pocetMesicu));
+      el.style.color = barva;
+    };
+    setUspora('k_uspora_1r', 12);
+    setUspora('k_uspora_3r', 36);
+    setUspora('k_uspora_5r', 60);
   } else {
     if (inlineBadge) inlineBadge.style.display = 'none';
   }
@@ -5543,6 +5577,14 @@ function syncHypoCena(val, fromSlider) {
 
 // HYPOTÉKA
 let hMode = 'hotovost'; // 'hotovost' nebo 'zastava'
+let hMinVlastniAktualni = 0;
+
+function hPouzitMinVlastni() {
+  setMoneyInputValue('h_vlastni', hMinVlastniAktualni);
+  const sl = document.getElementById('h_vlastni_sl');
+  if (sl) sl.value = Math.min(hMinVlastniAktualni, 5000000);
+  hCalc();
+}
 
 function hGetN(id) {
   const el = document.getElementById(id);
@@ -5720,11 +5762,13 @@ function hCalc() {
     hypo = Math.max(cena - vlastni, 0);
 
     // Warning vlastni
+    hMinVlastniAktualni = minCastka;
     const warn = document.getElementById('h_vlastni_warn');
     if (warn && rok > 0) {
       if (vlastni < minCastka) {
         warn.style.color = 'var(--red)';
-        warn.innerHTML = '⚠️ Min. ' + minPct + ' % = <strong>' + fmt(minCastka) + '</strong> — chybí ' + fmt(minCastka - vlastni);
+        warn.innerHTML = '⚠️ Min. ' + minPct + ' % = <strong>' + fmt(minCastka) + '</strong> — chybí ' + fmt(minCastka - vlastni) +
+          ' <button type="button" onclick="hPouzitMinVlastni()" style="margin-left:4px;font-size:11px;padding:2px 8px;border-radius:6px;border:1px solid var(--accent);background:var(--accent-dim);color:var(--text);cursor:pointer;font-family:\'Inter\',sans-serif;font-weight:600;white-space:nowrap">↙ Doplnit ' + fmt(minCastka) + '</button>';
       } else {
         warn.textContent = '✓ Vlastní zdroje jsou dostatečné';
         warn.style.color = 'var(--green)';
