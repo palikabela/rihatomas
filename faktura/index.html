@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title></title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script src="https://unpkg.com/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700&display=swap" rel="stylesheet">
@@ -151,6 +153,10 @@
                 <input type="date" id="date-issue" style="width: 130px; text-align: right;">
             </div>
             <div class="form-group" style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+                <label style="margin: 0; white-space: nowrap;">Datum uskut. plnění (DUZP):</label>
+                <input type="date" id="date-duzp" style="width: 130px; text-align: right;">
+            </div>
+            <div class="form-group" style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
                 <label style="margin: 0; white-space: nowrap;">Datum splatnosti:</label>
                 <input type="date" id="date-due" style="width: 130px; text-align: right;">
             </div>
@@ -166,6 +172,10 @@
                     <input type="text" id="sup-ico" placeholder="Zadejte IČO" onchange="saveSup()">
                     <button class="ares-btn" type="button" onclick="fetchAres('sup', this)">Načíst z ARES</button>
                 </div>
+            </div>
+            <div class="form-group">
+                <label>DIČ (povinné pro plátce DPH):</label>
+                <input type="text" id="sup-dic" onchange="saveSup()" placeholder="např. CZ12345678">
             </div>
             <div class="form-group">
                 <label>Jméno / Firma:</label>
@@ -269,13 +279,21 @@
     </div>
 
     <div class="btn-print-wrap no-print">
-        <button class="btn" onclick="tiskFaktury()">🖨️ Vytisknout / Uložit PDF</button>
-        <p style="font-size: 0.82em; color: #9ca3af; margin-top: 10px;">V dialogu tisku zvolte "Uložit jako PDF" a vypněte záhlaví a zápatí.</p>
+        <button class="btn" id="btn-generate-pdf" onclick="generateFakturaPDF()">📄 Stáhnout PDF</button>
+        <p id="faktura-pdf-status" style="font-size: 0.82em; color: #9ca3af; margin-top: 10px;"></p>
     </div>
 </div>
 
 <script>
+// ═══════════════ ARCHIV FAKTUR DO CLOUDU (volitelné) ═══════════════
+// Po nasazení Google Apps Scriptu (soubor faktury_apps_script.gs) sem vlož
+// URL nasazení Web Appky (končí na /exec) a stejný SECRET jako ve skriptu.
+// Necháš-li CLOUD_ARCHIVE_URL prázdné, archivace se prostě přeskočí.
+const CLOUD_ARCHIVE_URL = 'https://script.google.com/macros/s/AKfycbxkq7uAbKIEjSYf1dt-Hlyc6x3yqkMwPRod_3qLzuGfkX499IGWhpwOJp47I9sM349Y/exec';
+const CLOUD_ARCHIVE_SECRET = 'Yv147eEa8NxKIMbOpmjMplhePr9pAivddqsGKzTmM6s';
+
     document.getElementById('date-issue').valueAsDate = new Date();
+    document.getElementById('date-duzp').valueAsDate = new Date();
     let dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + 14);
     document.getElementById('date-due').valueAsDate = dueDate;
@@ -327,7 +345,7 @@
             // Vyplnění názvu
             document.getElementById(`${type}-name`).value = data.obchodniJmeno || '';
             
-            // DIČ (vyplní jen pokud formulář dané pole má - odběratel ho má, dodavatel ho teď nemá)
+            // DIČ (vyplní se pro dodavatele i odběratele)
             const dicElement = document.getElementById(`${type}-dic`);
             if (dicElement) {
                 dicElement.value = data.dic || '';
@@ -519,7 +537,7 @@
         });
     }
 
-    const supFields = ['sup-name', 'sup-ico', 'sup-address', 'sup-account', 'sup-phone', 'sup-registry'];
+    const supFields = ['sup-name', 'sup-ico', 'sup-dic', 'sup-address', 'sup-account', 'sup-phone', 'sup-registry'];
     
     function saveSup() {
         supFields.forEach(id => {
@@ -570,46 +588,296 @@
         if (reg && regPrint) regPrint.innerText = reg.value;
     }
 
-    function tiskFaktury() {
-        // Skryj prázdné form-group před tiskem
-        document.querySelectorAll('.form-group').forEach(function(group) {
-            const input = group.querySelector('input, textarea');
-            if (input && (!input.value || input.value.trim() === '')) {
-                group.classList.add('no-print');
-            }
-        });
-
-        document.querySelectorAll('input, select').forEach(function(input) {
-            if (input.type === 'checkbox') return;
-            if (!input.classList.contains('print-hidden')) {
-                var span = document.createElement('span');
-                span.className = 'print-val';
-                if (input.tagName === 'SELECT') {
-                    span.textContent = input.options[input.selectedIndex].text;
-                } else if (input.type === 'date' && input.value) {
-                    var d = input.value.split('-');
-                    span.textContent = d[2] + '. ' + d[1] + '. ' + d[0];
-                } else {
-                    span.textContent = input.value;
-                }
-                span.style.display = 'block';
-                if (input.style.textAlign) {
-                    span.style.textAlign = input.style.textAlign;
-                }
-                input.parentNode.insertBefore(span, input);
-                input.classList.add('print-hidden');
-            }
-        });
-        window.focus();
-        setTimeout(function() { window.print(); }, 300);
+    // ── Generování PDF (pdf-lib + fontkit kvůli české diakritice) ──
+    let fNotoFontBytes = null;
+    async function loadFakturaFont() {
+        if (fNotoFontBytes) return fNotoFontBytes;
+        const res = await fetch('https://raw.githubusercontent.com/openmaptiles/fonts/master/noto-sans/NotoSans-Regular.ttf');
+        fNotoFontBytes = await res.arrayBuffer();
+        return fNotoFontBytes;
+    }
+    let fNotoFontBoldBytes = null;
+    async function loadFakturaFontBold() {
+        if (fNotoFontBoldBytes) return fNotoFontBoldBytes;
+        const res = await fetch('https://raw.githubusercontent.com/openmaptiles/fonts/master/noto-sans/NotoSans-Bold.ttf');
+        fNotoFontBoldBytes = await res.arrayBuffer();
+        return fNotoFontBoldBytes;
     }
 
-    // Vrácení do původního stavu se spustí bezpečně AŽ po dokončení nebo zrušení tisku
-    window.addEventListener('afterprint', function() {
-        document.querySelectorAll('.print-val').forEach(function(s) { s.remove(); });
-        document.querySelectorAll('.print-hidden').forEach(function(i) { i.classList.remove('print-hidden'); });
-        document.querySelectorAll('.form-group.no-print').forEach(function(g) { g.classList.remove('no-print'); });
-    });
+    function dataUrlToBytes(dataUrl) {
+        const base64 = dataUrl.split(',')[1];
+        const binary = atob(base64);
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+        return bytes;
+    }
+
+    function formatDateCZ(isoDate) {
+        if (!isoDate) return '';
+        const d = isoDate.split('-');
+        return d[2] + '. ' + d[1] + '. ' + d[0];
+    }
+
+    function sanitizeFakturaFilenamePart(s) {
+        return (s || '')
+            .normalize('NFD').replace(/[̀-ͯ]/g, '')
+            .replace(/[^a-zA-Z0-9]+/g, '_')
+            .replace(/^_+|_+$/g, '') || 'faktura';
+    }
+
+    function arrayBufferToBase64Faktura(bytes) {
+        let binary = '';
+        const chunkSize = 0x8000;
+        for (let i = 0; i < bytes.length; i += chunkSize) {
+            binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
+        }
+        return btoa(binary);
+    }
+
+    // ── Archiv do cloudu (volitelné, viz CLOUD_ARCHIVE_URL nahoře) ──
+    function uploadFakturaToCloudArchive(fileBytes, filename, meta) {
+        const base64 = arrayBufferToBase64Faktura(fileBytes);
+        fetch(CLOUD_ARCHIVE_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                secret: CLOUD_ARCHIVE_SECRET,
+                filename: filename,
+                pdfBase64: base64,
+                mimetype: 'application/pdf',
+                vs: meta.vs,
+                dodavatel: meta.sup.name,
+                odberatel: meta.sub.name,
+                castka: meta.castka
+            })
+        })
+            .then(r => r.json())
+            .then(res => { if (!res.ok) console.error('Archivace faktury selhala:', res.error); })
+            .catch(err => { console.error('Archivace faktury se nezdařila:', err); });
+    }
+
+    async function generateFakturaPDF() {
+        const statusEl = document.getElementById('faktura-pdf-status');
+        statusEl.style.color = '#9ca3af';
+        statusEl.textContent = 'Generuji PDF…';
+        try {
+            calculate();
+            await new Promise(r => setTimeout(r, 80));
+
+            const isVat = document.getElementById('is-vat-payer').checked;
+            const vs = document.getElementById('vs').value.trim();
+            const dateIssue = formatDateCZ(document.getElementById('date-issue').value);
+            const dateDuzp = formatDateCZ(document.getElementById('date-duzp').value);
+            const dateDue = formatDateCZ(document.getElementById('date-due').value);
+
+            const sup = {
+                ico: document.getElementById('sup-ico').value.trim(),
+                dic: document.getElementById('sup-dic').value.trim(),
+                name: document.getElementById('sup-name').value.trim(),
+                address: document.getElementById('sup-address').value.trim(),
+                account: document.getElementById('sup-account').value.trim(),
+                vs: document.getElementById('sup-vs').value.trim(),
+                phone: document.getElementById('sup-phone').value.trim(),
+                registry: document.getElementById('sup-registry').value.trim(),
+            };
+            const sub = {
+                ico: document.getElementById('sub-ico').value.trim(),
+                name: document.getElementById('sub-name').value.trim(),
+                dic: document.getElementById('sub-dic').value.trim(),
+                address: document.getElementById('sub-address').value.trim(),
+            };
+
+            const rows = [...document.querySelectorAll('#items-body tr')].map(tr => {
+                const tds = tr.querySelectorAll('td');
+                const popis = tds[0].querySelector('input').value.trim();
+                const mnozstvi = tds[1].querySelector('input').value.trim();
+                const vatSel = tds[2].querySelector('select');
+                const vatRate = vatSel ? vatSel.value : null;
+                const cena = tds[3].querySelector('input').value.trim();
+                const celkem = tds[4].innerText.trim();
+                return { popis, mnozstvi, vatRate, cena, celkem };
+            }).filter(r => r.popis || r.mnozstvi || r.cena);
+
+            const totalSum = document.getElementById('total-sum').innerText.trim();
+            const totalBase = document.getElementById('total-base') ? document.getElementById('total-base').innerText.trim() : '';
+            const totalVat = document.getElementById('total-vat') ? document.getElementById('total-vat').innerText.trim() : '';
+
+            const accText = document.getElementById('acc-text').innerText.trim();
+            const vsText = document.getElementById('vs-text').innerText.trim();
+            const qrImg = document.querySelector('#qrcode img');
+            const qrWarning = document.getElementById('qr-warning');
+            const qrValid = !!(qrImg && qrImg.src && (!qrWarning || qrWarning.style.display === 'none') && accText);
+
+            const { PDFDocument, rgb } = PDFLib;
+            const pdfDoc = await PDFDocument.create();
+            pdfDoc.registerFontkit(fontkit);
+            const [fontBytes, fontBoldBytes] = await Promise.all([loadFakturaFont(), loadFakturaFontBold()]);
+            const font = await pdfDoc.embedFont(fontBytes);
+            const fontBold = await pdfDoc.embedFont(fontBoldBytes);
+
+            const pageWidth = 595.28, pageHeight = 841.89;
+            const marginX = 50, marginTop = 50, marginRight = 545;
+            const usableWidth = marginRight - marginX;
+            let page = pdfDoc.addPage([pageWidth, pageHeight]);
+            let y = pageHeight - marginTop;
+
+            function text(str, x, yPos, opts = {}) {
+                const { size = 9, bold = false, color = rgb(0.07, 0.07, 0.07), align = 'left' } = opts;
+                const useFont = bold ? fontBold : font;
+                let drawX = x;
+                if (align === 'right') drawX = x - useFont.widthOfTextAtSize(str, size);
+                else if (align === 'center') drawX = x - useFont.widthOfTextAtSize(str, size) / 2;
+                page.drawText(str, { x: drawX, y: yPos, size, font: useFont, color });
+            }
+            function hline(x1, yy, x2, opts = {}) {
+                const { thickness = 1, color = rgb(0.85, 0.85, 0.85) } = opts;
+                page.drawLine({ start: { x: x1, y: yy }, end: { x: x2, y: yy }, thickness, color });
+            }
+            function wrapText(str, useFont, size, maxWidth) {
+                if (!str) return [''];
+                const words = str.split(' ');
+                const out = []; let cur = '';
+                words.forEach(w => {
+                    const t = cur ? cur + ' ' + w : w;
+                    if (useFont.widthOfTextAtSize(t, size) > maxWidth) { if (cur) out.push(cur); cur = w; }
+                    else cur = t;
+                });
+                if (cur) out.push(cur);
+                return out.length ? out : [''];
+            }
+
+            // Hlavička
+            text('Faktura', marginX, y - 20, { size: 24, bold: true });
+            text('Doklad slouží zároveň jako dodací list.', marginX, y - 36, { size: 8.5, color: rgb(0.3, 0.34, 0.4) });
+
+            let ry = y - 4;
+            [['Číslo faktury / VS', vs], ['Datum vystavení', dateIssue], ['Datum uskut. plnění (DUZP)', dateDuzp], ['Datum splatnosti', dateDue]].forEach(([label, val]) => {
+                text(label + ':', marginRight - 195, ry, { size: 8, color: rgb(0.45, 0.48, 0.53) });
+                text(val || '—', marginRight, ry, { size: 9.5, bold: true, align: 'right' });
+                ry -= 14;
+            });
+
+            y -= 69;
+            hline(marginX, y, marginRight, { thickness: 1.5 });
+            y -= 20;
+
+            // Dodavatel / Odběratel
+            const colGap = 40;
+            const colWidth = (usableWidth - colGap) / 2;
+            const leftX = marginX, rightX = marginX + colWidth + colGap;
+            let leftY = y, rightY = y;
+
+            text('Dodavatel', leftX, leftY, { size: 11, bold: true });
+            text('Odběratel', rightX, rightY, { size: 11, bold: true });
+            leftY -= 8; rightY -= 8;
+            hline(leftX, leftY, leftX + colWidth);
+            hline(rightX, rightY, rightX + colWidth);
+            leftY -= 14; rightY -= 14;
+
+            [['IČO', sup.ico], ['DIČ', sup.dic], ['Jméno / Firma', sup.name], ['Sídlo', sup.address],
+             ['Číslo účtu', sup.account], ['Variabilní symbol', sup.vs], ['Telefon', sup.phone],
+             ['Zápis v rejstříku', sup.registry]].forEach(([label, val]) => {
+                if (!val) return;
+                text(label + ':', leftX, leftY, { size: 7.5, color: rgb(0.45, 0.48, 0.53) });
+                leftY -= 10;
+                wrapText(val, font, 9.5, colWidth).forEach(w => { text(w, leftX, leftY, { size: 9.5 }); leftY -= 12; });
+                leftY -= 2;
+            });
+            text(isVat ? 'Dodavatel je plátcem DPH.' : 'Dodavatel není plátcem DPH.', leftX, leftY, { size: 8, bold: true });
+            leftY -= 14;
+
+            [['IČO', sub.ico], ['Jméno / Firma', sub.name], ['DIČ', sub.dic], ['Sídlo', sub.address]].forEach(([label, val]) => {
+                if (!val) return;
+                text(label + ':', rightX, rightY, { size: 7.5, color: rgb(0.45, 0.48, 0.53) });
+                rightY -= 10;
+                wrapText(val, font, 9.5, colWidth).forEach(w => { text(w, rightX, rightY, { size: 9.5 }); rightY -= 12; });
+                rightY -= 2;
+            });
+
+            y = Math.min(leftY, rightY) - 16;
+
+            // Položky faktury
+            text('Položky faktury', marginX, y, { size: 11, bold: true });
+            y -= 18;
+
+            const weights = isVat ? [0.35, 0.12, 0.13, 0.20, 0.20] : [0.40, 0.15, 0, 0.225, 0.225];
+            const colX = [marginX];
+            weights.forEach(w => colX.push(colX[colX.length - 1] + w * usableWidth));
+
+            text('Popis položky', colX[0], y, { size: 7.5, bold: true, color: rgb(0.45, 0.48, 0.53) });
+            text('Množství', (colX[1] + colX[2]) / 2, y, { size: 7.5, bold: true, color: rgb(0.45, 0.48, 0.53), align: 'center' });
+            if (isVat) text('DPH %', (colX[2] + colX[3]) / 2, y, { size: 7.5, bold: true, color: rgb(0.45, 0.48, 0.53), align: 'center' });
+            text('Cena / mj.', colX[4], y, { size: 7.5, bold: true, color: rgb(0.45, 0.48, 0.53), align: 'right' });
+            text('Celkem', colX[5], y, { size: 7.5, bold: true, color: rgb(0.45, 0.48, 0.53), align: 'right' });
+            y -= 6;
+            hline(marginX, y, marginRight, { thickness: 1.5, color: rgb(0.7, 0.72, 0.76) });
+            y -= 14;
+
+            rows.forEach(r => {
+                const wrapped = wrapText(r.popis || '', font, 9, weights[0] * usableWidth - 6);
+                const rowTopY = y;
+                wrapped.forEach((w, i) => text(w, colX[0], rowTopY - i * 11, { size: 9 }));
+                text(r.mnozstvi || '', (colX[1] + colX[2]) / 2, rowTopY, { size: 9, align: 'center' });
+                if (isVat) text((r.vatRate || '0') + ' %', (colX[2] + colX[3]) / 2, rowTopY, { size: 9, align: 'center' });
+                text(r.cena ? Number(r.cena).toLocaleString('cs-CZ', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0,00', colX[4], rowTopY, { size: 9, align: 'right' });
+                text(r.celkem || '0,00', colX[5], rowTopY, { size: 9, bold: true, align: 'right' });
+                y -= Math.max(1, wrapped.length) * 11 + 6;
+                hline(marginX, y, marginRight, { color: rgb(0.9, 0.9, 0.9) });
+                y -= 12;
+            });
+
+            y -= 6;
+            if (isVat) {
+                text('Základ pro DPH:', marginRight - 140, y, { size: 9 });
+                text(totalBase + ' Kč', marginRight, y, { size: 9, align: 'right' });
+                y -= 14;
+                text('DPH celkem:', marginRight - 140, y, { size: 9 });
+                text(totalVat + ' Kč', marginRight, y, { size: 9, align: 'right' });
+                y -= 18;
+            }
+            text('CELKEM K ÚHRADĚ', marginRight, y, { size: 8, color: rgb(0.45, 0.48, 0.53), align: 'right' });
+            y -= 24;
+            text(totalSum + ' Kč', marginRight, y, { size: 20, bold: true, align: 'right' });
+            y -= 30;
+
+            // QR platba
+            hline(marginX, y, marginRight);
+            y -= 20;
+            text('Způsob platby: Bankovní převod', marginX, y, { size: 10, bold: true });
+            y -= 16;
+            text('Číslo účtu: ' + (accText || '—'), marginX, y, { size: 9 });
+            y -= 14;
+            text('Variabilní symbol: ' + (vsText || '—'), marginX, y, { size: 9 });
+
+            if (qrValid) {
+                try {
+                    const qrPngBytes = dataUrlToBytes(qrImg.src);
+                    const qrImage = await pdfDoc.embedPng(qrPngBytes);
+                    const qrSize = 90;
+                    page.drawImage(qrImage, { x: marginRight - qrSize, y: y - 20, width: qrSize, height: qrSize });
+                } catch (e) { /* QR se nepodařilo vložit, pokračuj bez něj */ }
+            }
+
+            const pdfBytes = await pdfDoc.save();
+            const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const safeVs = (vs || 'faktura').replace(/[^\w-]/g, '');
+            const safeName = sanitizeFakturaFilenamePart(sub.name || sup.name);
+            const filename = 'Faktura_' + safeVs + '_' + safeName + '.pdf';
+            a.href = url; a.download = filename;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            statusEl.textContent = '✅ PDF staženo.';
+            statusEl.style.color = '#059669';
+
+            if (CLOUD_ARCHIVE_URL) {
+                uploadFakturaToCloudArchive(pdfBytes, filename, { vs, sup, sub, castka: totalSum });
+            }
+        } catch (err) {
+            statusEl.textContent = '⚠️ Chyba při generování PDF: ' + err.message;
+            statusEl.style.color = '#dc2626';
+        }
+    }
 
     window.onload = () => {
         loadSup();
