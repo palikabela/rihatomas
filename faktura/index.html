@@ -146,8 +146,9 @@
         <div class="header-right" style="text-align: right; min-width: 260px;">
             <div class="form-group" style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
                 <label style="margin: 0; white-space: nowrap;">Číslo faktury / VS:</label>
-                <input type="text" id="vs" value="20260001" oninput="generateQR()" onchange="generateQR()" style="width: 100px; text-align: right; font-weight: bold;">
+                <input type="text" id="vs" value="" oninput="generateQR()" onchange="generateQR()" style="width: 100px; text-align: right; font-weight: bold;">
             </div>
+            <div style="font-size: 0.72em; color: #9ca3af; margin-top: -8px; margin-bottom: 10px;">Generuje se automaticky podle data a času (jde přepsat ručně)</div>
             <div class="form-group" style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
                 <label style="margin: 0; white-space: nowrap;">Datum vystavení:</label>
                 <input type="date" id="date-issue" style="width: 130px; text-align: right;">
@@ -869,6 +870,7 @@ const CLOUD_ARCHIVE_SECRET = 'Yv147eEa8NxKIMbOpmjMplhePr9pAivddqsGKzTmM6s';
             URL.revokeObjectURL(url);
             statusEl.textContent = '✅ PDF staženo.';
             statusEl.style.color = '#059669';
+            refreshInvoiceNumber();
 
             if (CLOUD_ARCHIVE_URL) {
                 uploadFakturaToCloudArchive(pdfBytes, filename, { vs, sup, sub, castka: totalSum });
@@ -879,11 +881,25 @@ const CLOUD_ARCHIVE_SECRET = 'Yv147eEa8NxKIMbOpmjMplhePr9pAivddqsGKzTmM6s';
         }
     }
 
+    // ── Automatické číslování faktur (podle data a času, aby se čísla nepotkala mezi lidmi) ──
+    // Formát MMDDHHMMSS (10 číslic) — vejde se do limitu VS (max 10 číslic) a je na sekundu přesné.
+    function generateTimestampInvoiceNumber() {
+        const d = new Date();
+        const pad = n => String(n).padStart(2, '0');
+        return pad(d.getMonth() + 1) + pad(d.getDate()) + pad(d.getHours()) + pad(d.getMinutes()) + pad(d.getSeconds());
+    }
+
+    function refreshInvoiceNumber() {
+        document.getElementById('vs').value = generateTimestampInvoiceNumber();
+        generateQR();
+    }
+
     window.onload = () => {
         loadSup();
-        addRow(); 
-        calculate(); 
-        setTimeout(generateQR, 150); 
+        addRow();
+        calculate();
+        refreshInvoiceNumber();
+        setTimeout(generateQR, 150);
     };
 </script>
 
