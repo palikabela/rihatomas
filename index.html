@@ -946,7 +946,7 @@ input[type="range"]::-webkit-slider-runnable-track {
             </div>
           </div>
           <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap:8px">
-            <a href="opatrne.pdf" target="_blank" style="padding:10px; background:var(--surface3); border:1px solid var(--border2); color:var(--text); text-decoration:none; border-radius:8px; font-size:12px; font-weight:600; text-align:center; transition:border-color 0.2s">
+            <a href="kratkodobe.pdf" target="_blank" style="padding:10px; background:var(--surface3); border:1px solid var(--border2); color:var(--text); text-decoration:none; border-radius:8px; font-size:12px; font-weight:600; text-align:center; transition:border-color 0.2s">
               Opatrné
             </a>
             <a href="strednedobe.pdf" target="_blank" style="padding:10px; background:var(--surface3); border:1px solid var(--border2); color:var(--text); text-decoration:none; border-radius:8px; font-size:12px; font-weight:600; text-align:center; transition:border-color 0.2s">
@@ -1009,60 +1009,56 @@ input[type="range"]::-webkit-slider-runnable-track {
     </div><!-- end invest-srovnani -->
 
     <div id="invest-cil" style="display:none">
-    <div class="card" style="margin-bottom:14px">
-      <div class="card-label">Kolik musím měsíčně investovat?</div>
-      <div class="grid2">
-        <div>
-          <div class="field">
-            <label>Cílová částka (Kč)</label>
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-              <button onclick="syncCiCil(getSafeNum('ci_cil')-100000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-              <input class="fmt-input" type="text" inputmode="numeric" id="ci_cil" value="" placeholder="např. 5 000 000" oninput="formatLive(this); syncCiCil(this.value.replace(/[^0-9]/g,''))" style="flex:1;text-align:center">
-              <button onclick="syncCiCil(getSafeNum('ci_cil')+100000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
-            </div>
-            <input type="range" id="ci_cil_slider" min="0" max="20000000" value="0" step="100000"
-              oninput="syncCiCil(this.value, true)"
-              style="width:100%;accent-color:var(--accent);cursor:pointer;margin-top:4px">
+    <div class="grid2" style="margin-bottom:16px">
+      <div class="card" style="position: sticky; top: 20px; align-self: start;">
+        <div class="card-label">Parametry investice</div>
+        <div class="field">
+          <label>Cílová částka (Kč)</label>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <button onclick="syncCiCil(getSafeNum('ci_cil')-100000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <input class="fmt-input" type="text" inputmode="numeric" id="ci_cil" value="" placeholder="např. 5 000 000" oninput="formatLive(this); syncCiCil(this.value.replace(/[^0-9]/g,''))" style="flex:1;text-align:center">
+            <button onclick="syncCiCil(getSafeNum('ci_cil')+100000)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
-          <div class="field">
-            <label>Počáteční jednorázová investice (Kč)</label>
-            <input class="fmt-input" type="text" inputmode="numeric" id="ci_jednoraz" value="" placeholder="např. 100 000" oninput="formatLive(this); calcCil()">
-          </div>
-          <div class="field">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px">
-              <label style="margin:0">Doba investice — <span id="ci_roky_label">20 let</span></label>
-              <input type="number" id="ci_rok_cil" placeholder="1989" oninput="syncCiRoky(document.getElementById('ci_roky').value)" style="width:75px;padding:3px 6px;font-size:10px;font-weight:600;text-align:center;border-radius:6px;border:1px dashed var(--border2);background:transparent;color:var(--text3);transition:all 0.2s" title="Zadejte ročník pro výpočet vašeho věku na konci spoření">
-            </div>
-            <div style="display:flex;align-items:center;gap:10px">
-              <button onclick="syncCiRoky(parseInt(document.getElementById('ci_roky').value)-1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
-              <input type="range" id="ci_roky_slider" min="1" max="50" value="20" oninput="syncCiRoky(this.value)" style="flex:1;accent-color:var(--accent)">
-              <button onclick="syncCiRoky(parseInt(document.getElementById('ci_roky').value)+1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
-            </div>
-            <input type="number" id="ci_roky" value="20" min="1" max="50" style="display:none">
-          </div>
-          <div class="field">
-            <label>Očekávaný výnos (% ročně)</label>
-            <input type="number" id="ci_vynos" value="8" step="0.5" min="0" oninput="calcCil()">
-          </div>
+          <input type="range" id="ci_cil_slider" min="0" max="20000000" value="0" step="100000"
+            oninput="syncCiCil(this.value, true)"
+            style="width:100%;accent-color:var(--accent);cursor:pointer;margin-top:4px">
         </div>
-        <div>
-          <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:1.25rem;border:1px solid var(--border);margin-bottom:12px">
-            <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:8px">Potřebná měsíční investice</div>
-            <div style="font-family:'Inter',sans-serif;font-size:clamp(24px,6vw,44px);font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:-0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="ci_mesicni">—</div>
+        <div class="field">
+          <label>Počáteční jednorázová investice (Kč)</label>
+          <input class="fmt-input" type="text" inputmode="numeric" id="ci_jednoraz" value="" placeholder="např. 100 000" oninput="formatLive(this); calcCil()">
+        </div>
+        <div class="field">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px">
+            <label style="margin:0">Doba investice — <span id="ci_roky_label">20 let</span></label>
+            <input type="number" id="ci_rok_cil" placeholder="1989" oninput="syncCiRoky(document.getElementById('ci_roky').value)" style="width:75px;padding:3px 6px;font-size:10px;font-weight:600;text-align:center;border-radius:6px;border:1px dashed var(--border2);background:transparent;color:var(--text3);transition:all 0.2s" title="Zadejte ročník pro výpočet vašeho věku na konci spoření">
           </div>
-          <div class="metrics" style="margin-bottom:12px">
-            <div class="metric"><div class="metric-label">Vaše vklady celkem</div><div class="metric-value" id="ci_vlozeno">—</div></div>
-            <div class="metric"><div class="metric-label">Zhodnocení</div><div class="metric-value green" id="ci_zhodnoceni">—</div></div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <button onclick="syncCiRoky(parseInt(document.getElementById('ci_roky').value)-1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">−</button>
+            <input type="range" id="ci_roky_slider" min="1" max="50" value="20" oninput="syncCiRoky(this.value)" style="flex:1;accent-color:var(--accent)">
+            <button onclick="syncCiRoky(parseInt(document.getElementById('ci_roky').value)+1)" style="width:32px;height:32px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
           </div>
-          <div style="position:relative;height:180px;margin-bottom:12px">
-            <canvas id="cilChart"></canvas>
-          </div>
+          <input type="number" id="ci_roky" value="20" min="1" max="50" style="display:none">
+        </div>
+        <div class="field">
+          <label>Očekávaný výnos (% ročně)</label>
+          <input type="number" id="ci_vynos" value="8" step="0.5" min="0" oninput="calcCil()">
         </div>
       </div>
+      <div class="card">
+        <div class="card-label">Přehled</div>
 
-      <div style="margin-top:1.25rem">
-        <div style="font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-bottom:10px">Kolik spořit podle produktu</div>
-        <div id="ci-products-grid" style="display:grid;grid-template-columns:1fr;gap:8px"></div>
+        <div style="margin-bottom:.6rem;padding:.5rem .75rem;background:var(--surface2);border-radius:8px;border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:11px;color:var(--text3)">Potřebná měsíční investice</div>
+          <div style="font-size:14px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums" id="ci_mesicni">—</div>
+        </div>
+
+        <div style="margin-bottom:.6rem;padding:.5rem .75rem;background:var(--surface2);border-radius:8px;border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:11px;color:var(--text3)">Vaše vklady celkem</div>
+          <div style="font-size:14px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums" id="ci_vlozeno">—</div>
+        </div>
+
+        <div style="font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);margin-bottom:.5rem">Kolik spořit podle produktu</div>
+        <div class="products-grid" id="ci-products-grid"></div>
       </div>
     </div>
     </div><!-- end invest-cil -->
@@ -5247,7 +5243,6 @@ function showInvestTab(tab) {
 }
 
 // CÍLOVÁ INVESTICE
-let cilChart = null;
 
 function syncCiCil(val, fromSlider) {
   const parsed = parseFormattedInt(val);
@@ -5303,7 +5298,7 @@ function calcCil() {
   const vynos = getCleanNum("ci_vynos");
   const setP = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val > 0 ? fmt(val) : ""; };
   if (cil <= 0) {
-    ["ci_mesicni","ci_vlozeno","ci_zhodnoceni"].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = "—"; });
+    ["ci_mesicni","ci_vlozeno"].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = "—"; });
     return;
   }
   const mesice = roky * 12;
@@ -5314,11 +5309,9 @@ function calcCil() {
   if (r <= 0) { mesicni = zbyvaCil / mesice; }
   else { mesicni = (zbyvaCil * r) / ((Math.pow(1 + r, mesice) - 1) * (1 + r)); }
   const vlozeno = mesicni * mesice + jednoraz;
-  const zhodnoceni = Math.max(cil - vlozeno, 0);
   const elM = document.getElementById("ci_mesicni");
   if (elM) elM.textContent = mesicni > 0 ? fmt(mesicni) + " / měs." : "0 Kč / měs.";
   const elV = document.getElementById("ci_vlozeno"); if (elV) elV.textContent = fmt(vlozeno);
-  const elZ = document.getElementById("ci_zhodnoceni"); if (elZ) elZ.textContent = fmt(zhodnoceni);
 
   // Product breakdown
   const sEtf = getCleanNum("s_etf") || 8;
@@ -5329,13 +5322,22 @@ function calcCil() {
   const sBezny = getCleanNum("s_bezny") || 0.1;
 
   const ciProdukty = [
-    {name:"ETF / Akciový index", sazba:sEtf, color:"#C8F04A"},
-    {name:"DIP", sazba:sDip, color:"var(--green)"},
-    {name:"Penzijní spoření", sazba:sPenzijko, color:"#60A5FA"},
-    {name:"Stavební spoření", sazba:sStavebko, color:"#F59E0B"},
-    {name:"Spořicí účet", sazba:sSporici, color:"#A78BFA"},
-    {name:"Běžný účet", sazba:sBezny, color:"#F87171"},
+    {id:"etf", name:"ETF / Akciový index", sazba:sEtf},
+    {id:"dip", name:"DIP", sazba:sDip},
+    {id:"penzijko", name:"Penzijní spoření", sazba:sPenzijko},
+    {id:"stavebko", name:"Stavební spoření", sazba:sStavebko},
+    {id:"sporici", name:"Spořicí účet", sazba:sSporici},
+    {id:"bezny", name:"Běžný účet", sazba:sBezny},
   ];
+
+  const ciInfoMap = {
+    etf:      "✅ Peníze dostupné kdykoliv · po 3 letech 0 % daň",
+    dip:      "⚠️ Zamčeno do 60 let (jinak vracení daní)",
+    penzijko: "🔒 Pevně zamčeno do 60 let (ztráta státní podpory + zdanění)",
+    stavebko: "⚠️ Min. 6 let vázací lhůta",
+    sporici:  "✅ Plně likvidní",
+    bezny:    "⚠️ Garantovaná ztráta (požírá inflace)",
+  };
 
   const ciGrid = document.getElementById("ci-products-grid");
   if (ciGrid && cil > 0) {
@@ -5347,55 +5349,39 @@ function calcCil() {
       let mes;
       if (pr <= 0) mes = zbyva / mesice;
       else mes = zbyva * pr / (Math.pow(1 + pr, mesice) - 1);
-      const row = document.createElement("div");
-      row.style.cssText = "display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border)";
-      row.innerHTML =
-        "<div style='display:flex;align-items:center;gap:8px'>" +
-          "<div style='width:8px;height:8px;border-radius:50%;background:" + p.color + ";flex-shrink:0'></div>" +
-          "<div style='font-size:13px;color:var(--text)'>" + p.name + "</div>" +
-          "<div style='font-size:11px;color:var(--text3);margin-left:4px'>" + p.sazba + " % p.a.</div>" +
-        "</div>" +
-        "<div style='font-family:Inter,sans-serif;font-size:15px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums'>" + fmt(mes) + "/měs.</div>";
-      ciGrid.appendChild(row);
+      p.mesicne = Math.max(mes, 0);
+    });
+    // Řazení: nejnižší potřebná měsíční částka první, ETF vždy zvýrazněno jako strategické doporučení
+    const sortedCi = [...ciProdukty].sort((a, b) => a.mesicne - b.mesicne);
+    sortedCi.forEach((p, i) => {
+      const isEtf = p.id === 'etf';
+      const rank = i === 0 ? "🥇 " : (i === 1 ? "🥈 " : (i === 2 ? "🥉 " : (i + 1) + ". "));
+      const div = document.createElement("div");
+      div.className = "product-card" + (isEtf ? " best" : "");
+      const etfLabel = isEtf
+        ? "<div style='font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:6px'>🏆 VÍTĚZ PRO DLOUHODOBÉ BOHATSTVÍ</div>"
+        : "";
+      const liq = ciInfoMap[p.id] || "";
+      const liqHtml = liq
+        ? "<div style='font-size:10px;color:" + (isEtf ? "var(--accent)" : (p.id==="penzijko"||p.id==="dip" ? "var(--red)" : "var(--text3)")) + ";margin-top:2px'>" + liq + "</div>"
+        : "";
+      div.innerHTML =
+        etfLabel +
+        "<div style='display:flex;justify-content:space-between;align-items:flex-start;width:100%'>" +
+          "<div style='display:flex;flex-direction:column;flex:1;min-width:0'>" +
+            "<div class='product-name' style='white-space:nowrap'>" + rank + p.name + " <span style='font-weight:400;color:var(--text3);font-size:11px'>· " + p.sazba + " % p.a.</span></div>" +
+            liqHtml +
+          "</div>" +
+          "<div style='text-align:right;flex-shrink:0;margin-left:8px'>" +
+            "<div class='product-amount " + (isEtf ? "pos" : "") + "'>" + fmt(p.mesicne) + "</div>" +
+            "<div class='product-gain'" + " style='color:var(--text3)'>Kč / měs.</div>" +
+          "</div>" +
+        "</div>";
+      ciGrid.appendChild(div);
     });
   } else if (ciGrid) {
     ciGrid.innerHTML = "";
   }
-  const isDark = document.documentElement.getAttribute("data-theme") !== "light";
-  if (cilChart) cilChart.destroy();
-  const canvas = document.getElementById("cilChart");
-  if (!canvas) return;
-  cilChart = new Chart(canvas.getContext("2d"), {
-    type: "doughnut",
-    data: {
-      labels: ["Vaše vklady", "Zhodnocení"],
-      datasets: [{
-        data: [Math.max(vlozeno, 0), zhodnoceni],
-        backgroundColor: [isDark ? "#2C3038" : "#E5E7EB", "#C8F04A"],
-        borderColor: [isDark ? "#3C4148" : "#D1D5DB", "#A8D03A"],
-        borderWidth: 1, hoverOffset: 4
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false, cutout: "65%",
-      plugins: {
-        legend: { display: true, position: "bottom", labels: { color: isDark ? "#8A9099" : "#555", font: {family:"Inter",size:12}, boxWidth:12, padding:12 } },
-        tooltip: {
-          backgroundColor: isDark ? "#1E2126" : "#fff",
-          titleColor: isDark ? "#F0F2F5" : "#111",
-          bodyColor: isDark ? "#8A9099" : "#555",
-          borderColor: isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)",
-          borderWidth: 1, padding: 10,
-          callbacks: { label: ctx => " " + ctx.label + ": " + new Intl.NumberFormat("cs-CZ",{style:"currency",currency:"CZK",maximumFractionDigits:0}).for.format(ctx.raw)
-          }
-        }
-      },
-      scales: {
-        x: {ticks:{color:textColor,font:{size:11},maxTicksLimit:12},grid:{color:gridColor}},
-        y: {ticks:{color:textColor,font:{size:11},callback:v=>new Intl.NumberFormat("cs-CZ",{notation:"compact"}).format(v)+" Kč"},grid:{color:gridColor}}
-      }
-    }
-  });
 }
 
 
