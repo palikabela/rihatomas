@@ -166,7 +166,7 @@ nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:b
         <div style="display:flex;gap:6px;position:relative">
           <input type="text" id="v_datum_podpisu" placeholder="21.7.2026" oninput="updateVypovedPreview()" style="flex:1">
           <button type="button" onclick="openDatumPodpisuKalendar(event)" title="Vybrat z kalendáře" style="padding:0 12px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center">📅</button>
-          <input type="date" id="v_datum_podpisu_picker" oninput="onDatumPodpisuPicked()" style="position:absolute;right:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none;border:0;padding:0">
+          <input type="date" id="v_datum_podpisu_picker" oninput="onDatumPodpisuPicked()" onchange="onDatumPodpisuPicked()" style="position:absolute;right:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none;border:0;padding:0">
         </div>
       </div>
 
@@ -178,7 +178,11 @@ nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:b
         <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px">📌 Znám výročí — kdy nejpozději doručit?</div>
         <div class="field" style="margin-bottom:6px">
           <label>Datum výročí smlouvy</label>
-          <input type="text" id="v_vyroci" placeholder="např. 1.1.2026 nebo 2026-01-01" oninput="calcTerminOdVyroci()" style="font-size:13px">
+          <div style="display:flex;gap:6px;position:relative">
+            <input type="text" id="v_vyroci" placeholder="např. 1.1.2026 nebo 2026-01-01" oninput="calcTerminOdVyroci()" style="font-size:13px;flex:1">
+            <button type="button" onclick="openDatumVyrociKalendar(event)" title="Vybrat z kalendáře" style="padding:0 12px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center">📅</button>
+            <input type="date" id="v_vyroci_picker" oninput="onDatumVyrociPicked()" onchange="onDatumVyrociPicked()" style="position:absolute;right:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none;border:0;padding:0">
+          </div>
         </div>
         <div id="v_termin_result_a" style="font-size:12px;line-height:1.7;padding:8px 10px;background:var(--surface);border-radius:7px;display:none;margin-bottom:12px"></div>
 
@@ -255,7 +259,8 @@ const POJISTOVNY = [
   {id:'hasicska',     nazev:'Hasičská vzájemná pojišťovna, a.s.',                          adresa:['Římská 2135/45','120 00 Praha 2'],                                email:'info@hvp.cz'},
   {id:'colonnade',    nazev:'Colonnade Insurance S.A., pobočka pro ČR',                    adresa:['Na Pankráci 1683/127','140 00 Praha 4'],                          email:'info@colonnade.cz'},
   {id:'aig',          nazev:'AIG Europe S.A., pobočka pro ČR',                             adresa:['V Celnici 1031/4','110 00 Praha 1'],                              email:'aig.czech@aig.com'},
-  {id:'nn',           nazev:'NN pojišťovna / NN penzijní společnost, a.s.',                adresa:['Nádražní 344/25','150 00 Praha 5'],                               email:'info@nn.cz'},
+  {id:'nn_poj',       nazev:'NN pojišťovna',                                                adresa:['Nádražní 344/25','150 00 Praha 5'],                               email:'info@nn.cz'},
+  {id:'nn_penzijni',  nazev:'NN penzijní společnost, a.s.',                                 adresa:['Nádražní 344/25','150 00 Praha 5'],                               email:'info@nn.cz'},
   {id:'kb_poj',       nazev:'Komerční pojišťovna, a.s.',                                   adresa:['Na Příkopě 33 čp. 969','114 07 Praha 1'],                         email:'info@kb-pojistovna.cz'},
   {id:'pillow',       nazev:'Pillow pojišťovna',                                            adresa:['Líbalova 2348/1','149 00 Praha 4'],                               email:'info@pillow.cz'},
   {id:'raiffeisen_ss',nazev:'Raiffeisen stavební spořitelna a.s.',                         adresa:['Koněvova 2747/99','130 45 Praha 3'],                              email:'info@rsts.cz'},
@@ -526,6 +531,19 @@ async function loadFromAresVypovedi() {
 }
 
 // ── Sestavení textu dopisu ──
+// Neviditelné <input type="date"> leží přímo přes ikonu 📅, takže ho uživatel
+// skutečně klikem otevírá sám (ne přes JS showPicker) — to je spolehlivější
+// napříč prohlížeči. Po výběru data se picker explicitně "odfokusuje" — v Safari se
+// totiž jinak kalendář někdy vizuálně nezavře, dokud se stránka neposune.
+function closeDatePicker(picker) {
+  picker.blur();
+  // Safari potřebuje fokus opravdu přesunout jinam, samotné blur() nestačí vždy hned.
+  setTimeout(() => {
+    picker.blur();
+    if (document.activeElement === picker) document.body.focus();
+  }, 0);
+}
+
 function openDatumPodpisuKalendar(evt) {
   if (evt) evt.preventDefault();
   const picker = document.getElementById('v_datum_podpisu_picker');
@@ -553,6 +571,40 @@ function onDatumPodpisuPicked() {
   const [y, mo, d] = picker.value.split('-');
   el.value = parseInt(d, 10) + '.' + parseInt(mo, 10) + '.' + y;
   updateVypovedPreview();
+  closeDatePicker(picker);
+}
+
+function openDatumVyrociKalendar(evt) {
+  if (evt) evt.preventDefault();
+  const picker = document.getElementById('v_vyroci_picker');
+  if (!picker) return;
+  const textEl = document.getElementById('v_vyroci');
+  if (textEl && textEl.value) {
+    const m = textEl.value.trim().match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+    if (m) {
+      const [, d, mo, y] = m;
+      picker.value = y + '-' + mo.padStart(2, '0') + '-' + d.padStart(2, '0');
+    } else {
+      const m2 = textEl.value.trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (m2) picker.value = textEl.value.trim();
+    }
+  }
+  if (typeof picker.showPicker === 'function') {
+    picker.showPicker();
+  } else {
+    picker.focus();
+    picker.click();
+  }
+}
+
+function onDatumVyrociPicked() {
+  const picker = document.getElementById('v_vyroci_picker');
+  const el = document.getElementById('v_vyroci');
+  if (!picker || !picker.value || !el) return;
+  const [y, mo, d] = picker.value.split('-');
+  el.value = parseInt(d, 10) + '.' + parseInt(mo, 10) + '.' + y;
+  calcTerminOdVyroci();
+  closeDatePicker(picker);
 }
 
 function fillDnesniDatum(evt) {
@@ -570,6 +622,20 @@ function fmtDateCZ(iso) {
   const parts = iso.split('-');
   if (parts.length !== 3) return '';
   return parseInt(parts[2]) + '.' + parseInt(parts[1]) + '.' + parts[0];
+}
+
+// Stejná kontrola jako validateVypovedForm(), ale bez vedlejších efektů (nezvýrazňuje pole)
+// — používá se pro rozhodnutí, jestli už má smysl zamknout ručně upravený náhled.
+function isVypovedFormComplete() {
+  if (!document.getElementById('v_cislo').value.trim()) return false;
+  if (!document.getElementById('v_adresa_search').value.trim()) return false;
+  const isFO = vypovedKlientTyp === 'fo';
+  const jmenoField = isFO ? 'v_jmeno' : 'v_nazev_firmy';
+  if (!document.getElementById(jmenoField).value.trim()) return false;
+  if (document.getElementById('v_typ').value === 'dva_mesice') {
+    if (!document.getElementById('v_ucet').value.trim()) return false;
+  }
+  return true;
 }
 
 function validateVypovedForm() {
@@ -665,6 +731,9 @@ function escapeHtml(s) {
 let vPreviewEdited = false;
 
 function onVypovedPreviewEdited() {
+  // Dokud formulář není kompletně vyplněný, náhled ještě nezamykáme — ať se do něj
+  // dál propisují data, která teprve doplňujete. Zámek nastane, až budou povinná pole hotová.
+  if (!isVypovedFormComplete()) return;
   vPreviewEdited = true;
   const hint = document.getElementById('v_preview_edited_hint');
   const btn = document.getElementById('v_preview_reset_btn');
