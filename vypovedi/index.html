@@ -200,8 +200,12 @@ nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:b
     </div>
 
     <div class="card">
-      <div class="card-label">Náhled dopisu</div>
-      <div id="v_preview" style="background:#fff;color:#111;border-radius:8px;padding:60px 70px;font-size:14.5px;line-height:2;white-space:pre-wrap;font-family:Georgia,'Times New Roman',serif;min-height:640px;box-shadow:0 4px 20px rgba(0,0,0,0.25)"></div>
+      <div class="card-label" style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+        <span>Náhled dopisu <span style="font-weight:400;font-size:11px;color:var(--text3)">(text jde ručně upravit kliknutím do náhledu)</span></span>
+        <button type="button" id="v_preview_reset_btn" onclick="resetVypovedPreview()" style="display:none;font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);color:var(--text2);cursor:pointer;white-space:nowrap;font-family:'Inter',sans-serif">↺ Obnovit podle formuláře</button>
+      </div>
+      <div id="v_preview_edited_hint" style="display:none;font-size:11px;color:#B45309;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.35);border-radius:6px;padding:6px 10px;margin-bottom:8px">✏️ Text byl ručně upraven — už se nebude přepisovat podle formuláře, dokud ho neobnovíte tlačítkem výše.</div>
+      <div id="v_preview" contenteditable="true" oninput="onVypovedPreviewEdited()" style="background:#fff;color:#111;border-radius:8px;padding:60px 70px;font-size:14.5px;line-height:2;white-space:pre-wrap;font-family:Georgia,'Times New Roman',serif;min-height:640px;box-shadow:0 4px 20px rgba(0,0,0,0.25);outline:none;cursor:text"></div>
       <p class="note" style="margin-top:10px">PDF se generuje přímo v prohlížeči (pdf-lib). Zkontrolujte prosím údaje před podpisem a odesláním.</p>
     </div>
   </div>
@@ -658,7 +662,26 @@ function escapeHtml(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-function updateVypovedPreview() {
+let vPreviewEdited = false;
+
+function onVypovedPreviewEdited() {
+  vPreviewEdited = true;
+  const hint = document.getElementById('v_preview_edited_hint');
+  const btn = document.getElementById('v_preview_reset_btn');
+  if (hint) hint.style.display = 'block';
+  if (btn) btn.style.display = 'inline-block';
+}
+
+function resetVypovedPreview() {
+  vPreviewEdited = false;
+  const hint = document.getElementById('v_preview_edited_hint');
+  const btn = document.getElementById('v_preview_reset_btn');
+  if (hint) hint.style.display = 'none';
+  if (btn) btn.style.display = 'none';
+  renderVypovedPreviewFromForm();
+}
+
+function renderVypovedPreviewFromForm() {
   const previewEl = document.getElementById('v_preview');
   if (!previewEl) return;
   const ctx = buildVypovedContext();
@@ -668,6 +691,48 @@ function updateVypovedPreview() {
     return l.bold ? '<b style="font-size:1.05em">' + safe + '</b>' : safe;
   }).join('<br>');
   previewEl.innerHTML = html;
+}
+
+function updateVypovedPreview() {
+  // Pokud uživatel dopis ručně upravil, další změny ve formuláři ho už nepřepisují.
+  if (vPreviewEdited) return;
+  renderVypovedPreviewFromForm();
+}
+
+// Přečte aktuální obsah náhledu (i po ruční úpravě) a převede ho zpět na řádky
+// se stejnou strukturou {text, bold}, jakou používá generování PDF/Wordu/e-mailu.
+function getVypovedLines(ctx) {
+  const previewEl = document.getElementById('v_preview');
+  if (!vPreviewEdited || !previewEl) return buildVypovedLines(ctx);
+
+  const lines = [];
+  let current = { text: '', bold: false };
+  function pushLine() {
+    lines.push(current);
+    current = { text: '', bold: false };
+  }
+  function walk(node, bold) {
+    node.childNodes.forEach(child => {
+      if (child.nodeType === Node.TEXT_NODE) {
+        current.text += child.textContent;
+        if (bold && child.textContent.trim()) current.bold = true;
+      } else if (child.nodeName === 'BR') {
+        pushLine();
+      } else if (child.nodeName === 'DIV' || child.nodeName === 'P') {
+        if (current.text) pushLine();
+        walk(child, bold);
+        pushLine();
+      } else if (child.nodeName === 'B' || child.nodeName === 'STRONG') {
+        walk(child, true);
+      } else {
+        walk(child, bold);
+      }
+    });
+  }
+  walk(previewEl, false);
+  pushLine();
+  // Nahradíme nbsp obyčejnou mezerou a řádky ořízneme, ať se prázdné řádky chovají stejně jako blank()
+  return lines.map(l => ({ text: l.text.replace(/ /g, ' ').trim(), bold: l.bold }));
 }
 
 // ── Generování PDF (pdf-lib + fontkit kvůli české diakritice) ──
@@ -744,7 +809,7 @@ async function generateVypovedPDF() {
   statusEl.textContent = 'Generuji PDF…';
   try {
     const ctx = buildVypovedContext();
-    const lines = buildVypovedLines(ctx);
+    const lines = getVypovedLines(ctx);
     const { PDFDocument, rgb } = PDFLib;
     const pdfDoc = await PDFDocument.create();
     pdfDoc.registerFontkit(fontkit);
@@ -908,7 +973,7 @@ function generateVypovedDOCX() {
     return;
   }
   const ctx   = buildVypovedContext();
-  const lines = buildVypovedLines(ctx);
+  const lines = getVypovedLines(ctx);
 
   // Sestavíme XML pro .docx (Office Open XML — WordprocessingML)
   const xmlLines = lines.map(l => {
@@ -1071,7 +1136,7 @@ function openEmailClient() {
   const email = ctx.pojistovna.email || '';
   const subject = encodeURIComponent(ctx.typ.vec(ctx));
   const body = encodeURIComponent(
-    buildVypovedLines(ctx).map(l => l.text).join('\n') +
+    getVypovedLines(ctx).map(l => l.text).join('\n') +
     '\n\n---\nVygenerováno na rihatomas.com/vypovedi'
   );
   const mailto = `mailto:${email}?subject=${subject}&body=${body}`;
