@@ -631,25 +631,23 @@ input[type="range"]::-webkit-slider-runnable-track {
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:center">
             <div class="premium-total-box" style="margin:0;padding:12px 14px;background:var(--surface);border-color:var(--green)">
               <div class="premium-total-label" style="color:var(--green)">Měsíční splátka</div>
-              <div class="premium-total-value" id="k_splatka" style="color:var(--green);font-size:20px">—</div>
+              <div class="premium-total-value" id="k_splatka" style="color:var(--text);font-size:16px;font-weight:600">—</div>
             </div>
-            <div><div style="font-size:11px;color:var(--text3)" id="k_celkem_label">Celkem zaplatíte</div><div style="font-size:17px;font-weight:700;color:var(--text)" id="k_celkem">—</div></div>
+            <div><div style="font-size:11px;color:var(--text3)" id="k_celkem_label">Celkem zaplatíte</div><div style="font-size:15px;font-weight:600;color:var(--text)" id="k_celkem">—</div></div>
             <div style="grid-column:1/-1;height:1px;background:var(--border);margin:4px 0"></div>
-            <div><div style="font-size:11px;color:var(--text3)">Přeplatek úroky</div><div style="font-size:17px;font-weight:700;color:var(--red)" id="k_uroky">—</div></div>
-            <div><div style="font-size:11px;color:var(--text3)">Počet splátek</div><div style="font-size:17px;font-weight:700;color:var(--text)" id="k_pocet">—</div></div>
+            <div><div style="font-size:11px;color:var(--text3)">Přeplatek úroky</div><div style="font-size:15px;font-weight:600;color:var(--text)" id="k_uroky">—</div></div>
+            <div><div style="font-size:11px;color:var(--text3)">Počet splátek</div><div style="font-size:15px;font-weight:600;color:var(--text)" id="k_pocet">—</div></div>
           </div>
         </div>
         <div id="k_splatka_b_inline" style="display:none;margin-bottom:1.5rem;background:rgba(59,130,246,0.07);border:1px solid rgba(59,130,246,0.4);border-radius:10px;padding:14px 16px">
-          <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:12px">
             <span style="font-size:11px;font-weight:700;color:#3B82F6;text-transform:uppercase;letter-spacing:0.05em">⚖️ Banka B — srovnání</span>
           </div>
-          <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:12px">
-            <div>
-              <div style="font-size:10px;color:var(--text3);margin-bottom:2px">Měsíční splátka</div>
-              <div style="font-size:19px;font-weight:700;color:#3B82F6" id="k_splatka_b_inline_val">—</div>
-            </div>
-            <div style="font-size:13px;font-weight:700;text-align:right" id="k_splatka_b_inline_delta"></div>
+          <div class="premium-total-box" style="margin:0 0 6px 0;padding:12px 14px;background:var(--surface);border-color:#3B82F6">
+            <div class="premium-total-label" style="color:#3B82F6">Měsíční splátka</div>
+            <div class="premium-total-value" id="k_splatka_b_inline_val" style="color:var(--text);font-size:16px;font-weight:600">—</div>
           </div>
+          <div id="k_splatka_b_inline_delta" style="text-align:right;font-size:12px;font-weight:600;margin-bottom:12px"></div>
           <div id="k_uspora_breakdown" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding-top:12px;border-top:1px dashed rgba(59,130,246,0.3)">
             <div style="text-align:center;background:var(--surface);border-radius:8px;padding:6px 4px">
               <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.04em">Za 1 rok</div>
@@ -3702,8 +3700,9 @@ function calcKalk() {
     const lepsi    = splatkaB < splatka ? 'B' : 'A';
     if (inlineVal) inlineVal.textContent = fmt(Math.round(splatkaB)) + ' / měs.';
     if (inlineDelta) {
-      inlineDelta.textContent = (lepsi === 'B' ? '↓ levnější o ' : '↑ dražší o ') + fmt(Math.round(uspMes));
-      inlineDelta.style.color = lepsi === 'B' ? 'var(--green)' : 'var(--red)';
+      const jeLevnejsi = lepsi === 'B';
+      inlineDelta.textContent = (jeLevnejsi ? '↓ levnější o ' : '↑ dražší o ') + fmt(Math.round(uspMes));
+      inlineDelta.style.color = jeLevnejsi ? 'var(--green)' : 'var(--red)';
     }
     if (inlineBadge) inlineBadge.style.display = 'block';
 
