@@ -138,6 +138,10 @@ footer a:hover{color:var(--text2)}
 /* INVEST GRID - SLOUPEC */
 .products-grid{display:grid;grid-template-columns:1fr;gap:5px;margin-bottom:.5rem}
 .product-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:.55rem .85rem;transition:background 0.3s,border-color 0.3s;display:flex;justify-content:space-between;align-items:center}
+.info-tip{position:relative;display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:#3B82F6;color:#fff;font-size:11px;font-weight:800;cursor:help;margin-left:4px;vertical-align:middle;line-height:1;box-shadow:0 1px 3px rgba(0,0,0,0.35);transition:background 0.15s,transform 0.15s}
+.info-tip:hover,.info-tip:focus{background:#60A5FA;transform:scale(1.15)}
+.info-tip .info-tip-text{visibility:hidden;opacity:0;position:absolute;bottom:135%;left:50%;transform:translateX(-50%);background:var(--surface3);color:var(--text2);border:1px solid var(--border2);border-radius:7px;padding:8px 10px;font-size:11px;font-weight:400;line-height:1.45;white-space:normal;width:230px;box-shadow:0 6px 18px rgba(0,0,0,0.3);transition:opacity 0.15s;z-index:60;text-transform:none;letter-spacing:normal}
+.info-tip:hover .info-tip-text,.info-tip:focus .info-tip-text{visibility:visible;opacity:1}
 .product-card.best{border-color:var(--accent);border-width:2px;background:rgba(200,240,74,0.08);box-shadow:0 0 0 1px rgba(200,240,74,0.2)}
 .product-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
 .product-name{font-size:13px;font-weight:600;color:var(--text)}
@@ -3114,6 +3118,10 @@ function fmt(n) {
   return new Intl.NumberFormat("cs-CZ", {style:"currency", currency:"CZK", maximumFractionDigits:0}).format(Math.round(n));
 }
 
+function sankceZamestHtml(amount) {
+  return '⚠ Sankce při zrušení<span class="info-tip" tabindex="0">ⓘ<span class="info-tip-text">Jde o zpětné zdanění příspěvků zaměstnavatele (15&nbsp;%) — ne o daň ze zisku. Ty jsou pro vás od daně osvobozené, jen pokud dodržíte podmínky: čerpáte po 60. roce věku a spořil/a jste alespoň 5 let (60 měsíců). Při dřívějším zrušení musíte tuto daňovou výhodu vrátit.</span></span>: -' + fmt(amount);
+}
+
 function monthlyPayment(jistina, sazbaRocni, mesice) {
   if (sazbaRocni <= 0) return jistina / mesice;
   const r = sazbaRocni / 100 / 12;
@@ -4950,19 +4958,19 @@ function calcPenze() {
   const tfDanZam = tfRes.zamest * 0.15;
   const dpsDanZam = dpsRes.zamest * 0.15;
   const tfHints = document.querySelectorAll('#penze-tfvsdps .dan-zamest-hint');
-  if(tfHints[0]) { tfHints[0].style.display = tfDanZam > 0 ? 'block' : 'none'; tfHints[0].textContent = `⚠️ Sankce při zrušení: -${fmt(Math.round(tfDanZam))} Kč`; }
-  if(tfHints[1]) { tfHints[1].style.display = dpsDanZam > 0 ? 'block' : 'none'; tfHints[1].textContent = `⚠️ Sankce při zrušení: -${fmt(Math.round(dpsDanZam))} Kč`; }
+  if(tfHints[0]) { tfHints[0].style.display = tfDanZam > 0 ? 'block' : 'none'; tfHints[0].innerHTML = sankceZamestHtml(Math.round(tfDanZam)); }
+  if(tfHints[1]) { tfHints[1].style.display = dpsDanZam > 0 ? 'block' : 'none'; tfHints[1].innerHTML = sankceZamestHtml(Math.round(dpsDanZam)); }
   const tfSankce = (tfRes.zamest || 0) * 0.15;
   const dpsSankce = (dpsRes.zamest || 0) * 0.15;
   const tfSankceEl = document.querySelector('#tf_zamest_celkem')?.parentElement.querySelector('.sankce-zamest-box');
   const dpsSankceEl = document.querySelector('#p_dps_zamest_celkem')?.parentElement.querySelector('.sankce-zamest-box');
   if(tfSankceEl) {
     tfSankceEl.style.display = tfSankce > 0 ? 'block' : 'none';
-    tfSankceEl.textContent = `⚠ Sankce při zrušení: -${fmt(tfSankce)}`;
+    tfSankceEl.innerHTML = sankceZamestHtml(tfSankce);
   }
   if(dpsSankceEl) {
     dpsSankceEl.style.display = dpsSankce > 0 ? 'block' : 'none';
-    dpsSankceEl.textContent = `⚠ Sankce při zrušení: -${fmt(dpsSankce)}`;
+    dpsSankceEl.innerHTML = sankceZamestHtml(dpsSankce);
   }
 }
 
@@ -5213,8 +5221,8 @@ function calcDip() {
     const dpsDanZam2 = dpsRes ? dpsRes.zamest * 0.15 : 0;
     const dipDanZam2 = dipRes ? dipRes.zamest * 0.15 : 0;
     const dipHints = document.querySelectorAll('#penze-dpsvssdip .dan-zamest-hint');
-    if(dipHints[0]) { dipHints[0].style.display = dpsDanZam2 > 0 ? 'block' : 'none'; dipHints[0].textContent = `⚠️ Sankce při zrušení: -${fmt(Math.round(dpsDanZam2))} Kč`; }
-    if(dipHints[1]) { dipHints[1].style.display = dipDanZam2 > 0 ? 'block' : 'none'; dipHints[1].textContent = `⚠️ Sankce při zrušení: -${fmt(Math.round(dipDanZam2))} Kč`; }
+    if(dipHints[0]) { dipHints[0].style.display = dpsDanZam2 > 0 ? 'block' : 'none'; dipHints[0].innerHTML = sankceZamestHtml(Math.round(dpsDanZam2)); }
+    if(dipHints[1]) { dipHints[1].style.display = dipDanZam2 > 0 ? 'block' : 'none'; dipHints[1].innerHTML = sankceZamestHtml(Math.round(dipDanZam2)); }
   }
   const dpsSankce2 = (dpsRes?.zamest || 0) * 0.15;
   const dipSankce2 = (dipRes?.zamest || 0) * 0.15;
@@ -5222,11 +5230,11 @@ function calcDip() {
   const dipSankceEl2 = document.getElementById('d_dip_zamest_celkem')?.parentElement.querySelector('.sankce-zamest-box');
   if(dpsSankceEl2) {
     dpsSankceEl2.style.display = dpsSankce2 > 0 ? 'block' : 'none';
-    dpsSankceEl2.textContent = `⚠ Sankce při zrušení: -${fmt(dpsSankce2)}`;
+    dpsSankceEl2.innerHTML = sankceZamestHtml(dpsSankce2);
   }
   if(dipSankceEl2) {
     dipSankceEl2.style.display = dipSankce2 > 0 ? 'block' : 'none';
-    dipSankceEl2.textContent = `⚠ Sankce při zrušení: -${fmt(dipSankce2)}`;
+    dipSankceEl2.innerHTML = sankceZamestHtml(dipSankce2);
   }
 }
 // INVEST SUB-TABS
