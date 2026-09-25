@@ -68,6 +68,24 @@ nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:b
 
 .note{font-size:13px;color:var(--text3);margin-top:1.5rem;line-height:1.7}
 .field input.v-error{border-color:var(--red) !important;background:var(--red-dim) !important}
+.field input.v-required-empty{border-color:var(--red) !important;box-shadow:0 0 0 3px rgba(239,68,68,0.18),0 0 14px rgba(239,68,68,0.35) !important}
+.termin-box{background:var(--accent-dim);border:1.5px solid var(--accent);border-radius:12px;padding:14px 16px;margin-bottom:12px;box-shadow:0 0 0 3px var(--accent-dim2),0 0 22px var(--accent-dim)}
+.termin-pill{display:inline-block;font-size:11px;font-weight:700;color:#0E0F11;background:var(--accent);text-transform:uppercase;letter-spacing:0.06em;padding:4px 10px;border-radius:20px;margin-bottom:12px}
+.termin-q{font-size:12px;font-weight:400;color:var(--text2);margin-bottom:6px}
+.termin-result{font-size:13px;line-height:1.8;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px}
+.termin-box .field label.termin-label{color:var(--text);font-weight:400}
+.termin-box strong{font-weight:500}
+#v_vyroci{border:2px solid #D4FF00;background:rgba(212,255,0,0.14);color:var(--text);box-shadow:0 0 0 3px rgba(212,255,0,0.25),0 0 18px rgba(212,255,0,0.55);font-size:14px;font-weight:400}
+.t-ok{color:var(--accent)}
+.t-warn{color:#F59E0B}
+.t-bad{color:var(--red)}
+[data-theme="light"] .termin-box{background:#FFFFFF;border:1.5px solid var(--border2);border-left:5px solid #7FA01A;box-shadow:0 2px 14px rgba(0,0,0,0.07)}
+[data-theme="light"] .termin-pill{background:#1F2937;color:#FFFFFF}
+[data-theme="light"] .termin-q{color:var(--text)}
+[data-theme="light"] .termin-result{background:#F9FAFB;border-color:var(--border2);color:var(--text)}
+[data-theme="light"] #v_vyroci{border-color:#B8E600;background:#EEFF66;color:#111827;box-shadow:0 0 0 3px rgba(200,255,0,0.45),0 0 18px rgba(200,255,0,0.8)}
+[data-theme="light"] .t-ok{color:var(--green)}
+[data-theme="light"] .t-warn{color:#B45309}
 .v-error-msg{font-size:12px;color:var(--red);margin-top:8px;text-align:center;font-weight:500}
 
 @keyframes v-pulse-search { 0%,100%{ border-color:var(--border2); background:var(--surface2); } 50%{ border-color:var(--accent); background:var(--accent-dim2); } }
@@ -171,24 +189,24 @@ nav{position:sticky;top:0;z-index:100;background:var(--nav-bg);backdrop-filter:b
       </div>
 
       <!-- Kalkulačka termínu -->
-      <div id="v_termin_box" style="background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:12px 14px;margin-bottom:12px;display:none">
-        <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px">⏰ Kalkulačka termínu odeslání</div>
+      <div id="v_termin_box" class="termin-box" style="display:none">
+        <div class="termin-pill">⏰ Kalkulačka termínu odeslání</div>
 
         <!-- Varianta A: Znám výročí, kdy nejpozději odeslat? -->
-        <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px">📌 Znám výročí — kdy nejpozději doručit?</div>
+        <div class="termin-q">📌 Znám výročí — kdy nejpozději doručit?</div>
         <div class="field" style="margin-bottom:6px">
-          <label>Datum výročí smlouvy</label>
+          <label class="termin-label">Datum výročí smlouvy</label>
           <div style="display:flex;gap:6px;position:relative">
-            <input type="text" id="v_vyroci" placeholder="např. 1.1.2026 nebo 2026-01-01" oninput="calcTerminOdVyroci()" style="font-size:13px;flex:1">
+            <input type="text" id="v_vyroci" placeholder="např. 1.1.2026 nebo 2026-01-01" oninput="calcTerminOdVyroci()" onchange="normalizeVyrociInput()" style="flex:1">
             <button type="button" onclick="openDatumVyrociKalendar(event)" title="Vybrat z kalendáře" style="padding:0 12px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center">📅</button>
             <input type="date" id="v_vyroci_picker" oninput="onDatumVyrociPicked()" onchange="onDatumVyrociPicked()" style="position:absolute;right:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none;border:0;padding:0">
           </div>
         </div>
-        <div id="v_termin_result_a" style="font-size:12px;line-height:1.7;padding:8px 10px;background:var(--surface);border-radius:7px;display:none;margin-bottom:12px"></div>
+        <div id="v_termin_result_a" class="termin-result" style="display:none;margin-bottom:12px"></div>
 
         <!-- Varianta B: Chci odeslat dnes, jaké nejpozdější výročí stihnu? -->
-        <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px">📌 Odesílám dnes — jaké nejpozdější výročí stihnu?</div>
-        <div id="v_termin_result_b" style="font-size:12px;line-height:1.7;padding:8px 10px;background:var(--surface);border-radius:7px"></div>
+        <div class="termin-q">📌 Odesílám dnes — jaké nejpozdější výročí stihnu?</div>
+        <div id="v_termin_result_b" class="termin-result"></div>
       </div>
 
       <!-- Kalkulačka výpovědní doby (životní pojištění) -->
@@ -579,15 +597,9 @@ function openDatumVyrociKalendar(evt) {
   const picker = document.getElementById('v_vyroci_picker');
   if (!picker) return;
   const textEl = document.getElementById('v_vyroci');
-  if (textEl && textEl.value) {
-    const m = textEl.value.trim().match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
-    if (m) {
-      const [, d, mo, y] = m;
-      picker.value = y + '-' + mo.padStart(2, '0') + '-' + d.padStart(2, '0');
-    } else {
-      const m2 = textEl.value.trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
-      if (m2) picker.value = textEl.value.trim();
-    }
+  const parsed = textEl ? parseFlexDate(textEl.value) : null;
+  if (parsed) {
+    picker.value = parsed.getFullYear() + '-' + String(parsed.getMonth() + 1).padStart(2, '0') + '-' + String(parsed.getDate()).padStart(2, '0');
   }
   if (typeof picker.showPicker === 'function') {
     picker.showPicker();
@@ -603,7 +615,7 @@ function onDatumVyrociPicked() {
   if (!picker || !picker.value || !el) return;
   const [y, mo, d] = picker.value.split('-');
   el.value = parseInt(d, 10) + '.' + parseInt(mo, 10) + '.' + y;
-  calcTerminOdVyroci();
+  normalizeVyrociInput();
   closeDatePicker(picker);
 }
 
@@ -762,7 +774,19 @@ function renderVypovedPreviewFromForm() {
   previewEl.innerHTML = html;
 }
 
+// Povinná pole svítí červeně, dokud nejsou vyplněná.
+function highlightRequiredFields() {
+  const jmenoField = vypovedKlientTyp === 'fo' ? 'v_jmeno' : 'v_nazev_firmy';
+  ['v_cislo', 'v_adresa_search', 'v_jmeno', 'v_nazev_firmy'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const required = id !== 'v_jmeno' && id !== 'v_nazev_firmy' || id === jmenoField;
+    el.classList.toggle('v-required-empty', required && !el.value.trim());
+  });
+}
+
 function updateVypovedPreview() {
+  highlightRequiredFields();
   // Pokud uživatel dopis ručně upravil, další změny ve formuláři ho už nepřepisují.
   if (vPreviewEdited) return;
   renderVypovedPreviewFromForm();
@@ -949,16 +973,39 @@ async function generateVypovedPDF() {
 }
 
 // ── Kalkulačka termínu — parsování flexibilního data ──
+// Přijímá např. "13.11.2025", "13. 11. 2025", "13 11 2025", "13/11/25", "13.11." (bez roku), "2025-11-13".
 function parseFlexDate(str) {
   if (!str) return null;
-  str = str.trim();
-  // Formáty: D.M.YYYY, DD.MM.YYYY, YYYY-MM-DD, D/M/YYYY
-  let m;
-  m = str.match(/^(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{4})$/);
-  if (m) return new Date(+m[3], +m[2]-1, +m[1]);
-  m = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
-  if (m) return new Date(+m[1], +m[2]-1, +m[3]);
-  return null;
+  str = str.trim().replace(/\.$/, '');
+  let d, mo, y;
+  let m = str.match(/^(\d{4})\s*[-.\/]\s*(\d{1,2})\s*[-.\/]\s*(\d{1,2})$/);
+  if (m) { y = +m[1]; mo = +m[2]; d = +m[3]; }
+  else {
+    m = str.match(/^(\d{1,2})\s*[.\/\-\s]\s*(\d{1,2})(?:\s*[.\/\-\s]\s*(\d{2}|\d{4}))?$/);
+    if (!m) return null;
+    d = +m[1]; mo = +m[2];
+    y = m[3] ? +m[3] : new Date().getFullYear();
+    if (m[3] && m[3].length === 2) y += 2000;
+  }
+  const date = new Date(y, mo - 1, d);
+  if (date.getMonth() !== mo - 1 || date.getDate() !== d) return null;
+  return date;
+}
+
+// Výročí se opakuje každý rok — vrátí nejbližší výročí, které je dnes nebo později.
+function nejblizsiVyroci(date) {
+  const dnes = new Date(); dnes.setHours(0,0,0,0);
+  const v = new Date(dnes.getFullYear(), date.getMonth(), date.getDate());
+  if (v < dnes) v.setFullYear(v.getFullYear() + 1);
+  return v;
+}
+
+function normalizeVyrociInput() {
+  const input = document.getElementById('v_vyroci');
+  const parsed = parseFlexDate(input.value);
+  if (!parsed) return;
+  input.value = fmtDateCZfull(nejblizsiVyroci(parsed));
+  calcTerminOdVyroci();
 }
 
 function fmtDateCZfull(d) {
@@ -969,11 +1016,9 @@ function fmtDateCZfull(d) {
 function calcTerminOdVyroci() {
   const str = document.getElementById('v_vyroci').value;
   const el  = document.getElementById('v_termin_result_a');
-  const vyroci = parseFlexDate(str);
-  if (!vyroci || isNaN(vyroci)) { el.style.display = 'none'; return; }
-
-  // Přepis do čitelného formátu
-  document.getElementById('v_vyroci').placeholder = fmtDateCZfull(vyroci);
+  const zadane = parseFlexDate(str);
+  if (!zadane || isNaN(zadane)) { el.style.display = 'none'; return; }
+  const vyroci = nejblizsiVyroci(zadane);
 
   const nejpozdeji = new Date(vyroci);
   nejpozdeji.setDate(nejpozdeji.getDate() - 42); // 6 týdnů = 42 dní
@@ -984,15 +1029,15 @@ function calcTerminOdVyroci() {
   html += '📬 Nejpozději <strong>doručit</strong> pojišťovně: <strong>' + fmtDateCZfull(nejpozdeji) + '</strong><br>';
 
   if (zbyvaDni < 0) {
-    html += '<span style="color:var(--red)">❌ Termín uplynul před ' + Math.abs(zbyvaDni) + ' dny — smlouva se automaticky prodlouží o rok.</span>';
+    html += '<span class="t-bad">❌ Termín uplynul před ' + Math.abs(zbyvaDni) + ' dny — smlouva se automaticky prodlouží o rok.</span>';
   } else if (zbyvaDni === 0) {
-    html += '<span style="color:var(--red)">❌ Dnes je poslední den! Odešlete ihned doporučeně.</span>';
+    html += '<span class="t-bad">❌ Dnes je poslední den! Odešlete ihned doporučeně.</span>';
   } else if (zbyvaDni <= 7) {
-    html += '<span style="color:var(--red)">⚠️ Zbývá pouze <strong>' + zbyvaDni + ' dní</strong> — odešlete ihned doporučeně!</span>';
+    html += '<span class="t-bad">⚠️ Zbývá pouze <strong>' + zbyvaDni + ' dní</strong> — odešlete ihned doporučeně!</span>';
   } else if (zbyvaDni <= 14) {
-    html += '<span style="color:orange">⚠️ Zbývá <strong>' + zbyvaDni + ' dní</strong> — rozhoduje datum doručení, ne odeslání.</span>';
+    html += '<span class="t-warn">⚠️ Zbývá <strong>' + zbyvaDni + ' dní</strong> — rozhoduje datum doručení, ne odeslání.</span>';
   } else {
-    html += '<span style="color:var(--accent)">✅ Zbývá <strong>' + zbyvaDni + ' dní</strong> — máte čas.</span>';
+    html += '<span class="t-ok">✅ Zbývá <strong>' + zbyvaDni + ' dní</strong> — máte čas.</span>';
   }
 
   el.innerHTML = html;
@@ -1217,6 +1262,7 @@ function openEmailClient() {
 
 // Spuštění po načtení stránky
 initVypovedi();
+highlightRequiredFields();
 </script>
 </body>
 </html>
