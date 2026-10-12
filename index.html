@@ -497,6 +497,12 @@ input[type="range"]::-webkit-slider-runnable-track {
 /* Hover efekt pro tabulku Vývoj po letech — ETF */
 #i_rocni_tbody tr { transition: background 0.15s ease; }
 #i_rocni_tbody tr:hover { background: var(--surface3) !important; }
+.k-preset-row{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.k-preset{flex:1;min-width:90px;padding:6px 8px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);color:var(--text2);font-family:'Inter',sans-serif;font-size:11px;line-height:1.3;cursor:pointer;text-align:center;transition:border-color .15s,background .15s,color .15s}
+.k-preset span{display:block;font-size:10px;color:var(--text3)}
+.k-preset:hover{border-color:var(--accent);color:var(--text)}
+.k-preset.active{border-color:var(--accent);background:var(--accent-dim);color:var(--text)}
+.k-preset.active span{color:var(--text2)}
 </style>
 </head>
 <body>
@@ -594,6 +600,11 @@ input[type="range"]::-webkit-slider-runnable-track {
               <button onclick="syncRoky((parseInt(document.getElementById('k_roky').value)||0)+1)" style="width:28px;height:32px;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">+</button>
             </div>
             <input type="range" id="k_roky_slider" min="0" max="65" value="10" step="1" oninput="syncRoky(this.value, true)" style="width:100%;accent-color:var(--accent);cursor:pointer">
+            <div class="k-preset-row">
+              <button type="button" class="k-preset" data-roky="10" onclick="kNastavTyp(10)">Spotřebitelský úvěr<span>8–10 let</span></button>
+              <button type="button" class="k-preset" data-roky="20" onclick="kNastavTyp(20)">Úvěr ze stavebka<span>20 let</span></button>
+              <button type="button" class="k-preset" data-roky="30" onclick="kNastavTyp(30)">Hypotéka<span>30 let</span></button>
+            </div>
           </div>
           <div class="field" style="margin-bottom:0">
             <label style="display:block">+ měsíce</label>
@@ -3276,6 +3287,23 @@ function syncRoky(val, fromSlider) {
   calcKalk();
 }
 
+// Rychlá volba typické doby splatnosti podle druhu úvěru
+function kNastavTyp(roky) {
+  const mes = document.getElementById("k_mes");
+  const mesSl = document.getElementById("k_mes_slider");
+  if (mes) mes.value = 0;
+  if (mesSl) mesSl.value = 0;
+  syncRoky(roky);
+}
+
+function kZvyrazniPreset() {
+  const roky = parseInt(document.getElementById("k_roky")?.value);
+  const mes = parseInt(document.getElementById("k_mes")?.value) || 0;
+  document.querySelectorAll(".k-preset").forEach(b => {
+    b.classList.toggle("active", mes === 0 && parseInt(b.dataset.roky) === roky);
+  });
+}
+
 function syncKMes(delta) {
   const el = document.getElementById("k_mes");
   const sl = document.getElementById("k_mes_slider");
@@ -3599,6 +3627,7 @@ function calcPredduchod() {
 // ── /PŘEDDŮCHOD ──────────────────────────────────────────────
 
 function calcKalk() {
+  kZvyrazniPreset();
   const prev = document.getElementById("k_jistina_prev");
   const prevS = document.getElementById("k_splatka_prev");
   const s = getCleanNum("k_sazba");
