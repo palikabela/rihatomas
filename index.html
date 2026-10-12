@@ -138,6 +138,57 @@ footer a:hover{color:var(--text2)}
 /* INVEST GRID - SLOUPEC */
 .products-grid{display:grid;grid-template-columns:1fr;gap:5px;margin-bottom:.5rem}
 .product-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:.55rem .85rem;transition:background 0.3s,border-color 0.3s;display:flex;justify-content:space-between;align-items:center}
+:root{--z-yellow:#EAB308}
+[data-theme="light"]{--z-yellow:#B08800}
+.z-card-title{display:flex;align-items:center;gap:7px;color:var(--text);font-weight:700;font-size:12px;margin-bottom:4px;letter-spacing:0.02em}
+.z-card-inv{border-top:3px solid var(--c) !important}
+.z-card-inv .z-card-title{color:var(--c)}
+.z-card-inv .z-res{border-color:color-mix(in srgb,var(--c) 45%,var(--border2))}
+.z-dot{width:8px;height:8px;border-radius:50%;background:var(--c);flex-shrink:0}
+.z-sec-title{font-size:10.5px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin:22px 0 8px 2px;display:flex;align-items:center;gap:8px}
+.z-sec-title::after{content:"";flex:1;height:1px;background:var(--border2)}
+.z-group{margin-bottom:16px}
+.z-group:last-child{margin-bottom:0}
+.z-group-title{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px}
+.z-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:420px){.z-grid{grid-template-columns:1fr}}
+@media(max-width:600px){.z-f-box input{font-size:16px}}
+.z-f label{display:block;font-size:10.5px;color:var(--text2);font-weight:500;margin-bottom:5px}
+.z-f-hint{color:var(--text3);font-weight:400;font-size:10px}
+.z-f-box{display:flex;align-items:center;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:0 10px;height:36px;transition:border-color .15s,box-shadow .15s}
+.z-f-box:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
+.z-f-box input{flex:1;min-width:0;width:100%;background:transparent;border:none;outline:none;color:var(--text);font-size:14px;font-weight:600;padding:0;font-family:'Inter',sans-serif}
+.z-f-box input::placeholder{color:var(--text3);font-weight:500}
+.z-f-box input:disabled{color:var(--text3);cursor:not-allowed}
+.z-f-unit{font-size:10.5px;color:var(--text3);margin-left:6px;white-space:nowrap}
+.z-f-sep{width:1px;align-self:stretch;margin:8px 8px;background:var(--border2)}
+.z-f-box input.z-f-alt{flex:0 0 56px;font-size:12px;font-weight:500;color:var(--text2)}
+.z-range{width:100%;margin-top:8px;margin-bottom:6px;display:block;cursor:pointer;accent-color:var(--accent)}
+input[type="range"].z-range{height:4px}
+input[type="range"].z-range::-webkit-slider-thumb{width:14px;height:14px}
+input[type="range"].z-range::-moz-range-thumb{width:14px;height:14px}
+.z-range-row{display:flex;align-items:center;gap:8px;margin-top:8px;margin-bottom:6px}
+.z-range-row .z-range{flex:1;margin:0}
+.z-step{flex-shrink:0;width:24px;height:24px;border-radius:6px;border:1px solid var(--border2);background:var(--surface2);color:var(--text2);font-size:14px;font-weight:600;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-family:'Inter',sans-serif;transition:border-color .15s,color .15s}
+.z-step:hover{border-color:var(--accent);color:var(--text)}
+.z-step:active{transform:scale(0.94)}
+.z-seg{display:flex;background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:3px;gap:3px}
+.z-seg button{flex:1;border:none;background:transparent;color:var(--text2);font-size:11.5px;font-weight:600;padding:6px 8px;border-radius:7px;cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s,color .15s}
+.z-seg button:hover{color:var(--text)}
+.z-seg button.active{background:var(--accent);color:#0E0F11}
+.z-res{margin-top:2px;padding:8px 10px;border-radius:9px;background:var(--surface2);border:1px solid var(--border2)}
+.z-res-label{font-size:10.5px;color:var(--text2);font-weight:600;margin-bottom:2px}
+.z-res-val{font-size:18px;font-weight:700;color:var(--text);letter-spacing:-0.01em}
+.z-causes{margin:0 0 10px;padding:8px 10px;border-radius:8px;background:var(--surface2)}
+.z-causes-title{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px}
+.z-chip{display:inline-block;font-size:10px;line-height:1.3;padding:2px 7px;border-radius:12px;background:var(--surface3);color:var(--text2);margin:2px 3px 2px 0}
+details.z-info{margin-top:10px;border-top:1px dashed var(--border);padding-top:8px}
+details.z-info summary{cursor:pointer;font-size:11px;color:var(--text2);list-style:none;display:inline-flex;align-items:center;gap:6px;user-select:none}
+details.z-info summary::-webkit-details-marker{display:none}
+details.z-info summary::before{content:"i";display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:#3B82F6;color:#fff;font-size:11px;font-weight:800;font-family:Georgia,serif}
+details.z-info[open] summary{color:var(--text)}
+details.z-info .z-info-body{font-size:10.5px;color:var(--text3);line-height:1.45;margin-top:6px}
+.z-warn{font-size:10.5px;line-height:1.45;padding:8px 10px;border-radius:7px;margin-bottom:10px;color:var(--text2);background:rgba(234,179,8,0.08);border:1px solid rgba(234,179,8,0.4)}
 .info-tip{position:relative;display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:#3B82F6;color:#fff;font-size:11px;font-weight:800;cursor:help;margin-left:4px;vertical-align:middle;line-height:1;box-shadow:0 1px 3px rgba(0,0,0,0.35);transition:background 0.15s,transform 0.15s}
 .info-tip:hover,.info-tip:focus{background:#60A5FA;transform:scale(1.15)}
 .info-tip .info-tip-text{visibility:hidden;opacity:0;position:absolute;bottom:135%;left:50%;transform:translateX(-50%);background:var(--surface3);color:var(--text2);border:1px solid var(--border2);border-radius:7px;padding:8px 10px;font-size:11px;font-weight:400;line-height:1.45;white-space:normal;width:230px;box-shadow:0 6px 18px rgba(0,0,0,0.3);transition:opacity 0.15s;z-index:60;text-transform:none;letter-spacing:normal}
@@ -2358,44 +2409,14 @@ input[type="range"]::-webkit-slider-runnable-track {
     <div style="position: sticky; top: 20px; align-self: start;">
       <div class="card" style="margin-bottom:12px; padding: 14px">
         <div class="card-label" style="margin-bottom:12px; font-size: 11px;">Základní parametry</div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px">
-          
-          <div class="field" style="margin-bottom:0">
-            <label style="font-size:10px; margin-bottom:4px; display:block">Věk / Rok nar.</label>
-            <div style="background:var(--surface2); padding:8px; border-radius:8px; border:1px solid var(--border)">
-              <div style="display:flex; align-items:center; gap:4px; margin-bottom:6px">
-                <button onclick="adjZivot('z_vek', -1)" style="width:24px;height:24px;border-radius:4px;border:1px solid var(--border2);background:var(--surface);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-weight:bold;flex-shrink:0">−</button>
-                <input type="text" id="z_vek" value="0" oninput="syncZivotInput(this, 'vek')" style="width:30px;background:transparent;border:none;color:var(--text);font-size:14px;font-weight:700;text-align:center;outline:none;padding:0" placeholder="Věk">
-                <button onclick="adjZivot('z_vek', 1)" style="width:24px;height:24px;border-radius:4px;border:1px solid var(--border2);background:var(--surface);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-weight:bold;flex-shrink:0">+</button>
-                <span style="font-size:10px; color:var(--text3); margin:0 4px">nebo</span>
-                <input type="text" id="z_rok" value="" oninput="syncZivotInput(this, 'rok')" style="width:52px;background:var(--surface);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:13px;font-weight:700;text-align:center;outline:none;padding:2px 0" placeholder="RRRR">
-              </div>
-              <input type="range" id="z_vek_slider" min="0" max="65" value="0" oninput="syncZivotSlider('z_vek')" style="width:100%; cursor:pointer; accent-color:var(--accent); height:4px; display:block">
-            </div>
+
+        <div class="z-group">
+          <div class="z-group-title">Klient</div>
+          <div class="z-seg" style="margin-bottom:10px">
+            <button type="button" id="z_type_zam" class="active" onclick="setClientType('z', 'zam')">👨‍💼 Zaměstnanec</button>
+            <button type="button" id="z_type_osvc" onclick="setClientType('z', 'osvc')">🧮 OSVČ</button>
           </div>
-
-          <div class="field" style="margin-bottom:0">
-            <label style="font-size:10px; margin-bottom:4px; display:block">Dlužná jistina (Kč)</label>
-            <div style="background:var(--surface2); padding:8px; border-radius:8px; border:1px solid var(--border)">
-              <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px">
-                <button onclick="adjZivot('z_hypo', -100000)" style="width:26px;height:26px;border-radius:4px;border:1px solid var(--border2);background:var(--surface);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-weight:bold;flex-shrink:0">−</button>
-                <input type="text" id="z_hypo" value="0" oninput="syncZivotInput(this)" style="flex:1;min-width:0;background:transparent;border:none;color:var(--text);font-size:14px;font-weight:700;text-align:center;outline:none;padding:0">
-                <button onclick="adjZivot('z_hypo', 100000)" style="width:26px;height:26px;border-radius:4px;border:1px solid var(--border2);background:var(--surface);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-weight:bold;flex-shrink:0">+</button>
-              </div>
-              <input type="range" id="z_hypo_slider" min="0" max="15000000" step="100000" value="0" oninput="syncZivotSlider('z_hypo')" style="width:100%; cursor:pointer; accent-color:var(--accent); height:4px; display:block">
-            </div>
-          </div>
-
-        </div>
-
-        <div style="grid-column:1/-1; margin-top:10px;">
-          <div style="margin-top: 5px; margin-bottom: 10px;">
-            <label style="display: block; margin-bottom: 6px; font-size: 11px; color: var(--text2); font-weight: 600;">Typ příjmu klienta:</label>
-            <div style="display: flex; gap: 8px; margin-bottom: 10px;">
-              <button type="button" id="z_type_zam" onclick="setClientType('z', 'zam')" style="flex: 1; background: var(--surface3); color: var(--text); border: 2px solid #3B82F6; padding: 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.2s;">👨‍💼 Zaměstnanec</button>
-              <button type="button" id="z_type_osvc" onclick="setClientType('z', 'osvc')" style="flex: 1; background: var(--surface2); color: var(--text2); border: 1px solid var(--border2); padding: 8px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s;">🧮 OSVČ (Živnostník)</button>
-            </div>
-            <div id="z_osvc_helper_box" style="display: none; background: var(--surface2); border: 1px solid var(--border2); padding: 12px; border-radius: 6px; font-size: 11px;">
+          <div id="z_osvc_helper_box" style="display: none; background: var(--surface2); border: 1px solid var(--border2); padding: 12px; border-radius: 6px; font-size: 11px;">
               <label style="display: block; margin-bottom: 5px; font-weight: 600; color: var(--text2);">Režim daně OSVČ:</label>
               <select id="z_osvc_type" onchange="updateOsvcCalculation('z')" style="width: 100%; background: var(--surface3); color: var(--text); border: 1px solid var(--border2); padding: 6px; border-radius: 4px; font-size: 11px; margin-bottom: 8px; font-weight: 700;">
                 <option value="none">-- Vyberte režim --</option>
@@ -2421,168 +2442,214 @@ input[type="range"]::-webkit-slider-runnable-track {
                 </div>
               </div>
             </div>
+          <div class="z-grid" style="margin-top:10px">
+            <div class="z-f">
+              <label for="z_vek">Věk</label>
+              <div class="z-f-box">
+                <input type="text" inputmode="numeric" id="z_vek" value="" placeholder="0" oninput="syncZivotInput(this, 'vek')">
+                <span class="z-f-unit">let</span>
+                <span class="z-f-sep"></span>
+                <input type="text" inputmode="numeric" id="z_rok" value="" placeholder="rok nar." oninput="syncZivotInput(this, 'rok')" class="z-f-alt">
+              </div>
+              <div class="z-range-row">
+                <button type="button" class="z-step" onclick="adjZivot('z_vek', -1)" aria-label="Méně">−</button>
+                <input type="range" id="z_vek_slider" class="z-range" min="0" max="65" value="0" oninput="syncZivotSlider('z_vek')">
+                <button type="button" class="z-step" onclick="adjZivot('z_vek', 1)" aria-label="Více">+</button>
+              </div>
+            </div>
+            <div class="z-f">
+              <label for="z_prijem" id="z_prijem_label">Čistý příjem</label>
+              <div class="z-f-box"><input type="text" inputmode="numeric" id="z_prijem" value="" placeholder="0" oninput="syncZivotInput(this)"><span class="z-f-unit">Kč/měs.</span></div>
+              <div class="z-range-row">
+                <button type="button" class="z-step" onclick="adjZivot('z_prijem', -1000)" aria-label="Méně">−</button>
+                <input type="range" id="z_prijem_slider" class="z-range" min="0" max="150000" step="500" value="0" oninput="syncZivotSlider('z_prijem')">
+                <button type="button" class="z-step" onclick="adjZivot('z_prijem', 1000)" aria-label="Více">+</button>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:4px">
-
-          <div class="field" style="margin-bottom:0">
-            <label style="font-size:10px; margin-bottom:4px; display:block">Čistý příjem / Vyměř. základ (Kč)</label>
-            <div style="background:var(--surface2); padding:8px; border-radius:8px; border:1px solid var(--border)">
-              <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px">
-                <button onclick="adjZivot('z_prijem', -1000)" style="width:26px;height:26px;border-radius:4px;border:1px solid var(--border2);background:var(--surface);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-weight:bold;flex-shrink:0">−</button>
-                <input type="text" id="z_prijem" value="0" oninput="syncZivotInput(this)" style="flex:1;min-width:0;background:transparent;border:none;color:var(--text);font-size:14px;font-weight:700;text-align:center;outline:none;padding:0">
-                <button onclick="adjZivot('z_prijem', 1000)" style="width:26px;height:26px;border-radius:4px;border:1px solid var(--border2);background:var(--surface);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-weight:bold;flex-shrink:0">+</button>
+        <div class="z-group">
+          <div class="z-group-title">Domácnost</div>
+          <div class="z-grid">
+            <div class="z-f">
+              <label for="z_vydaje">Nutné výdaje</label>
+              <div class="z-f-box"><input type="text" inputmode="numeric" id="z_vydaje" value="" placeholder="0" oninput="syncZivotInput(this)"><span class="z-f-unit">Kč/měs.</span></div>
+              <div class="z-range-row">
+                <button type="button" class="z-step" onclick="adjZivot('z_vydaje', -1000)" aria-label="Méně">−</button>
+                <input type="range" id="z_vydaje_slider" class="z-range" min="0" max="150000" step="500" value="0" oninput="syncZivotSlider('z_vydaje')">
+                <button type="button" class="z-step" onclick="adjZivot('z_vydaje', 1000)" aria-label="Více">+</button>
               </div>
-              <input type="range" id="z_prijem_slider" min="0" max="150000" step="500" value="0" oninput="syncZivotSlider('z_prijem')" style="width:100%; cursor:pointer; accent-color:var(--accent); height:4px; display:block">
+            </div>
+            <div class="z-f">
+              <label for="z_rezerva">Vlastní rezerva</label>
+              <div class="z-f-box"><input type="text" inputmode="numeric" id="z_rezerva" value="" placeholder="0" oninput="syncZivotInput(this)"><span class="z-f-unit">Kč</span></div>
+              <div class="z-range-row">
+                <button type="button" class="z-step" onclick="adjZivot('z_rezerva', -10000)" aria-label="Méně">−</button>
+                <input type="range" id="z_rezerva_slider" class="z-range" min="0" max="2000000" step="10000" value="0" oninput="syncZivotSlider('z_rezerva')">
+                <button type="button" class="z-step" onclick="adjZivot('z_rezerva', 10000)" aria-label="Více">+</button>
+              </div>
+            </div>
+            <div class="z-f">
+              <label for="z_hypo">Dlužná jistina <span class="z-f-hint">úvěry</span></label>
+              <div class="z-f-box"><input type="text" inputmode="numeric" id="z_hypo" value="" placeholder="0" oninput="syncZivotInput(this)"><span class="z-f-unit">Kč</span></div>
+            </div>
+            <div class="z-f">
+              <label for="z_naklady">Jednorázové náklady <span class="z-f-hint">vozík apod.</span></label>
+              <div class="z-f-box"><input type="text" inputmode="numeric" id="z_naklady" value="" placeholder="0" oninput="syncZivotInput(this)"><span class="z-f-unit">Kč</span></div>
             </div>
           </div>
-
-          <div class="field" style="margin-bottom:0">
-            <label style="font-size:10px; margin-bottom:4px; display:block">Nutné výdaje (Kč)</label>
-            <div style="background:var(--surface2); padding:8px; border-radius:8px; border:1px solid var(--border)">
-              <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px">
-                <button onclick="adjZivot('z_vydaje', -1000)" style="width:26px;height:26px;border-radius:4px;border:1px solid var(--border2);background:var(--surface);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-weight:bold;flex-shrink:0">−</button>
-                <input type="text" id="z_vydaje" value="0" oninput="syncZivotInput(this)" style="flex:1;min-width:0;background:transparent;border:none;color:var(--text);font-size:14px;font-weight:700;text-align:center;outline:none;padding:0">
-                <button onclick="adjZivot('z_vydaje', 1000)" style="width:26px;height:26px;border-radius:4px;border:1px solid var(--border2);background:var(--surface);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-weight:bold;flex-shrink:0">+</button>
-              </div>
-              <input type="range" id="z_vydaje_slider" min="0" max="150000" step="500" value="0" oninput="syncZivotSlider('z_vydaje')" style="width:100%; cursor:pointer; accent-color:var(--accent); height:4px; display:block">
-            </div>
-          </div>
-
-          <div class="field" style="margin-bottom:0">
-            <label style="font-size:10px; margin-bottom:4px; display:block">Vlastní rezerva (Kč)</label>
-            <div style="background:var(--surface2); padding:8px; border-radius:8px; border:1px solid var(--border)">
-              <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px">
-                <button onclick="adjZivot('z_rezerva', -10000)" style="width:26px;height:26px;border-radius:4px;border:1px solid var(--border2);background:var(--surface);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-weight:bold;flex-shrink:0">−</button>
-                <input type="text" id="z_rezerva" value="0" oninput="syncZivotInput(this)" style="flex:1;min-width:0;background:transparent;border:none;color:var(--text);font-size:14px;font-weight:700;text-align:center;outline:none;padding:0">
-                <button onclick="adjZivot('z_rezerva', 10000)" style="width:26px;height:26px;border-radius:4px;border:1px solid var(--border2);background:var(--surface);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-weight:bold;flex-shrink:0">+</button>
-              </div>
-              <input type="range" id="z_rezerva_slider" min="0" max="2000000" step="10000" value="0" oninput="syncZivotSlider('z_rezerva')" style="width:100%; cursor:pointer; accent-color:var(--accent); height:4px; display:block">
-            </div>
-          </div>
-
-          <div class="field" style="margin-bottom:0">
-            <label style="font-size:10px; margin-bottom:4px; display:block">Jednorázové nák. (3.st — např. vozík)</label>
-            <div style="background:var(--surface2); padding:8px; border-radius:8px; border:1px solid var(--border)">
-              <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px">
-                <button onclick="adjZivot('z_naklady', -50000)" style="width:26px;height:26px;border-radius:4px;border:1px solid var(--border2);background:var(--surface);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-weight:bold;flex-shrink:0">−</button>
-                <input type="text" id="z_naklady" value="0" oninput="syncZivotInput(this)" style="flex:1;min-width:0;background:transparent;border:none;color:var(--text);font-size:14px;font-weight:700;text-align:center;outline:none;padding:0">
-                <button onclick="adjZivot('z_naklady', 50000)" style="width:26px;height:26px;border-radius:4px;border:1px solid var(--border2);background:var(--surface);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;font-weight:bold;flex-shrink:0">+</button>
-              </div>
-              <input type="range" id="z_naklady_slider" min="0" max="2000000" step="50000" value="0" oninput="syncZivotSlider('z_naklady')" style="width:100%; cursor:pointer; accent-color:var(--accent); height:4px; display:block">
-            </div>
-          </div>
-
         </div>
       </div>
-      <div style="margin-top:20px; font-size:10px; color:var(--text2); background:var(--surface2); padding:10px; border-radius:6px; border:1px solid var(--border2); line-height:1.4">
+      <div id="z_osvc_guide" style="display:none; margin-top:20px; font-size:10px; color:var(--text2); background:var(--surface2); padding:10px; border-radius:6px; border:1px solid var(--border2); line-height:1.4">
         <div style="font-weight:700; color:var(--text); margin-bottom:4px">📊 JAK ZADAT PŘÍJEM PRO OSVČ?</div>
         • <b>Paušální daň (1. pásmo):</b> Zadejte natvrdo cca 18 700 Kč. Reálný zisk stát nezajímá!<br>
         • <b>Paušální daň (2. pásmo):</b> Zadejte fixně 28 050 Kč.<br>
         • <b>Paušální daň (3. pásmo):</b> Zadejte fixně 42 900 Kč.<br>
         • <b>Výdajový paušál:</b> (Roční příjmy − Výdaje) × 0.55 / 12. Pokud vyjde méně než cca 15 000 Kč, zadejte minimum.
-        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); font-size: 11px; color: var(--text3); line-height: 1.4;">
-          💡 <strong>Důležité upozornění pro praxi:</strong> Výpočet pracuje s ideálním scénářem a předpokládá plnou historii odvodů. V reálné praxi klientům velmi často chybí celé roky pojištění (nedoložená studia, neevidované úřady práce, pochybení zaměstnavatelů). Pokud má klient v historii mezery, které nekryjí tzv. <em>náhradní doby pojištění</em>, státní důchod bude v realitě <strong>výrazně nižší</strong>, případně při nesplnění minimální doby dokonce <strong>0 Kč</strong> (výjimkou jsou pouze pracovní úrazy a nemoci z povolání, kde se roky nevyžadují). Pro přesný výpočet vždy doporučte ověření historie přes státní aplikaci IDA a zpracování <strong>důchodového auditu</strong>.
-        </div>
       </div>
+      <div id="z_vydaje_warn" class="z-warn" style="display:none; margin-top:12px; margin-bottom:0"></div>
+      <details class="z-info" style="margin-top:12px; border-top:none; padding-top:0">
+        <summary>Důležité upozornění pro praxi (mezery v historii pojištění)</summary>
+        <div class="z-info-body"> Výpočet pracuje s ideálním scénářem a předpokládá plnou historii odvodů. V reálné praxi klientům velmi často chybí celé roky pojištění (nedoložená studia, neevidované úřady práce, pochybení zaměstnavatelů). Pokud má klient v historii mezery, které nekryjí tzv. <em>náhradní doby pojištění</em>, státní důchod bude v realitě <strong>výrazně nižší</strong>, případně při nesplnění minimální doby dokonce <strong>0 Kč</strong> (výjimkou jsou pouze pracovní úrazy a nemoci z povolání, kde se roky nevyžadují). Pro přesný výpočet vždy doporučte ověření historie přes státní aplikaci IDA a zpracování <strong>důchodového auditu</strong>.
+        </div>
+      </details>
       <div id="inv_doba_pojisteni_warning" style="font-size:11px; color:var(--text3); background:var(--surface2); padding:10px 12px; border-radius:8px; margin-top:12px; border:1px solid var(--border); display:none; line-height:1.4;"></div>
     </div>
 
     <div>
-      <div id="z_card_pn" class="card" style="margin-bottom:10px; border-top:4px solid #3B82F6; padding:14px">
-        <div style="color:#3B82F6; font-weight:700; font-size:12px; margin-bottom:4px">PRACOVNÍ NESCHOPNOST (PN)</div>
+      <div class="z-sec-title" style="margin-top:0">Krátkodobý výpadek</div>
+      <div id="z_card_pn" class="card z-card" style="--c:#3B82F6; margin-bottom:10px; padding:14px">
+        <div class="z-card-title"><span class="z-dot"></span>PRACOVNÍ NESCHOPNOST (PN)</div>
         <div id="z_pn_goal_text" style="font-size:11px; color:var(--text2); margin-bottom:10px">Krátkodobý výpadek příjmu (max. 1 rok, poté invalidita).</div>
         <div style="display:flex; background:var(--surface); border:1px solid var(--border2); border-radius:6px; padding:2px; margin-bottom:10px">
           <button type="button" id="z_pn_target_vy" onclick="setPnTarget('vy')" style="flex:1; padding:5px; border:none; border-radius:4px; font-size:10px; font-weight:700; cursor:pointer; background:var(--accent); color:#fff; transition:all 0.2s">KRYTÍ VÝDAJŮ</button>
           <button type="button" id="z_pn_target_p" onclick="setPnTarget('p')" style="flex:1; padding:5px; border:none; border-radius:4px; font-size:10px; font-weight:700; cursor:pointer; background:transparent; color:var(--text2); transition:all 0.2s">KRYTÍ PŘÍJMU</button>
         </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; border-bottom:1px solid var(--border); padding-bottom:10px; margin-bottom:10px">
-          <div><div style="font-size:11px; color:#60A5FA; font-weight:700; letter-spacing: 0.02em">Nemocenská (odhad — cca 60 % z příjmu)</div><div id="z_stat_pn" style="font-size:15px; font-weight:700; color:var(--text); margin-top:2px">—</div></div>
-          <div><div style="font-size:11px; color:var(--accent); font-weight:700; text-transform:uppercase; letter-spacing:0.03em">Chybí /m 🚨</div><div id="z_chybi_pn" style="font-size:15px; font-weight:700; color:#3B82F6; margin-top:2px">—</div></div>
+          <div><div id="z_label_stat_pn" style="font-size:11px; color:var(--text); font-weight:700; letter-spacing: 0.02em">Nemocenská (cca 60 % příjmu)</div><div id="z_stat_pn" style="font-size:14px; font-weight:600; color:var(--text); margin-top:2px">—</div></div>
+          <div><div style="font-size:11px; color:var(--text3); font-weight:600; text-transform:uppercase; letter-spacing:0.03em">Chybí měsíčně</div><div id="z_chybi_pn" style="font-size:14px; font-weight:600; color:var(--red); margin-top:2px">—</div></div>
         </div>
-        <div>
-          <div style="font-size:10px; color:var(--text2); font-weight:600">Doporučená denní dávka a karenční doba</div>
+        <div id="z_osvc_pn_warn" class="z-warn" style="display:none; color:var(--text2); background:rgba(239,68,68,0.06); border-color:rgba(239,68,68,0.35)">
+          ⚠️ <b>OSVČ:</b> Bez dobrovolného nemocenského pojištění dostane od státu při nemoci <b>0 Kč</b> — výpadek je 100 %.
+          <label style="display:flex; align-items:center; gap:6px; margin-top:6px; cursor:pointer; color:var(--text); font-weight:600">
+            <input type="checkbox" id="z_osvc_nemoc" onchange="calcZivot()" style="accent-color:#3B82F6; width:14px; height:14px; margin:0">
+            Klient si platí dobrovolné nemocenské pojištění
+          </label>
+        </div>
+        <div class="z-res">
+          <div class="z-res-label">Doporučená denní dávka a karenční doba</div>
           <div style="display:flex; justify-content:space-between; align-items:flex-end">
-            <div id="z_denni_pn" style="font-size:18px; font-weight:800; color:var(--text)">—</div>
-            <div id="z_karence_pn" style="font-size:12px; font-weight:700; color:#3B82F6; background:rgba(59,130,246,0.1); padding:4px 8px; border-radius:4px">—</div>
+            <div id="z_denni_pn" class="z-res-val">—</div>
+            <div id="z_karence_pn" style="font-size:12px; font-weight:700; color:var(--text); background:var(--surface3); padding:4px 8px; border-radius:4px">—</div>
           </div>
         </div>
-        <div style="font-size:10px; color:var(--text3); margin-top:10px; line-height:1.4; border-top:1px dashed var(--border); padding-top:8px">
-        <div style="font-size:10.5px; color:#EF4444; background:rgba(239, 68, 68, 0.05); padding:10px; border-radius:6px; border:1px solid rgba(239, 68, 68, 0.3); margin-top:12px; margin-bottom:12px; line-height:1.4">
-          ⚠️ <b>KRUTÁ PRAVDA PRO OSVČ (Nemocenská):</b> Odhad 60 % platí převážně pro zaměstnance. Většina OSVČ si <b>neplatí</b> dobrovolné nemocenské pojištění. To v praxi znamená, že od státu dostanou při nemoci <b>přesně 0 Kč</b> a jejich propad příjmu je 100 %. Pojistnou částku je nutné adekvátně navýšit!
-        </div>
-          💡 <b>Metodický cíl:</b> Soukromé pojištění neschopenky neslouží k plnému dorovnání původního příjmu, ale k bezpečnému dokrytí nutných fixních výdajů a chodu domácnosti po dobu, kdy státní nemocenská nestačí.
-        </div>
+        <details class="z-info">
+          <summary>Jak počítáme</summary>
+          <div class="z-info-body">
+          Při neschopence dostane klient cca 60 % příjmu (prvních 14 dní náhradu mzdy od zaměstnavatele, potom nemocenskou od státu). Chybějících cca 40 % do pokrytí výdajů/příjmu dorovná soukromá denní dávka.<br><br>
+          <b>Metodický cíl:</b> Soukromé pojištění neschopenky neslouží k plnému dorovnání původního příjmu, ale k bezpečnému dokrytí nutných fixních výdajů a chodu domácnosti po dobu, kdy státní nemocenská nestačí.
+          </div>
+        </details>
       </div>
 
-      <div id="z_card_1" class="card" style="margin-bottom:10px; border-top:4px solid #EAB308; padding:14px">
-        <div style="color:#EAB308; font-weight:700; font-size:12px; margin-bottom:4px">1. STUPEŇ INVALIDITY</div>
+      <div class="z-sec-title">Dlouhodobý výpadek (invalidita)</div>
+      <div id="z_card_1" class="card z-card z-card-inv" style="--c:var(--z-yellow); margin-bottom:10px; padding:14px">
+        <div class="z-card-title"><span class="z-dot"></span>1. STUPEŇ INVALIDITY</div>
         <div style="font-size:11px; color:var(--text2); margin-bottom:10px">Dlouhodobý výpadek. Rekvalifikace a změna profese.</div>
+        <div class="z-causes">
+          <div class="z-causes-title">🩺 Typicky · Pokles pracovní schopnosti 35–49 %</div>
+          <span class="z-chip">Bolesti zad, výhřez ploténky</span><span class="z-chip">Stav po úrazu kloubu či zlomenině</span><span class="z-chip">Středně těžká deprese, úzkosti</span><span class="z-chip">Cukrovka s komplikacemi</span><span class="z-chip">Astma, CHOPN</span><span class="z-chip">Epilepsie</span>
+        </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; border-bottom:1px solid var(--border); padding-bottom:10px; margin-bottom:10px">
-          <div><div style="font-size:11px; color:var(--text); font-weight:700; letter-spacing:0.02em; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:2px">Státní důchod🏛️</div><div id="z_stat_1" style="font-size:15px; font-weight:700; margin-top:2px">—</div></div>
-          <div><div style="font-size:11px; color:var(--accent); font-weight:700; text-transform:uppercase; letter-spacing:0.03em">Chybí /m 🚨</div><div id="z_chybi_1" style="font-size:15px; font-weight:700; color:#EAB308; margin-top:2px">—</div></div>
+          <div><div style="font-size:11px; color:var(--text); font-weight:700; letter-spacing:0.02em; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:2px">Státní důchod🏛️</div><div id="z_stat_1" style="font-size:14px; font-weight:600; margin-top:2px">—</div></div>
+          <div><div style="font-size:11px; color:var(--text3); font-weight:600; text-transform:uppercase; letter-spacing:0.03em">Chybí měsíčně</div><div id="z_chybi_1" style="font-size:14px; font-weight:600; color:var(--red); margin-top:2px">—</div></div>
         </div>
-        <div>
-          <div id="z_label_poj_1" style="font-size:11px; color:var(--text2); font-weight:600; margin-bottom:2px">Krytí propadu po dobu 3 let (− rezerva)</div>
-          <div id="z_pojistna_1" style="font-size:18px; font-weight:800">—</div>
+        <div class="z-res">
+          <div id="z_label_poj_1" class="z-res-label">Krytí propadu po dobu 3 let (− rezerva)</div>
+          <div id="z_pojistna_1" class="z-res-val">—</div>
         </div>
-        <div style="font-size:10px; color:var(--text3); margin-top:10px; line-height:1.4; border-top:1px dashed var(--border); padding-top:8px">
-          💡 <b>Proč je částka nižší?</b> 1. stupeň neřeší doživotní rentu. Člověk zůstává v pracovním procesu, pouze mění profesi. Pojistné krytí slouží jako 3letý překlenovací polštář pro klidnou rekvalifikaci a adaptaci na nový životní stav.
-        </div>
+        <details class="z-info">
+          <summary>Proč je částka nižší?</summary>
+          <div class="z-info-body">1. stupeň neřeší doživotní rentu. Člověk zůstává v pracovním procesu, pouze mění profesi. Pojistné krytí slouží jako 3letý překlenovací polštář pro klidnou rekvalifikaci a adaptaci na nový životní stav.</div>
+        </details>
       </div>
 
-      <div id="z_card_2" class="card" style="margin-bottom:10px; border-top:4px solid #F97316; padding:14px">
-        <div style="color:#F97316; font-weight:700; font-size:12px; margin-bottom:4px">2. STUPEŇ INVALIDITY</div>
+      <div id="z_card_2" class="card z-card z-card-inv" style="--c:#F97316; margin-bottom:10px; padding:14px">
+        <div class="z-card-title"><span class="z-dot"></span>2. STUPEŇ INVALIDITY</div>
         <div style="font-size:11px; color:var(--text2); margin-bottom:10px">Dlouhodobý výpadek. Předpoklad částečného úvazku.</div>
+        <div class="z-causes">
+          <div class="z-causes-title">🩺 Typicky · Pokles pracovní schopnosti 50–69 %</div>
+          <span class="z-chip">Stav po infarktu, srdeční selhání</span><span class="z-chip">Onkologická léčba</span><span class="z-chip">Roztroušená skleróza</span><span class="z-chip">Těžká deprese, bipolární porucha</span><span class="z-chip">Revmatoidní artritida</span><span class="z-chip">Amputace části končetiny</span>
+        </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; border-bottom:1px solid var(--border); padding-bottom:10px; margin-bottom:10px">
-          <div><div style="font-size:11px; color:var(--text); font-weight:700; letter-spacing:0.02em; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:2px">Státní důchod🏛️</div><div id="z_stat_2" style="font-size:15px; font-weight:700; margin-top:2px">—</div></div>
-          <div><div style="font-size:11px; color:var(--accent); font-weight:700; text-transform:uppercase; letter-spacing:0.03em">Chybí /m 🚨</div><div id="z_chybi_2" style="font-size:15px; font-weight:700; color:#F97316; margin-top:2px">—</div></div>
+          <div><div style="font-size:11px; color:var(--text); font-weight:700; letter-spacing:0.02em; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:2px">Státní důchod🏛️</div><div id="z_stat_2" style="font-size:14px; font-weight:600; margin-top:2px">—</div></div>
+          <div><div style="font-size:11px; color:var(--text3); font-weight:600; text-transform:uppercase; letter-spacing:0.03em">Chybí měsíčně</div><div id="z_chybi_2" style="font-size:14px; font-weight:600; color:var(--red); margin-top:2px">—</div></div>
         </div>
-        <div>
-          <div id="z_label_poj_2" style="font-size:11px; color:var(--text2); font-weight:600; margin-bottom:2px">Doplacení úvěru + plné krytí deficitu do 65 let (− rezerva)</div>
-          <div id="z_pojistna_2" style="font-size:18px; font-weight:800">—</div>
+        <div class="z-res">
+          <div id="z_label_poj_2" class="z-res-label">Doplacení úvěru + plné krytí deficitu do 65 let (− rezerva)</div>
+          <div id="z_pojistna_2" class="z-res-val">—</div>
         </div>
-        <div style="font-size:10px; color:var(--text3); margin-top:10px; line-height:1.4; border-top:1px dashed var(--border); padding-top:8px">
-          💡 <b>Proč volíme poloviční krytí?</b> Částka odpovídající dlužné jistině jde ihned na kompletní splacení závazků (úvěru), čímž radikálně klesnou fixní výdaje. Zbytek peněz tvoří rentu, která kryje 50 % propadu příjmu až do 65 let. U 2. stupně invalidity se metodicky předpokládá zachování zbytkového pracovního potenciálu (částečný úvazek). Pokus o 100% krytí by vygeneroval astronomickou částku, která je v praxi u pojišťoven nepojistitelná.
-        </div>
+        <details class="z-info">
+          <summary>Proč poloviční krytí?</summary>
+          <div class="z-info-body">Částka odpovídající dlužné jistině jde ihned na kompletní splacení závazků (úvěru), čímž radikálně klesnou fixní výdaje. Zbytek peněz tvoří rentu, která kryje 50 % propadu příjmu až do 65 let. U 2. stupně invalidity se metodicky předpokládá zachování zbytkového pracovního potenciálu (částečný úvazek). Pokus o 100% krytí by vygeneroval astronomickou částku, která je v praxi u pojišťoven nepojistitelná.</div>
+        </details>
       </div>
 
-      <div id="z_card_3" class="card" style="margin-bottom:10px; border-top:4px solid #EF4444; padding:14px">
-        <div style="color:#EF4444; font-weight:700; font-size:12px; margin-bottom:4px">3. STUPEŇ INVALIDITY (NEJTĚŽŠÍ)</div>
+      <div id="z_card_3" class="card z-card z-card-inv" style="--c:#EF4444; margin-bottom:10px; padding:14px">
+        <div class="z-card-title"><span class="z-dot"></span>3. STUPEŇ INVALIDITY (NEJTĚŽŠÍ)</div>
         <div style="font-size:11px; color:var(--text2); margin-bottom:10px">Dlouhodobý výpadek. Klient již nebude pracovat.</div>
+        <div class="z-causes">
+          <div class="z-causes-title">🩺 Typicky · Pokles pracovní schopnosti 70 % a více</div>
+          <span class="z-chip">Pokročilá rakovina</span><span class="z-chip">Těžká mrtvice s ochrnutím</span><span class="z-chip">Poranění míchy (ochrnutí)</span><span class="z-chip">Selhání ledvin – dialýza</span><span class="z-chip">Pokročilá RS, Parkinson</span><span class="z-chip">Těžká psychiatrická onemocnění</span>
+        </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; border-bottom:1px solid var(--border); padding-bottom:10px; margin-bottom:10px">
-          <div><div style="font-size:11px; color:var(--text); font-weight:700; letter-spacing:0.02em; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:2px">Státní důchod🏛️</div><div id="z_stat_3" style="font-size:15px; font-weight:700; margin-top:2px">—</div></div>
-          <div><div style="font-size:11px; color:var(--accent); font-weight:700; text-transform:uppercase; letter-spacing:0.03em">Chybí /m 🚨</div><div id="z_chybi_3" style="font-size:15px; font-weight:700; color:#EF4444; margin-top:2px">—</div></div>
+          <div><div style="font-size:11px; color:var(--text); font-weight:700; letter-spacing:0.02em; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:2px">Státní důchod🏛️</div><div id="z_stat_3" style="font-size:14px; font-weight:600; margin-top:2px">—</div></div>
+          <div><div style="font-size:11px; color:var(--text3); font-weight:600; text-transform:uppercase; letter-spacing:0.03em">Chybí měsíčně</div><div id="z_chybi_3" style="font-size:14px; font-weight:600; color:var(--red); margin-top:2px">—</div></div>
         </div>
-        <div>
-          <div id="z_label_poj_3" style="font-size:11px; color:var(--text2); font-weight:600; margin-bottom:2px">Krytí do 65 let + úvěr + jednorázové náklady (− rezerva)</div>
-          <div id="z_pojistna_3" style="font-size:18px; font-weight:800">—</div>
+        <div class="z-res">
+          <div id="z_label_poj_3" class="z-res-label">Krytí do 65 let + úvěr + jednorázové náklady (− rezerva)</div>
+          <div id="z_pojistna_3" class="z-res-val">—</div>
         </div>
-        <div style="font-size:10px; color:var(--text3); margin-top:10px; line-height:1.4; border-top:1px dashed var(--border); padding-top:8px">
-          💡 <b>Metodický cíl:</b> Kompletní finanční restart rodiny. Částka odpovídající dlužné jistině <b>jde prioritně na okamžité splacení závazků (úvěru)</b>, aby se rodina kompletně zbavila dluhů. Další část kryje jednorázové náklady na bezbariérové úpravy či léčbu (např. vozík) a zbytek peněz tvoří doživotní měsíční rentu až do 65 let, protože klient již nemůže pracovat.
-        </div>
+        <details class="z-info">
+          <summary>Metodický cíl</summary>
+          <div class="z-info-body">Kompletní finanční restart rodiny. Částka odpovídající dlužné jistině <b>jde prioritně na okamžité splacení závazků (úvěru)</b>, aby se rodina kompletně zbavila dluhů. Další část kryje jednorázové náklady na bezbariérové úpravy či léčbu (např. vozík) a zbytek peněz tvoří doživotní měsíční rentu až do 65 let, protože klient již nemůže pracovat.</div>
+        </details>
       </div>
-      <div id="z_card_vo" class="card" style="margin-bottom:10px; border-top:4px solid #8B5CF6; padding:14px">
-        <div style="color:#8B5CF6; font-weight:700; font-size:12px; margin-bottom:4px">VÁŽNÁ ONEMOCNĚNÍ (KRITICKÉ NEMOCI)</div>
-        <div style="font-size:11px; color:var(--text2); margin-bottom:10px">Jednorázová kapitálová injekce při diagnóze (rakovina, infarkt, mrtvice...).</div>
+      <div class="z-sec-title">Jednorázové riziko</div>
+      <div id="z_card_vo" class="card z-card" style="--c:#8B5CF6; margin-bottom:10px; padding:14px">
+        <div class="z-card-title"><span class="z-dot"></span>VÁŽNÁ ONEMOCNĚNÍ (KRITICKÉ NEMOCI)</div>
+        <div style="font-size:11px; color:var(--text2); margin-bottom:10px">Jednorázová výplata při stanovení diagnózy.</div>
+        <div class="z-causes">
+          <div class="z-causes-title">🩺 Nejčastěji pojištěné diagnózy</div>
+          <span class="z-chip">Rakovina (nejčastější plnění)</span><span class="z-chip">Infarkt</span><span class="z-chip">Mrtvice</span><span class="z-chip">Bypass, operace srdce</span><span class="z-chip">Selhání ledvin</span><span class="z-chip">Transplantace orgánu</span><span class="z-chip">Roztroušená skleróza</span><span class="z-chip">Parkinson, Alzheimer</span><span class="z-chip">Slepota, hluchota</span><span class="z-chip">Ochrnutí</span>
+          <div style="font-size:10px; color:var(--text3); margin-top:4px">Seznam nemocí a výše plnění (např. u méně závažných nádorů jen část) se liší podle pojišťovny.</div>
+        </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; border-bottom:1px solid var(--border); padding-bottom:10px; margin-bottom:10px">
-          <div><div style="font-size:11px; color:var(--text); font-weight:700; letter-spacing:0.02em; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:2px">Rekonvalescence (1 rok)</div><div id="z_vo_rok" style="font-size:15px; font-weight:700; margin-top:2px">—</div></div>
-          <div><div style="font-size:11px; color:var(--text); font-weight:700; letter-spacing:0.02em; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:2px">Nadstandardní léčba</div><div style="font-size:15px; font-weight:700; color:var(--text2); margin-top:2px">500 000 Kč</div></div>
+          <div><div style="font-size:11px; color:var(--text); font-weight:700; letter-spacing:0.02em; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:2px">Rekonvalescence (1 rok)</div><div id="z_vo_rok" style="font-size:14px; font-weight:600; margin-top:2px">—</div></div>
+          <div><div style="font-size:11px; color:var(--text); font-weight:700; letter-spacing:0.02em; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:2px">Nadstandardní léčba</div><div style="font-size:14px; font-weight:600; color:var(--text2); margin-top:2px">500 000 Kč</div></div>
         </div>
-        <div>
-          <div id="z_label_vo" style="font-size:11px; color:var(--text2); font-weight:600; margin-bottom:2px">Doporučená pojistná částka (příjem × 12 + 500k)</div>
-          <div id="z_pojistna_vo" style="font-size:18px; font-weight:800; color:#8B5CF6">—</div>
+        <div class="z-res">
+          <div id="z_label_vo" class="z-res-label">Doporučená pojistná částka (příjem × 12 + 500k)</div>
+          <div id="z_pojistna_vo" class="z-res-val">—</div>
         </div>
-        <div style="font-size:10px; color:var(--text3); margin-top:10px; line-height:1.4; border-top:1px dashed var(--border); padding-top:8px">
-          💡 <b>Metodický cíl a vlastní rezerva:</b> Tyto peníze neřeší dluhy, ale kupují čas a špičkovou medicínu. <b>Proč se neodečítá vlastní rezerva?</b> Běžný finanční polštář slouží na rozbité auto nebo krátkodobý výpadek. Náklady spojené s vážnou nemocí (dojíždění, doplňky stravy, biologická léčba, partner doma jako doprovod) by celoživotní úspory rodiny okamžitě „vyluxovaly“. Pojištění zajistí nadstandardní péči a rodinné úspory zůstanou nedotčeny.
-        </div>
+        <details class="z-info">
+          <summary>Proč se neodečítá rezerva?</summary>
+          <div class="z-info-body"> Tyto peníze neřeší dluhy, ale kupují čas a špičkovou medicínu. <b>Proč se neodečítá vlastní rezerva?</b> Běžný finanční polštář slouží na rozbité auto nebo krátkodobý výpadek. Náklady spojené s vážnou nemocí (dojíždění, doplňky stravy, biologická léčba, partner doma jako doprovod) by celoživotní úspory rodiny okamžitě „vyluxovaly“. Pojištění zajistí nadstandardní péči a rodinné úspory zůstanou nedotčeny.
+          </div>
+        </details>
       </div>
       
-      <div style="margin-top:12px; padding:12px; background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:8px; font-size:11px; color:var(--text3); line-height:1.5">
-        <div style="font-weight:700; color:var(--text2); margin-bottom:4px; font-size:12px">💡 Proč je státní důchod u různých věků stejný?</div>
+      <details class="z-info" style="border-top:none; padding:10px 12px; background:var(--surface2); border:1px solid var(--border); border-radius:8px">
+        <summary>Podle čeho se určuje stupeň invalidity?</summary>
+        <div class="z-info-body">Stupeň neurčuje samotná diagnóza, ale to, <b>o kolik klesla pracovní schopnost</b> (posudkový lékař ČSSZ). Stejná nemoc proto může vést ke kterémukoli stupni. Nejčastější příčiny invalidity v ČR: nemoci pohybového aparátu, duševní poruchy, nádory a nemoci srdce a cév.</div>
+      </details>
+      <details class="z-info" style="border-top:none; margin-top:8px; padding:10px 12px; background:var(--surface2); border:1px solid var(--border); border-radius:8px">
+        <summary>Proč je státní důchod u různých věků stejný?</summary>
+        <div class="z-info-body">
         Při výpočtu invalidního důchodu používá stát tzv. <b>dopočtenou dobu</b> (fiktivní roky od vzniku invalidity do důchodového věku). Předpokládá se, jako by klient pracoval a odváděl pojistné až do starobního důchodu. Proto má 30letý i 50letý člověk se stejným průměrným příjmem téměř totožný státní důchod a rozhodující je výše dosavadních příjmů.
-      </div>
+        </div>
+      </details>
 
       <div style="margin-top:12px; padding:12px; background:var(--surface2); border:1px solid var(--border); border-radius:8px">
         <div style="font-weight:700; color:var(--text); margin-bottom:8px; font-size:11px; text-transform:uppercase; letter-spacing:0.05em">
@@ -6309,8 +6376,27 @@ function calcZivot() {
   const m = (v === 0) ? 0 : Math.max(0, (65 - v) * 12);
   const s = getStatniDuchod(p);
 
-  const nemocenska = p * 0.6;
-  const cilovaCastka = (typeof z_pn_target !== 'undefined' && z_pn_target === 'p') ? p : vy;
+  const isOsvc = zClientType === 'osvc';
+  const osvcNemoc = !!document.getElementById('z_osvc_nemoc')?.checked;
+  const osvcWarn = document.getElementById('z_osvc_pn_warn');
+  if (osvcWarn) osvcWarn.style.display = isOsvc ? 'block' : 'none';
+  const lblStatPN = document.getElementById('z_label_stat_pn');
+  if (lblStatPN) lblStatPN.textContent = (isOsvc && !osvcNemoc) ? 'Státní nemocenská (OSVČ bez pojištění)' : 'Nemocenská (cca 60 % příjmu)';
+  const nemocenska = (isOsvc && !osvcNemoc) ? 0 : p * 0.6;
+
+  // Pojišťovny nepojistí víc, než klient vydělává — u zaměstnance proto výpadek počítáme nejvýš z jeho příjmu.
+  const vyKryti = (!isOsvc && vy > p) ? p : vy;
+  const elVyWarn = document.getElementById('z_vydaje_warn');
+  if (elVyWarn) {
+    if (!isOsvc && vy > p) {
+      elVyWarn.style.display = 'block';
+      elVyWarn.innerHTML = '⚠️ <b>Výdaje (' + fmtZNum(vy) + ' Kč) jsou vyšší než příjem klienta (' + fmtZNum(p) + ' Kč).</b> Výpadek počítáme z příjmu — víc pojišťovna nepojistí. Zbytek výdajů domácnosti kryje jiný příjem (partner apod.).';
+    } else {
+      elVyWarn.style.display = 'none';
+    }
+  }
+
+  const cilovaCastka = (typeof z_pn_target !== 'undefined' && z_pn_target === 'p') ? p : vyKryti;
   const deficitPN = Math.max(0, cilovaCastka - nemocenska);
   const denniDavka = Math.round(deficitPN / 30);
   const voRok = p * 12;
@@ -6330,7 +6416,7 @@ function calcZivot() {
   if (elVoRok) elVoRok.textContent = fmtZNum(voRok) + " Kč";
   if (elPojVo) elPojVo.textContent = fmtZNum(voCelkem) + " Kč";
 
-  const d3 = Math.max(0, vy - s.s3), d2 = Math.max(0, vy - s.s2), d1 = Math.max(0, vy - s.s1);
+  const d3 = Math.max(0, vyKryti - s.s3), d2 = Math.max(0, vyKryti - s.s2), d1 = Math.max(0, vyKryti - s.s1);
 
   const poj3 = (v === 0 && h === 0 && vy === 0) ? 0 : Math.max(0, h + (d3 * m) + n - r);
   const poj2 = (v === 0 && h === 0 && vy === 0) ? 0 : Math.max(0, h + (d2 * m * 0.5) - r);
@@ -6464,11 +6550,12 @@ function lockPrijemInput(prefix, locked) {
   const inputEl = document.getElementById(prefix + '_prijem');
   const sliderEl = document.getElementById(prefix + '_prijem_slider');
   if (!inputEl) return;
-  const btnMinus = inputEl.previousElementSibling;
-  const btnPlus  = inputEl.nextElementSibling;
+  const prevEl = inputEl.previousElementSibling, nextEl = inputEl.nextElementSibling;
+  const btnMinus = prevEl && prevEl.tagName === 'BUTTON' ? prevEl : null;
+  const btnPlus  = nextEl && nextEl.tagName === 'BUTTON' ? nextEl : null;
   if (locked) {
     inputEl.disabled = true;
-    inputEl.style.background = 'rgba(255,255,255,0.05)';
+    if (prefix !== 'z') inputEl.style.background = 'rgba(255,255,255,0.05)';
     inputEl.style.color = 'var(--text3)';
     inputEl.style.cursor = 'not-allowed';
     if (sliderEl) { sliderEl.disabled = true; sliderEl.style.opacity = '0.35'; sliderEl.style.cursor = 'not-allowed'; }
@@ -6485,7 +6572,23 @@ function lockPrijemInput(prefix, locked) {
   }
 }
 
+let zClientType = 'zam';
+
 function setClientType(prefix, type) {
+  if (prefix === 'z') {
+    zClientType = type;
+    const guide = document.getElementById('z_osvc_guide');
+    if (guide) guide.style.display = type === 'osvc' ? 'block' : 'none';
+    document.getElementById('z_type_zam')?.classList.toggle('active', type === 'zam');
+    document.getElementById('z_type_osvc')?.classList.toggle('active', type === 'osvc');
+    const lbl = document.getElementById('z_prijem_label');
+    if (lbl) lbl.textContent = type === 'osvc' ? 'Vyměřovací základ' : 'Čistý příjem';
+    const helper = document.getElementById('z_osvc_helper_box');
+    if (helper) helper.style.display = type === 'osvc' ? 'block' : 'none';
+    if (type === 'zam') lockPrijemInput('z', false); else updateOsvcCalculation('z');
+    calcZivot();
+    return;
+  }
   const btnZam = document.getElementById(prefix + '_type_zam');
   const btnOsvc = document.getElementById(prefix + '_type_osvc');
   const helperBox = document.getElementById(prefix + '_osvc_helper_box');
