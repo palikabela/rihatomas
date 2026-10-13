@@ -145,6 +145,9 @@ footer a:hover{color:var(--text2)}
 .z-card-inv .z-card-title{color:var(--c)}
 .z-card-inv .z-res{border-color:color-mix(in srgb,var(--c) 45%,var(--border2))}
 .z-dot{width:8px;height:8px;border-radius:50%;background:var(--c);flex-shrink:0}
+.z-src{font-size:10.5px;color:var(--text3);margin:-2px 0 10px 2px;line-height:1.4}
+.z-src a{color:#3B82F6;text-decoration:none;font-weight:600}
+.z-src a:hover{text-decoration:underline}
 .z-sec-title{font-size:10.5px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin:22px 0 8px 2px;display:flex;align-items:center;gap:8px}
 .z-sec-title::after{content:"";flex:1;height:1px;background:var(--border2)}
 .z-group{margin-bottom:16px}
@@ -2554,6 +2557,7 @@ input[type="range"]::-webkit-slider-runnable-track {
       </div>
 
       <div class="z-sec-title">Dlouhodobý výpadek (invalidita)</div>
+      <div class="z-src">🏛️ Státní důchod počítán podle parametrů <a href="https://www.cssz.gov.cz/web/cz/-/prehled-nejdulezitejsich-udaju-pro-socialni-zabezpeceni-v-roce-2026" target="_blank" rel="noopener">ČSSZ pro rok 2026 ↗</a> · ověřeno 13. 10. 2026</div>
       <div id="z_card_1" class="card z-card z-card-inv" style="--c:var(--z-yellow); margin-bottom:10px; padding:14px">
         <div class="z-card-title"><span class="z-dot"></span>1. STUPEŇ INVALIDITY</div>
         <div style="font-size:11px; color:var(--text2); margin-bottom:10px">Dlouhodobý výpadek. Rekvalifikace a změna profese.</div>
@@ -2587,12 +2591,12 @@ input[type="range"]::-webkit-slider-runnable-track {
           <div><div style="font-size:11px; color:var(--text3); font-weight:600; text-transform:uppercase; letter-spacing:0.03em">Chybí měsíčně</div><div id="z_chybi_2" style="font-size:14px; font-weight:600; color:var(--red); margin-top:2px">—</div></div>
         </div>
         <div class="z-res">
-          <div id="z_label_poj_2" class="z-res-label">Doplacení úvěru + plné krytí deficitu do 65 let (− rezerva)</div>
+          <div id="z_label_poj_2" class="z-res-label">Doplacení úvěru + poloviční krytí deficitu (− rezerva)</div>
           <div id="z_pojistna_2" class="z-res-val">—</div>
         </div>
         <details class="z-info">
           <summary>Proč poloviční krytí?</summary>
-          <div class="z-info-body">Částka odpovídající dlužné jistině jde ihned na kompletní splacení závazků (úvěru), čímž radikálně klesnou fixní výdaje. Zbytek peněz tvoří rentu, která kryje 50 % propadu příjmu až do 65 let. U 2. stupně invalidity se metodicky předpokládá zachování zbytkového pracovního potenciálu (částečný úvazek). Pokus o 100% krytí by vygeneroval astronomickou částku, která je v praxi u pojišťoven nepojistitelná.</div>
+          <div class="z-info-body">Částka odpovídající dlužné jistině jde ihned na kompletní splacení závazků (úvěru), čímž radikálně klesnou fixní výdaje. Zbytek peněz tvoří rentu, která kryje 50 % propadu příjmu až do důchodového věku (<span class="z-duch-vek">65 let</span>). U 2. stupně invalidity se metodicky předpokládá zachování zbytkového pracovního potenciálu (částečný úvazek). Pokus o 100% krytí by vygeneroval astronomickou částku, která je v praxi u pojišťoven nepojistitelná.</div>
         </details>
       </div>
 
@@ -2608,12 +2612,12 @@ input[type="range"]::-webkit-slider-runnable-track {
           <div><div style="font-size:11px; color:var(--text3); font-weight:600; text-transform:uppercase; letter-spacing:0.03em">Chybí měsíčně</div><div id="z_chybi_3" style="font-size:14px; font-weight:600; color:var(--red); margin-top:2px">—</div></div>
         </div>
         <div class="z-res">
-          <div id="z_label_poj_3" class="z-res-label">Krytí do 65 let + úvěr + jednorázové náklady (− rezerva)</div>
+          <div id="z_label_poj_3" class="z-res-label">Krytí do důchodu + úvěr + jednorázové náklady (− rezerva)</div>
           <div id="z_pojistna_3" class="z-res-val">—</div>
         </div>
         <details class="z-info">
           <summary>Metodický cíl</summary>
-          <div class="z-info-body">Kompletní finanční restart rodiny. Částka odpovídající dlužné jistině <b>jde prioritně na okamžité splacení závazků (úvěru)</b>, aby se rodina kompletně zbavila dluhů. Další část kryje jednorázové náklady na bezbariérové úpravy či léčbu (např. vozík) a zbytek peněz tvoří doživotní měsíční rentu až do 65 let, protože klient již nemůže pracovat.</div>
+          <div class="z-info-body">Kompletní finanční restart rodiny. Částka odpovídající dlužné jistině <b>jde prioritně na okamžité splacení závazků (úvěru)</b>, aby se rodina kompletně zbavila dluhů. Další část kryje jednorázové náklady na bezbariérové úpravy či léčbu (např. vozík) a zbytek peněz tvoří měsíční rentu až do důchodového věku (<span class="z-duch-vek">65 let</span>), protože klient již nemůže pracovat.</div>
         </details>
       </div>
       <div class="z-sec-title">Jednorázové riziko</div>
@@ -2647,7 +2651,8 @@ input[type="range"]::-webkit-slider-runnable-track {
       <details class="z-info" style="border-top:none; margin-top:8px; padding:10px 12px; background:var(--surface2); border:1px solid var(--border); border-radius:8px">
         <summary>Proč je státní důchod u různých věků stejný?</summary>
         <div class="z-info-body">
-        Při výpočtu invalidního důchodu používá stát tzv. <b>dopočtenou dobu</b> (fiktivní roky od vzniku invalidity do důchodového věku). Předpokládá se, jako by klient pracoval a odváděl pojistné až do starobního důchodu. Proto má 30letý i 50letý člověk se stejným průměrným příjmem téměř totožný státní důchod a rozhodující je výše dosavadních příjmů.
+        Při výpočtu invalidního důchodu používá stát tzv. <b>dopočtenou dobu</b> (fiktivní roky od vzniku invalidity do důchodového věku). Předpokládá se, jako by klient pracoval a odváděl pojistné až do starobního důchodu. Proto má 30letý i 50letý člověk se stejným průměrným příjmem téměř totožný státní důchod a rozhodující je výše dosavadních příjmů.<br><br>
+          <b>Jak kalkulačka důchod počítá (pravidla 2026):</b> z čistého příjmu dopočte hrubou mzdu, tu zredukuje (do 21 546 Kč z 99 %, do 195 868 Kč z 26 %) a za každý rok od 20 let do důchodového věku přičte 0,5 % (1. st.), 0,75 % (2. st.) nebo 1,5 % (3. st.). K tomu základní výměra 4 900 Kč. Předpokládá stejně vysoké příjmy po celou kariéru a pojištění bez mezer. U OSVČ se zadaná částka bere jako vyměřovací základ.
         </div>
       </details>
 
@@ -6315,25 +6320,39 @@ function syncZivotInput(el, type) {
   calcZivot();
 }
 
-function getStatniDuchod(netto) {
-  const pts = [
-    { n: 0, s1: 0, s2: 0, s3: 0 },
-    { n: 24590, s1: 9597, s2: 12196, s3: 19992 },
-    { n: 39270, s1: 10819, s2: 14029, s3: 23658 },
-    { n: 53950, s1: 12041, s2: 15862, s3: 27324 },
-    { n: 75970, s1: 13874, s2: 18612, s3: 32823 },
-    { n: 500000, s1: 30000, s2: 40000, s3: 65000 }
-  ];
-  let p1 = pts[0], p2 = pts[1];
-  for (let i = 0; i < pts.length - 1; i++) {
-    if (netto >= pts[i].n && netto <= pts[i+1].n) { p1 = pts[i]; p2 = pts[i+1]; break; }
-  }
-  const r = (netto - p1.n) / (p2.n - p1.n || 1);
-  return {
-    s1: p1.s1 + (p2.s1 - p1.s1) * r,
-    s2: p1.s2 + (p2.s2 - p1.s2) * r,
-    s3: p1.s3 + (p2.s3 - p1.s3) * r
-  };
+// ── Invalidní důchod — výpočet podle pravidel ČSSZ (každý leden aktualizovat parametry) ──
+const DUCHOD = {
+  rok: 2026,
+  zakladniVymera: 4900,            // Kč měsíčně
+  rh1: 21546, rh2: 195868,         // redukční hranice osobního vyměřovacího základu
+  pct1: 0.99, pct2: 0.26,          // započtení do 1. RH / mezi RH
+  sazba: { s1: 0.005, s2: 0.0075, s3: 0.015 },   // procentní výměra za rok pojištění
+  minPV: { s1: 1634, s2: 2450, s3: 4900 },        // minimální procentní výměra
+  zacatekPojisteni: 20             // předpoklad: pojištěn od 20 let bez mezer
+};
+
+// Důchodový věk podle roku narození (od ročníku 1966 +1 měsíc za ročník, max. 67 let)
+function duchodovyVek(rokNar) {
+  if (!rokNar || rokNar <= 1965) return 65;
+  return 65 + Math.min(24, rokNar - 1965) / 12;
+}
+
+// Hrubá mzda z čisté (zaměstnanec 2026: SP 7,1 %, ZP 4,5 %, daň 15 % − sleva 2 570 Kč)
+function hrubaZCiste(netto) {
+  if (netto <= 0) return 0;
+  return netto <= 15146 ? netto / 0.884 : (netto - 2570) / 0.734;
+}
+
+function getStatniDuchod(netto, vek, typ) {
+  if (!netto || netto <= 0) return { s1: 0, s2: 0, s3: 0 };
+  const ovz = typ === 'osvc' ? netto : hrubaZCiste(netto);
+  const vz = DUCHOD.pct1 * Math.min(ovz, DUCHOD.rh1)
+           + DUCHOD.pct2 * Math.max(0, Math.min(ovz, DUCHOD.rh2) - DUCHOD.rh1);
+  const rokNar = vek > 0 ? new Date().getFullYear() - vek : null;
+  // doba pojištění + dopočtená doba = celé roky od začátku pojištění do důchodového věku
+  const roky = Math.floor(duchodovyVek(rokNar) - DUCHOD.zacatekPojisteni);
+  const vypocet = k => DUCHOD.zakladniVymera + Math.max(DUCHOD.minPV[k], Math.ceil(vz * DUCHOD.sazba[k] * roky));
+  return { s1: vypocet('s1'), s2: vypocet('s2'), s3: vypocet('s3') };
 }
 
 function calcZivot() {
@@ -6373,8 +6392,11 @@ function calcZivot() {
     elInvWarning.innerHTML = `ℹ️ <strong style="color:var(--text2)">Podmínka státu:</strong> Pro přiznání invalidního důchodu v tomto věku musí mít klient odpracováno (doba pojištění) <strong style="color:var(--text)">${textDoby}</strong>. Pokud tuto podmínku nesplňuje, invalidní důchod od státu bude 0 Kč.`;
   }
 
-  const m = (v === 0) ? 0 : Math.max(0, (65 - v) * 12);
-  const s = getStatniDuchod(p);
+  const dVek = duchodovyVek(new Date().getFullYear() - v);
+  const dVekTxt = Number.isInteger(dVek) ? dVek + ' let' : Math.floor(dVek) + ' let a ' + Math.round((dVek % 1) * 12) + ' měs.';
+  const m = (v === 0) ? 0 : Math.max(0, Math.round((dVek - v) * 12));
+  const s = getStatniDuchod(p, v, zClientType);
+  document.querySelectorAll('.z-duch-vek').forEach(el => el.textContent = dVekTxt);
 
   const isOsvc = zClientType === 'osvc';
   const osvcNemoc = !!document.getElementById('z_osvc_nemoc')?.checked;
@@ -6440,7 +6462,7 @@ function calcZivot() {
   
   if (l1) l1.innerHTML = `Krytí propadu po dobu 3 let ${strRez}`;
   if (l2) l2.innerHTML = `${strUver2} poloviční krytí deficitu ${strRez}`;
-  if (l3) l3.innerHTML = `Krytí do 65 let + ${strUver3} jednorázové náklady ${strRez}`;
+  if (l3) l3.innerHTML = `Krytí do důchodu (${dVekTxt}) + ${strUver3} jednorázové náklady ${strRez}`;
   if (lVo) {
     lVo.innerHTML = p > 0 
       ? "Doporučená pojistná částka (příjem × 12 + 500k)" 
@@ -6726,7 +6748,7 @@ function calcRodina() {
   if(document.getElementById('r_roky_lbl2')) document.getElementById('r_roky_lbl2').textContent = roky;
   if(document.getElementById('r_roky_lbl_budget')) document.getElementById('r_roky_lbl_budget').textContent = roky;
 
-  const zakladniVymera = 4400;
+  const zakladniVymera = DUCHOD.zakladniVymera;
   let st3 = 0;
   if(typeof getStatniDuchod === 'function' && prijem > 0) {
     st3 = getStatniDuchod(prijem).s3;
