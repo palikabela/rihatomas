@@ -1,0 +1,3 @@
+User-agent: *
+# Web je jen pro poradce – stránky mají noindex, PDF dokumenty vyhledávače neprocházejí
+Disallow: /*.pdf$
