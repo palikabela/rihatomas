@@ -13,6 +13,7 @@
 </script>
 
 <meta charset="UTF-8">
+<script>/* výchozí světlý režim (brzy) */try{if(localStorage.getItem("theme")!=="dark")document.documentElement.setAttribute("data-theme","light")}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TRfin — Finanční kalkulačky</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
@@ -1619,7 +1620,7 @@ function toggleTheme() {
   if (btn) btn.textContent = next === "light" ? "🌙" : "☀️";
 }
 
-const savedTheme = localStorage.getItem("theme");
+const savedTheme = localStorage.getItem("theme") || "light";   // výchozí světlý režim, tmavý jen po přepnutí
 if (savedTheme) {
   document.documentElement.setAttribute("data-theme", savedTheme);
   const btn = document.querySelector(".theme-btn");

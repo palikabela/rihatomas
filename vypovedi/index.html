@@ -4,6 +4,7 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="google" content="notranslate">
 <meta charset="UTF-8">
+<script>/* výchozí světlý režim (brzy) */try{if(localStorage.getItem("theme")!=="dark")document.documentElement.setAttribute("data-theme","light")}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>TRfin — Generátor výpovědí pojistných smluv</title>
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -257,7 +258,7 @@ function toggleTheme() {
   if (btn) btn.textContent = next === "light" ? "🌙" : "☀️";
 }
 const savedTheme = localStorage.getItem("theme");
-if (savedTheme === "light") {
+if (savedTheme !== "dark") {   // výchozí světlý režim, tmavý jen po přepnutí
   document.documentElement.setAttribute("data-theme", "light");
   const btn = document.querySelector(".theme-btn");
   if (btn) btn.textContent = "🌙";
