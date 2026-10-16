@@ -4,7 +4,7 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="google" content="notranslate">
 <meta charset="UTF-8">
-<script>/* výchozí světlý režim (brzy) */try{if(localStorage.getItem("theme")!=="dark")document.documentElement.setAttribute("data-theme","light")}catch(e){}</script>
+<script src="/motiv.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>TRfin — Generátor výpovědí pojistných smluv</title>
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -247,22 +247,7 @@ const CLOUD_ARCHIVE_URL = 'https://script.google.com/macros/s/AKfycbzDRe2Y1t3DWI
 const CLOUD_ARCHIVE_SECRET = 'KbBLsk9-O5X04fI49bXp9zk9eTEM_zm2JI3ykudTJpY';
 
 // ═══════════════ THEME TOGGLE ═══════════════
-function toggleTheme() {
-  const root = document.documentElement;
-  const current = root.getAttribute("data-theme");
-  const next = current === "light" ? "dark" : "light";
-  if (next === "light") root.setAttribute("data-theme", "light");
-  else root.removeAttribute("data-theme");
-  localStorage.setItem("theme", next);
-  const btn = document.querySelector(".theme-btn");
-  if (btn) btn.textContent = next === "light" ? "🌙" : "☀️";
-}
-const savedTheme = localStorage.getItem("theme");
-if (savedTheme !== "dark") {   // výchozí světlý režim, tmavý jen po přepnutí
-  document.documentElement.setAttribute("data-theme", "light");
-  const btn = document.querySelector(".theme-btn");
-  if (btn) btn.textContent = "🌙";
-}
+// přepínání režimu (světlý / šedý / tmavý): /motiv.js
 
 // ═══════════════ VÝPOVĚDI — DATA A LOGIKA ═══════════════
 
